@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import Speakers from "../components/Speakers";
 
 // --- Talent Page Content ---

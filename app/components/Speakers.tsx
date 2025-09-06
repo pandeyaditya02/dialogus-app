@@ -6,25 +6,25 @@ import Image from "next/image";
 const speakersData = [
   {
     name: "Pawan Kumar",
-    role: "Host, The Digital Dialogue",
+    // role: "Host, The Digital Dialogue",
     image: "/pawan kumar.jpg",
     delay: "0ms",
   },
   {
     name: "Vishal Dahia",
-    role: "Host, Uncharted Territories",
+    // role: "Host, Uncharted Territories",
     image: "/Vishal Dahia.jpg",
     delay: "100ms",
   },
   {
     name: "Sonia Singh",
-    role: "Host, The Creative Code",
+    // role: "Host, The Creative Code",
     image: "/Sonia Singh.jpg",
     delay: "200ms",
   },
   {
     name: "Sweta",
-    role: "Executive Producer",
+    // role: "Executive Producer",
     image: "/Sweta.jpg",
     delay: "300ms",
   },
@@ -32,7 +32,7 @@ const speakersData = [
 
 const SpeakerCard = ({
   name,
-  role,
+  // role,
   image,
   delay,
 }: (typeof speakersData)[0]) => (
