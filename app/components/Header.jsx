@@ -87,7 +87,7 @@ const Header = () => {
             href="#contact"
             className="primary-cta font-medium py-2 px-5 rounded-full text-sm"
           >
-            Start a Project
+            Connect With Us
           </a>
         </div>
         <button onClick={toggleMenu} className="md:hidden text-white">
@@ -127,7 +127,7 @@ const Header = () => {
             onClick={closeMenu}
             className="block text-center py-3 px-4 bg-fuchsia-600 text-white rounded-full hover:bg-fuchsia-500 transition-colors duration-300"
           >
-            Start a Project
+            Connect With Us!
           </a>
         </div>
       </div>

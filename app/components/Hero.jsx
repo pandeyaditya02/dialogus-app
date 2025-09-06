@@ -25,7 +25,7 @@ const Hero = () => {
       <div className="relative z-20 container mx-auto px-6 w-full text-center md:text-left">
         <div className="w-full md:w-1/2 lg:w-2/5 py-16 md:py-0">
           {/* Branding */}
-          <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+          {/* <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
             <Image
               src="/NEW LOGO.png"
               alt="Dialogus Logo Icon"
@@ -36,7 +36,7 @@ const Hero = () => {
             <span className="text-gray-300 font-semibold tracking-wider text-sm">
               Clarity in a World of Noise
             </span>
-          </div>
+          </div> */}
 
           {/* Title */}
           <h1 className="hero-title text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">

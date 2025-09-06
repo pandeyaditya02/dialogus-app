@@ -201,7 +201,7 @@ const Productions = () => {
       <div className="container mx-auto px-6">
         <div className="text-left max-w-2xl mb-12">
           <h2 className="section-title text-3xl md:text-4xl fade-in">
-            Latest Productions
+            Latest Videos
           </h2>
         </div>
 
