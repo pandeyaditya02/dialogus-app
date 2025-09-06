@@ -36,22 +36,32 @@ const SpeakerCard = ({
   image,
   delay,
 }: (typeof speakersData)[0]) => (
-  <div className="fade-in text-center" style={{ transitionDelay: delay }}>
-    <div className="speaker-card">
+  <div
+    className="fade-in text-center"
+    style={{ transitionDelay: delay }}
+  >
+    <div className="relative group overflow-hidden rounded-2xl shadow-xl shadow-fuchsia-500/20 transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
+      {/* Speaker Image */}
       <Image
         src={image}
         alt={name}
         width={400}
         height={400}
-        className="w-full h-full object-contain object-center p-2"
+        className="w-full h-full object-cover"
       />
+
+      {/* Overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>
+
+    {/* Speaker Info */}
     <div className="mt-4">
       <h3 className="font-bold text-lg text-white">{name}</h3>
-      <p className="text-fuchsia-300 text-sm">{role}</p>
+      {/* <p className="text-fuchsia-300 text-sm">{role}</p> */}
     </div>
   </div>
 );
+
 
 const Speakers = () => {
   // This useEffect is now managed in Productions.tsx, but can be duplicated if sections are used independently.
