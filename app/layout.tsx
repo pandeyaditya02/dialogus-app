@@ -1,7 +1,7 @@
-
 import type { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { Inter, Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Dialogus - Crafting Digital Narratives",
@@ -9,28 +9,27 @@ export const metadata: Metadata = {
     "Dialogus is a digital media platform bringing clarity in a noisy world. We cover politics, business, law, and culture with data-driven analysis and storytelling.",
 };
 
+// Inter for body text
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+// Space Grotesk for headers / hero titles
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Tailwind CSS CDN */}
         <script src="https://cdn.tailwindcss.com"></script>
-
-        {/* Google Fonts: Inter & Space Grotesk */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
 
         {/* Global Styles */}
         <style>
