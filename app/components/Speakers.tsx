@@ -11,7 +11,7 @@ const speakersData = [
 
 const SpeakerCard = ({ name, role, image, delay }: typeof speakersData[0]) => (
     <div className="speaker-card fade-in" style={{ transitionDelay: delay }}>
-        <img src={image} alt={name} className="w-full h-full object-cover object-center" />
+        <img src={image} alt={name} className="w-full h-full object-contain object-center p-0.5" />
         <div className="speaker-info">
             <h3 className="font-bold text-lg text-white">{name}</h3>
             <p className="text-fuchsia-300 text-sm">{role}</p>
@@ -46,7 +46,7 @@ const Speakers = () => {
                         Meet the brilliant minds and compelling personalities that host our shows and lead our creative productions.
                     </p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
                     {speakersData.map((speaker) => (
                         <SpeakerCard key={speaker.name} {...speaker} />
                     ))}
