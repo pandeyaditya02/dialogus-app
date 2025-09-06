@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Base Styles */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #050505;
@@ -14,10 +13,10 @@ body {
 
 /* Dark Navigation Bar Styles with Scroll Effect */
 .dark-glass-nav {
-    background: transparent; /* Initially transparent */
+    background: transparent;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid transparent; /* Initially transparent border */
+    border-bottom: 1px solid transparent;
     transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out;
 }
 
@@ -28,14 +27,14 @@ body {
 
 .nav-link {
     position: relative;
-    color: #a1a1aa; /* Lighter gray for non-active links */
+    color: #a1a1aa;
     text-decoration: none;
     transition: color 0.3s ease;
-    font-size: 0.95rem; /* Slightly larger font size */
+    font-size: 0.95rem;
 }
 
 .nav-link:hover, .nav-link.active {
-    color: #ffffff; /* White on hover and for active link */
+    color: #ffffff;
 }
 
 .nav-link::after {
@@ -43,7 +42,7 @@ body {
     position: absolute;
     width: 0;
     height: 2px;
-    bottom: -8px; /* More space for the underline */
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #c026d3;
@@ -84,43 +83,28 @@ body {
     border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Netflix-style Slider */
-.slider-container {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-}
-.slider-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
-}
-
-.slider-arrow {
-    background: rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease-in-out;
-    opacity: 0; /* Initially hidden */
-}
-
-.slider-wrapper:hover .slider-arrow {
-    opacity: 1; /* Show on hover of wrapper */
-}
-
-.slider-arrow:hover {
-    background: rgba(0, 0, 0, 0.8);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.video-card-thumbnail {
-    transition: transform 0.3s ease-in-out;
-}
-
-.video-card:hover .video-card-thumbnail {
-    transform: scale(1.05);
+/* Productions Page Grid and Card Styles */
+.video-card-container {
+    aspect-ratio: 16 / 9;
 }
 
 .video-title-truncate {
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.video-synopsis-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 
 /* General Styles */
 .section-title {
