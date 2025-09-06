@@ -10,9 +10,11 @@ const speakersData = [
 ];
 
 const SpeakerCard = ({ name, role, image, delay }: typeof speakersData[0]) => (
-    <div className="speaker-card fade-in" style={{ transitionDelay: delay }}>
-        <img src={image} alt={name} className="w-full h-full object-contain object-center p-0.5" />
-        <div className="speaker-info">
+    <div className="fade-in text-center" style={{ transitionDelay: delay }}>
+        <div className="speaker-card">
+            <img src={image} alt={name} className="w-full h-full object-contain object-center p-2" />
+        </div>
+        <div className="mt-4">
             <h3 className="font-bold text-lg text-white">{name}</h3>
             <p className="text-fuchsia-300 text-sm">{role}</p>
         </div>
@@ -57,4 +59,3 @@ const Speakers = () => {
 };
 
 export default Speakers;
-

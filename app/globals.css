@@ -143,27 +143,11 @@ body {
     overflow: hidden;
     aspect-ratio: 4 / 5;
     transition: transform 0.3s ease;
+    background-color: #18181b; /* Added background color */
 }
 
 .speaker-card:hover {
     transform: scale(1.03);
-}
-
-.speaker-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    padding: 1.5rem 1rem 1rem;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-}
-
-.speaker-card:hover .speaker-info {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .fade-in {
@@ -200,3 +184,6 @@ body {
     color: #c026d3;
     transform: scale(1.1);
 }
+
+
+
