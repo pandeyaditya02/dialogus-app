@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  # no publish directory needed — the Netlify Next.js plugin takes care of serving .next
+
+[build.environment]
+  NODE_VERSION = "18.18.0"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
