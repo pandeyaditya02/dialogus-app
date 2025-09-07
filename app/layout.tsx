@@ -4,9 +4,12 @@ import Footer from "./components/Footer";
 import { Inter, Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "Dialogus - Crafting Digital Narratives",
+  title: "Dialogus - Debate Discuss Decide",
   description:
     "Dialogus is a digital media platform bringing clarity in a noisy world. We cover politics, business, law, and culture with data-driven analysis and storytelling.",
+    icons: {
+    icon: "/NEW LOGO.png", // ✅ path relative to /public
+  },
 };
 
 // Inter for body text
