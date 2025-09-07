@@ -64,7 +64,7 @@ const Header = () => {
             height={100}
             className="h-10 w-auto"
           />
-          <span className="hidden md:block font-semibold tracking-wider text-xs text-gray-400 border-l border-gray-500 pl-4">
+          <span className="hidden md:block font-semibold tracking-wider text-sm md:text-lg lg:text-xl text-gray-400 border-l border-gray-500 pl-4">
             DEBATE DISCUSS DECIDE
           </span>
         </a>
@@ -90,7 +90,7 @@ const Header = () => {
             href="#contact"
             className="primary-cta font-medium py-2 px-5 rounded-full text-sm"
           >
-            Connect With Us
+            Connect With Us!
           </a>
         </div>
         <button onClick={toggleMenu} className="md:hidden text-white">
