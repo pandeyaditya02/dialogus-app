@@ -39,12 +39,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="footer-link">
+                <a href="/privacy" className="footer-link">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="footer-link">
+                <a href="/terms" className="footer-link">
                   Terms of Service
                 </a>
               </li>
