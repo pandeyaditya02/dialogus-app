@@ -4,8 +4,8 @@ import React from "react";
 // import Image from "next/image";
 import Speakers from "../components/Speakers";
 
-// --- Talent Page Content ---
-// const talentData = [
+// --- Hosts Page Content ---
+// const hostsData = [
 //   {
 //     name: "Pawan Kumar",
 //     role: "Host, The Digital Dialogue",
@@ -36,7 +36,7 @@ import Speakers from "../components/Speakers";
 //   },
 // ];
 
-// const SpeakerCard = ({
+// const HostCard = ({
 //   name,
 //   role,
 //   imgSrc,
@@ -67,7 +67,7 @@ import Speakers from "../components/Speakers";
 //   </div>
 // );
 
-// const TalentContent = () => {
+// const HostsContent = () => {
 //   return (
 //     <main className="pt-24">
 //       <section id="speakers" className="py-20 md:py-28">
@@ -82,8 +82,8 @@ import Speakers from "../components/Speakers";
 //             </p>
 //           </div>
 //           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-//             {talentData.map((speaker) => (
-//               <SpeakerCard key={speaker.name} {...speaker} />
+//             {hostsData.map((host) => (
+//               <HostCard key={host.name} {...host} />
 //             ))}
 //           </div>
 //         </div>
@@ -92,8 +92,8 @@ import Speakers from "../components/Speakers";
 //   );
 // };
 
-// --- Main Talent Page Component ---
-export default function TalentPage() {
-  // return <TalentContent />;
-  return <Speakers />
+// --- Main Hosts Page Component ---
+export default function HostsPage() {
+  // return <HostsContent />;
+  return <Speakers />;
 }
