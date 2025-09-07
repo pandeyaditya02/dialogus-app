@@ -36,10 +36,7 @@ const SpeakerCard = ({
   image,
   delay,
 }: (typeof speakersData)[0]) => (
-  <div
-    className="fade-in text-center"
-    style={{ transitionDelay: delay }}
-  >
+  <div className="fade-in text-center" style={{ transitionDelay: delay }}>
     <div className="relative group overflow-hidden rounded-2xl shadow-xl shadow-fuchsia-500/20 transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
       {/* Speaker Image */}
       <Image
@@ -61,7 +58,6 @@ const SpeakerCard = ({
     </div>
   </div>
 );
-
 
 const Speakers = () => {
   // This useEffect is now managed in Productions.tsx, but can be duplicated if sections are used independently.
@@ -94,8 +90,9 @@ const Speakers = () => {
             className="text-gray-400 fade-in"
             style={{ transitionDelay: "100ms" }}
           >
-            Meet the brilliant minds and compelling personalities that host our
-            shows and lead our creative productions.
+            From hard-hitting conversations to thought-provoking discussions,
+            our brilliant hosts bring intelligence, insight and range to every
+            production
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
