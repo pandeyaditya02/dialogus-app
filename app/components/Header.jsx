@@ -56,7 +56,7 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="/" onClick={closeMenu}>
+        <a href="/" onClick={closeMenu} className="flex items-center gap-4">
           <Image
             src="/NEW LOGO.png"
             alt="Dialogus Logo"
@@ -64,6 +64,9 @@ const Header = () => {
             height={100}
             className="h-10 w-auto"
           />
+          <span className="hidden md:block font-semibold tracking-wider text-xs text-gray-400 border-l border-gray-500 pl-4">
+            DEBATE DISCUSS DECIDE
+          </span>
         </a>
         <nav className="hidden md:flex space-x-12 items-center text-sm font-medium">
           {navLinks.map((link) => (
