@@ -200,15 +200,15 @@ const Productions = () => {
     <section id="videos" className="py-20 md:py-28 bg-black/50">
       <div className="container mx-auto px-6">
         <div className="text-left max-w-2xl mb-12">
-          <h2 className="section-title text-3xl md:text-4xl fade-in">
+          {/* <h2 className="section-title text-3xl md:text-4xl fade-in">
             Latest Videos
-          </h2>
+          </h2> */}
         </div>
 
         <div className="space-y-16">
-          <VideoSlider title="EDITOR'S PICK" videos={editorsPicks} />
           <VideoSlider title="TRENDING" videos={trendingVideos} />
           <VideoSlider title="WORLD VIEW" videos={worldViewVideos} />
+          <VideoSlider title="EDITOR'S PICK" videos={editorsPicks} />
         </div>
       </div>
     </section>
