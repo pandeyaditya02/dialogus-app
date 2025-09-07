@@ -63,12 +63,12 @@ const DisclaimerContent = () => {
                            {disclaimerCards.map(card => <DisclaimerCard key={card.title} {...card} />)}
                         </div>
 
-                        <div className="mt-16 text-center border-t border-gray-800 pt-10">
+                        {/* <div className="mt-16 text-center border-t border-gray-800 pt-10">
                             <h3 className="text-xl font-semibold text-white mb-3">Contact Us</h3>
                             <p className="text-gray-400">If you have any questions about this Disclaimer Notice, please contact us at:</p>
                             <p className="mt-4 text-gray-200">[Official email address]</p>
                             <p className="text-gray-400 text-sm">[Registered address]</p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </section>
