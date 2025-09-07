@@ -63,7 +63,9 @@ const Hero = () => {
               Watch Now
             </a>
             <a
-              href="#"
+              href="https://www.youtube.com/@Dialogusdigital"
+              target="_blank"
+              rel="noopener noreferrer"
               className="subscribe-cta inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-full"
             >
               <Star size={20} className="text-yellow-400" fill="currentColor" />

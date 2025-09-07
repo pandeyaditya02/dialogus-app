@@ -81,13 +81,17 @@ const Header = () => {
         </nav>
         <div className="hidden md:flex items-center gap-4">
           <a
-            href="#"
+            href="https://www.youtube.com/@Dialogusdigital"
+            target="_blank"
+            rel="noopener noreferrer"
             className="subscribe-cta font-medium py-2 px-5 rounded-full text-sm"
           >
             Subscribe
           </a>
           <a
-            href="#contact"
+            href="https://www.youtube.com/@Dialogusdigital"
+            target="_blank"
+            rel="noopener noreferrer"
             className="primary-cta font-medium py-2 px-5 rounded-full text-sm"
           >
             Connect With Us!
