@@ -87,7 +87,10 @@ const Footer = () => {
               >
                 <FaInstagram size={24} />
               </a>
-              <a href="https://www.facebook.com/people/Dialogus/61577374885734/" className="social-icon">
+              <a
+                href="https://www.facebook.com/people/Dialogus/61577374885734/"
+                className="social-icon"
+              >
                 <FaFacebook size={24} />
               </a>
             </div>
@@ -97,10 +100,12 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold text-white mb-4">Stay Updated</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to our newsletter for the latest insights.
+              Subscribe to our Youtube channel for the latest insights.
             </p>
             <a
-              href="#"
+              href="https://www.youtube.com/@Dialogusdigital"
+              target="_blank"
+              rel="noopener noreferrer"
               className="primary-cta text-white font-semibold py-2 px-5 rounded-full inline-block"
             >
               Subscribe Now
