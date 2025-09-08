@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { insightsData } from "../data/insights";
 
 // --- Featured Article ---
@@ -11,16 +10,6 @@ const FeaturedArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
     href={`/insights/${post.slug}`}
     className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-gray-900"
   >
-    <div className="relative w-full h-80">
-      <Image
-        src={post.image}
-        alt={post.title}
-        fill
-        className="object-cover"
-        priority
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-      />
-    </div>
     <div className="p-6 space-y-3">
       <span className="text-sm text-fuchsia-400 font-semibold uppercase">
         {post.category}
@@ -28,13 +17,6 @@ const FeaturedArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
       <h2 className="text-3xl font-bold text-white">{post.title}</h2>
       <p className="text-gray-400">{post.description}</p>
       <div className="flex items-center gap-3 text-sm text-gray-500 mt-3">
-        <Image
-          src={post.authorImg}
-          alt={post.author}
-          width={32}
-          height={32}
-          className="w-8 h-8 rounded-full"
-        />
         <span className="text-white">{post.author}</span>
         <span>·</span>
         <span>{post.date}</span>
@@ -54,15 +36,6 @@ const GridArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
     href={`/insights/${post.slug}`}
     className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col"
   >
-    <div className="relative w-full h-48">
-      <Image
-        src={post.image}
-        alt={post.title}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
-    </div>
     <div className="p-5 flex flex-col flex-grow space-y-2">
       <span className="text-sm text-fuchsia-400 font-semibold uppercase">
         {post.category}
@@ -70,13 +43,6 @@ const GridArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
       <h3 className="font-bold text-xl text-white">{post.title}</h3>
       <p className="text-gray-400 text-sm flex-grow">{post.description}</p>
       <div className="flex items-center gap-2 text-xs text-gray-500">
-        <Image
-          src={post.authorImg}
-          alt={post.author}
-          width={24}
-          height={24}
-          className="w-6 h-6 rounded-full"
-        />
         <span className="text-white">{post.author}</span>
         <span>·</span>
         <span>{post.date}</span>

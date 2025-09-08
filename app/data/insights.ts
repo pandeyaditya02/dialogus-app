@@ -6,9 +6,7 @@ export interface InsightPost {
   body: string;
   category: string;
   author: string;
-  authorImg: string;
   readTime: string;
-  image: string;
 }
 
 export const insightsData: InsightPost[] = [
@@ -61,10 +59,7 @@ export const insightsData: InsightPost[] = [
     `,
     category: "Production",
     author: "Jane Doe",
-    authorImg: "https://randomuser.me/api/portraits/women/44.jpg",
     readTime: "6 min read",
-    image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80",
   },
   {
     slug: "sonic-branding",
@@ -127,10 +122,7 @@ export const insightsData: InsightPost[] = [
     `,
     category: "Branding",
     author: "John Smith",
-    authorImg: "https://randomuser.me/api/portraits/men/32.jpg",
     readTime: "5 min read",
-    image:
-      "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1600&q=80",
   },
   {
     slug: "visual-podcasting",
@@ -195,9 +187,6 @@ export const insightsData: InsightPost[] = [
     `,
     category: "Visual Media",
     author: "Alice Brown",
-    authorImg: "https://randomuser.me/api/portraits/women/68.jpg",
     readTime: "7 min read",
-    image:
-      "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=1600&q=80",
   },
 ];

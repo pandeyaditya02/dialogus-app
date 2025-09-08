@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { insightsData, type InsightPost } from "../../data/insights";
 
 interface BlogPostProps {
@@ -31,16 +30,14 @@ export async function generateMetadata({ params }: BlogPostProps) {
     openGraph: {
       title: post.title,
       description: post.description,
-      images: [post.image],
       type: "article",
       publishedTime: post.date,
       authors: [post.author],
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title: post.title,
       description: post.description,
-      images: [post.image],
     },
   };
 }
@@ -56,23 +53,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
-      {/* Hero Section */}
-      <section className="relative">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0">
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-6 pt-32 pb-16">
+      {/* Header Section */}
+      <section className="py-16 bg-gray-900/50">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             {/* Category Badge */}
             <div className="mb-6">
@@ -89,13 +72,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
             {/* Meta Information */}
             <div className="flex flex-wrap items-center gap-6 text-gray-300 mb-8">
               <div className="flex items-center gap-3">
-                <Image
-                  src={post.authorImg}
-                  alt={post.author}
-                  width={48}
-                  height={48}
-                  className="w-12 h-12 rounded-full border-2 border-white/20"
-                />
+                <div className="w-12 h-12 rounded-full border-2 border-white/20 bg-fuchsia-500/20 flex items-center justify-center">
+                  <span className="text-fuchsia-400 font-semibold text-lg">
+                    {post.author.charAt(0)}
+                  </span>
+                </div>
                 <div>
                   <p className="font-semibold text-white">{post.author}</p>
                   <p className="text-sm text-gray-400">Author</p>
@@ -160,13 +141,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
             <div className="mt-16 pt-8 border-t border-gray-800">
               <div className="flex flex-wrap items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <Image
-                    src={post.authorImg}
-                    alt={post.author}
-                    width={64}
-                    height={64}
-                    className="w-16 h-16 rounded-full border-2 border-fuchsia-500/30"
-                  />
+                  <div className="w-16 h-16 rounded-full border-2 border-fuchsia-500/30 bg-fuchsia-500/20 flex items-center justify-center">
+                    <span className="text-fuchsia-400 font-semibold text-2xl">
+                      {post.author.charAt(0)}
+                    </span>
+                  </div>
                   <div>
                     <h3 className="text-xl font-semibold text-white">
                       {post.author}
@@ -209,15 +188,6 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     className="group block"
                   >
                     <article className="bg-gray-800/50 rounded-2xl overflow-hidden hover:bg-gray-800/70 transition-all duration-300 hover:transform hover:scale-105">
-                      <div className="aspect-video overflow-hidden relative">
-                        <Image
-                          src={relatedPost.image}
-                          alt={relatedPost.title}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
                       <div className="p-6">
                         <span className="inline-block px-3 py-1 bg-fuchsia-500/20 text-fuchsia-400 rounded-full text-xs font-semibold mb-3">
                           {relatedPost.category}
@@ -229,13 +199,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
                           {relatedPost.description}
                         </p>
                         <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <Image
-                            src={relatedPost.authorImg}
-                            alt={relatedPost.author}
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 rounded-full"
-                          />
+                          <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
+                            <span className="text-fuchsia-400 font-semibold text-xs">
+                              {relatedPost.author.charAt(0)}
+                            </span>
+                          </div>
                           <span>{relatedPost.author}</span>
                           <span>·</span>
                           <span>{relatedPost.readTime}</span>
