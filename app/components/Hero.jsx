@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative h-screen w-full flex flex-col md:flex-row items-end md:items-center overflow-hidden"
+      className="relative h-screen w-full flex items-end md:items-center overflow-hidden"
     >
       {/* 1. Video Background */}
       <div className="absolute top-0 left-0 w-full h-full">
@@ -15,6 +15,7 @@ const Hero = () => {
           frameBorder="0"
           allow="autoplay; encrypted-media"
           allowFullScreen
+          title="Hero Video"
         ></iframe>
       </div>
 
@@ -23,28 +24,14 @@ const Hero = () => {
 
       {/* 3. Content */}
       <div className="relative z-20 container mx-auto px-6 w-full text-center md:text-left">
-        <div className="w-full md:w-1/2 lg:w-2/5 py-16 md:py-0">
-          {/* Branding */}
-          {/* <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
-            <Image
-              src="/NEW LOGO.png"
-              alt="Dialogus Logo Icon"
-              width={100}
-              height={32}
-              className="h-8 w-auto"
-            />
-            <span className="text-gray-300 font-semibold tracking-wider text-sm">
-              Clarity in a World of Noise
-            </span>
-          </div> */}
-
+        <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-16 md:py-0">
           {/* Title */}
-          <h1 className="hero-title text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+          <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">
             Casteism in the Cockpit: Indigo&apos;s Dark Side Under the Radar
           </h1>
 
           {/* Description */}
-          <p className="text-gray-300 text-base mb-8">
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8">
             Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations
             revealed in this eye-opening episode. We dive deep into systemic
             discrimination in India&apos;s aviation sector and question the
@@ -52,12 +39,12 @@ const Hero = () => {
           </p>
 
           {/* CTAs */}
-          <div className="flex items-center justify-center md:justify-start gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
             <a
               href="https://www.youtube.com/watch?v=j7F5KNw5F20"
               target="_blank"
               rel="noopener noreferrer"
-              className="primary-cta inline-flex items-center gap-2 text-white font-semibold py-3 px-6 rounded-full"
+              className="primary-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-semibold py-3 px-6 rounded-full"
             >
               <Play size={20} fill="currentColor" />
               Watch Now
@@ -66,7 +53,7 @@ const Hero = () => {
               href="https://www.youtube.com/@Dialogusdigital"
               target="_blank"
               rel="noopener noreferrer"
-              className="subscribe-cta inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-full"
+              className="subscribe-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full"
             >
               <Star size={20} className="text-yellow-400" fill="currentColor" />
               Subscribe to Dialogus
