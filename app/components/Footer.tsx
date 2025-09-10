@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   FaXTwitter,
   FaYoutube,
@@ -29,24 +30,24 @@ const Footer = () => {
             <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <a href="/about" className="footer-link">
+                <Link href="/about" className="footer-link">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/disclaimer" className="footer-link">
+                <Link href="/disclaimer" className="footer-link">
                   Disclaimer
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/privacy" className="footer-link">
+                <Link href="/privacy" className="footer-link">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/terms" className="footer-link">
+                <Link href="/terms" className="footer-link">
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
