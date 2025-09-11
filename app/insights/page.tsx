@@ -73,11 +73,11 @@ async function InsightsContent() {
           {/* Page Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="section-title text-4xl md:text-5xl mb-4 font-bold">
-              Insights & Stories
+              News & Voices
             </h2>
             <p className="text-gray-400">
-              Go behind the scenes and explore our perspective on the evolving
-              media landscape.
+              See the evolving global geopolitical landscape through our lens
+              and uncover the forces transforming the world around us.
             </p>
           </div>
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 const Header = () => {
@@ -58,30 +59,36 @@ const Header = () => {
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo and Tagline */}
         <div className="flex-shrink-0">
-            <a href="/" onClick={closeMenu} className="flex items-center gap-2 sm:gap-4">
-              <Image
-                src="/NEW LOGO.png"
-                alt="Dialogus Logo"
-                width={200}
-                height={67}
-                className="h-8 md:h-10 w-auto"
-              />
-              <span className="hidden lg:block font-semibold tracking-wider text-sm text-gray-400 border-l border-gray-600 pl-4">
-                DEBATE DISCUSS DECIDE
-              </span>
-            </a>
+          <Link
+            href="/"
+            onClick={closeMenu}
+            className="flex items-center gap-2 sm:gap-4"
+          >
+            <Image
+              src="/NEW LOGO.png"
+              alt="Dialogus Logo"
+              width={200}
+              height={67}
+              className="h-8 md:h-10 w-auto"
+            />
+            <span className="hidden lg:block font-semibold tracking-wider text-sm text-gray-400 border-l border-gray-600 pl-4">
+              DEBATE DISCUSS DECIDE
+            </span>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8 text-sm font-medium">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              className={`nav-link whitespace-nowrap ${isActive(link.href) ? "active" : ""}`}
+              className={`nav-link whitespace-nowrap ${
+                isActive(link.href) ? "active" : ""
+              }`}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -117,10 +124,10 @@ const Header = () => {
         className={`absolute top-0 left-0 right-0 pt-20 bg-black/90 backdrop-blur-md md:hidden transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ minHeight: '100vh' }}
+        style={{ minHeight: "100vh" }}
       >
         {navLinks.map((link) => (
-          <a
+          <Link
             key={link.href}
             href={link.href}
             onClick={closeMenu}
@@ -129,7 +136,7 @@ const Header = () => {
             }`}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
         <div className="p-6 flex flex-col gap-4 border-t border-gray-800 mt-4">
           <a
@@ -155,4 +162,3 @@ const Header = () => {
 };
 
 export default Header;
-
