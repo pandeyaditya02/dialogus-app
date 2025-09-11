@@ -1,11 +1,10 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
-import { insightsData } from "../data/insights";
+import { client } from "../../sanity/lib/client";
+import { groq } from "next-sanity";
 
 // --- Featured Article ---
-const FeaturedArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
+const FeaturedArticle = ({ post }: { post: any }) => (
   <Link
     href={`/insights/${post.slug}`}
     className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-gray-900"
@@ -31,7 +30,7 @@ const FeaturedArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
 );
 
 // --- Grid Article ---
-const GridArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
+const GridArticle = ({ post }: { post: any }) => (
   <Link
     href={`/insights/${post.slug}`}
     className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col"
@@ -51,8 +50,21 @@ const GridArticle = ({ post }: { post: (typeof insightsData)[0] }) => (
   </Link>
 );
 
-const InsightsContent = () => {
-  const [featured, ...rest] = insightsData;
+const query = groq`
+  *[_type == "post"] | order(publishedAt desc) {
+    "slug": slug.current,
+    title,
+    "description": coalesce(excerpt, ""),
+    "date": coalesce(publishedAt, _createdAt),
+    "author": author->name,
+    "category": categories[0]->title,
+    "readTime": coalesce(readTime, "")
+  }
+`;
+
+async function InsightsContent() {
+  const posts = await client.fetch(query);
+  const [featured, ...rest] = posts;
 
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
@@ -76,7 +88,7 @@ const InsightsContent = () => {
 
           {/* Grid of Other Articles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rest.map((post) => (
+            {rest?.map((post: any) => (
               <GridArticle key={post.slug} post={post} />
             ))}
           </div>
@@ -84,8 +96,8 @@ const InsightsContent = () => {
       </section>
     </main>
   );
-};
+}
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
   return <InsightsContent />;
 }

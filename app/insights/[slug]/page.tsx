@@ -1,22 +1,21 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { insightsData, type InsightPost } from "../../data/insights";
+import { client } from "../../../sanity/lib/client";
+import { groq } from "next-sanity";
+import { PortableText } from "@portabletext/react";
 
-interface BlogPostProps {
-  params: Promise<{ slug: string }>;
-}
+interface BlogPostProps { params: { slug: string } }
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
-  return insightsData.map((post) => ({
-    slug: post.slug,
-  }));
+  const slugs: { slug: string }[] = await client.fetch(groq`*[_type=='post' && defined(slug.current)]{"slug": slug.current}`);
+  return slugs.map((s) => ({ slug: s.slug }));
 }
 
 // Generate metadata for each post
 export async function generateMetadata({ params }: BlogPostProps) {
-  const { slug } = await params;
-  const post = insightsData.find((p) => p.slug === slug);
+  const { slug } = params;
+  const post = await client.fetch(groq`*[_type=='post' && slug.current==$slug][0]{ title, excerpt }`, { slug });
 
   if (!post) {
     return {
@@ -26,30 +25,49 @@ export async function generateMetadata({ params }: BlogPostProps) {
 
   return {
     title: `${post.title} | Dialogus Insights`,
-    description: post.description,
+    description: post.excerpt ?? "",
     openGraph: {
       title: post.title,
-      description: post.description,
+      description: post.excerpt ?? "",
       type: "article",
-      publishedTime: post.date,
-      authors: [post.author],
+      // You can extend with publishedTime/authors if you query them above
     },
     twitter: {
       card: "summary",
       title: post.title,
-      description: post.description,
+      description: post.excerpt ?? "",
     },
   };
 }
 
+const postBySlugQuery = groq`*[_type=='post' && slug.current==$slug][0]{
+  "slug": slug.current,
+  title,
+  excerpt,
+  "date": coalesce(publishedAt, _createdAt),
+  "author": author->name,
+  "readTime": coalesce(readTime, ""),
+  "category": categories[0]->title,
+  body
+}`;
+
+const relatedQuery = groq`*[_type=='post' && slug.current!=$slug][0...3]{
+  "slug": slug.current,
+  title,
+  excerpt,
+  "readTime": coalesce(readTime, ""),
+  "category": categories[0]->title,
+  "author": author->name
+}`;
+
 export default async function BlogPost({ params }: BlogPostProps) {
-  const { slug } = await params;
-  const post = insightsData.find((p) => p.slug === slug);
+  const { slug } = params;
+  const post = await client.fetch(postBySlugQuery, { slug });
 
   if (!post) return notFound();
 
   // Get related posts (excluding current post)
-  const relatedPosts = insightsData.filter((p) => p.slug !== slug).slice(0, 3);
+  const relatedPosts = await client.fetch(relatedQuery, { slug });
 
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
@@ -108,33 +126,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           <div className="max-w-4xl mx-auto">
             {/* Article Body */}
             <div className="prose prose-lg prose-invert max-w-none">
-              {post.body.split("\n\n").map((paragraph, index) => {
-                // Handle headings
-                if (paragraph.startsWith("## ")) {
-                  return (
-                    <h2
-                      key={index}
-                      className="text-3xl font-bold text-white mt-12 mb-6 first:mt-0"
-                    >
-                      {paragraph.replace("## ", "")}
-                    </h2>
-                  );
-                }
-
-                // Handle regular paragraphs
-                if (paragraph.trim()) {
-                  return (
-                    <p
-                      key={index}
-                      className="text-gray-300 leading-relaxed mb-6 text-lg"
-                    >
-                      {paragraph.trim()}
-                    </p>
-                  );
-                }
-
-                return null;
-              })}
+              <PortableText value={post.body} />
             </div>
 
             {/* Article Footer */}
@@ -196,7 +188,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                           {relatedPost.title}
                         </h3>
                         <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                          {relatedPost.description}
+                          {relatedPost.excerpt}
                         </p>
                         <div className="flex items-center gap-3 text-sm text-gray-500">
                           <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
