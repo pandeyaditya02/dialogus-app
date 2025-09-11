@@ -176,7 +176,7 @@ const VideoSlider = ({
   );
 };
 
-const Productions = () => {
+const Videos = () => {
   // Intersection Observer for fade-in effect
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -215,4 +215,4 @@ const Productions = () => {
   );
 };
 
-export default Productions;
+export default Videos;
