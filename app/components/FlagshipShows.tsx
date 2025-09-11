@@ -7,8 +7,7 @@ const showsData = [
   {
     title: "TALK IT OUT",
     host: "Pawan Kumar",
-    imageUrl:
-      "https://i3.ytimg.com/vi/GTnu0WBYt8U/maxresdefault.jpg",
+    imageUrl: "https://i3.ytimg.com/vi/GTnu0WBYt8U/maxresdefault.jpg",
     alt: "Talk It Out Playlist Cover",
     url: "https://www.youtube.com/watch?v=GTnu0WBYt8U&list=PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS",
     delay: "0ms",
@@ -16,8 +15,7 @@ const showsData = [
   {
     title: "BITS & PIECES",
     host: "Sweta",
-    imageUrl:
-      "https://i3.ytimg.com/vi/BHG3aa3Mw0k/maxresdefault.jpg",
+    imageUrl: "https://i3.ytimg.com/vi/BHG3aa3Mw0k/maxresdefault.jpg",
     alt: "Bits & Pieces Playlist Cover",
     url: "https://www.youtube.com/watch?v=BHG3aa3Mw0k&list=PLiWELLjBSGHIJh5QCyMBS4YLNCVxC1Wxc",
     delay: "150ms",
@@ -25,8 +23,7 @@ const showsData = [
   {
     title: "WORLD VIEW",
     host: "Vishal Dahia",
-    imageUrl:
-      "https://i3.ytimg.com/vi/KWaUj_C-xHU/maxresdefault.jpg",
+    imageUrl: "https://i3.ytimg.com/vi/KWaUj_C-xHU/maxresdefault.jpg",
     alt: "World View Playlist Cover",
     url: "https://www.youtube.com/watch?v=KWaUj_C-xHU&list=PLiWELLjBSGHI3c517bIrA7kVx0leH6v-y",
     delay: "300ms",
@@ -34,8 +31,7 @@ const showsData = [
   {
     title: "SAMAJIK VIMARSH",
     host: "Preeta Harit",
-    imageUrl:
-      "https://i3.ytimg.com/vi/7C4XbU0Z_IU/maxresdefault.jpg",
+    imageUrl: "https://i3.ytimg.com/vi/7C4XbU0Z_IU/maxresdefault.jpg",
     alt: "Samajik Vimarsh Playlist Cover",
     url: "https://www.youtube.com/watch?v=7C4XbU0Z_IU&list=PLiWELLjBSGHIBgML8hbZlpzMfbN4awCBt",
     delay: "450ms",
@@ -100,7 +96,8 @@ const FlagshipShows = () => {
             className="text-gray-400 fade-in"
             style={{ transitionDelay: "100ms" }}
           >
-            Explore our curated playlists hosted by brilliant voices. Click a show to watch directly on YouTube.
+            Explore our curated playlists hosted by brilliant voices. Click a
+            show to watch directly on YouTube.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
