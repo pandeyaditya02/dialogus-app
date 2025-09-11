@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import AppChrome from "./components/AppChrome";
 import { Inter, Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
@@ -31,8 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
-        {/* Tailwind CSS CDN */}
-        <script src="https://cdn.tailwindcss.com"></script>
+        {/* Tailwind CSS CDN - avoid injecting on Studio route via CSS no-op */}
+        <script dangerouslySetInnerHTML={{__html: `
+          if (!location.pathname.startsWith('/studio')) {
+            var s=document.createElement('script');
+            s.src='https://cdn.tailwindcss.com';
+            document.head.appendChild(s);
+          }
+        `}} />
 
         {/* Global Styles */}
         <style>
@@ -233,9 +238,7 @@ export default function RootLayout({
         </style>
       </head>
       <body className="antialiased">
-        <Header />
-        {children}
-        <Footer />
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );
