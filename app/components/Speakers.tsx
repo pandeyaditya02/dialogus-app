@@ -9,9 +9,9 @@ const speakersData = [
     image: "/pawan kumar.jpg",
     delay: "0ms",
     intro: [
-      "Pawan is a seasoned journalist and storyteller with over a decade of experience.",
-      "At Dialogus, he brings sharp insights and engaging conversations to every dialogue.",
-      "His expertise spans politics, business, and social issues that matter most.",
+      "PAWAN KUMAR is a veteran financial journalist and policy specialist with nearly three decades of experience in navigating India’s economy, politics and the corporate landscape.",
+      "Over the course of his career, he has earned a reputation for sharp analysis, credible reporting, and deep policy insight, making him a trusted voice in the national discourse. ",
+      "As managing editor at Dialogus and host of Talk It Out, Pawan brings together leaders, experts and changemakers to deliver thought-provoking conversations on policy, governance and the forces shaping India's future.",
     ],
   },
   {
@@ -19,9 +19,9 @@ const speakersData = [
     image: "/Vishal Dahia.jpg",
     delay: "100ms",
     intro: [
-      "Vishal has been exploring uncharted territories in media and journalism.",
-      "His columns connect audiences with new perspectives on global affairs.",
-      "At Dialogus, he leads discussions that challenge conventional thinking.",
+      "VISHAL DAHIYA is a noted journalist and strategic communicator with a distinguished career in news analysis and public discourse.",
+      "With years of experience across TV and digital platforms, he is known for his in-depth understanding of global affairs, sharp interviewing skills, and balanced perspective on complex issues.",
+      "Vishal currently anchors World View on Dialogus, where he breaks down global trends, geopolitical shifts, and key international debates with deep insight and precision.",
     ],
   },
   {
@@ -39,9 +39,9 @@ const speakersData = [
     image: "/Sweta.jpg",
     delay: "300ms",
     intro: [
-      "Sweta is the backbone of production at Dialogus, ensuring seamless execution.",
-      "She oversees creative excellence and technical precision in every project.",
-      "Her attention to detail makes Dialogus content stand out in the media landscape.",
+      "SWETA RANJAN is a seasoned journalist with over 18 years of excellence across electronic and print media.",
+      "Renowned for her credible reporting, incisive analysis, and sharp news instincts, she transforms complex stories into clear, compelling narratives.",
+      "A trusted voice in journalism, Sweta now anchors Clear Cut and Bits & Pieces on Dialogus, where her trademark depth and clarity continue to engage and enlighten audiences."
     ],
   },
 ];
