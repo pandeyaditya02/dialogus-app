@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { client } from "../../sanity/lib/client";
-import { groq } from "next-sanity";
+import groq from "groq";
 
 // --- Featured Article ---
 const FeaturedArticle = ({ post }: { post: any }) => (

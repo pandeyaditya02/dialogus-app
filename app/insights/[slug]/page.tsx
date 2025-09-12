@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { client } from "../../../sanity/lib/client";
-import { groq } from "next-sanity";
+import groq from "groq";
 import { PortableText } from "@portabletext/react";
 
 interface BlogPostProps { params: { slug: string } }
