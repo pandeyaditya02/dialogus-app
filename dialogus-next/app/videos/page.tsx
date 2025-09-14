@@ -8,19 +8,6 @@ interface YouTubeThumbnail {
   height: number;
 }
 
-interface YouTubeSnippet {
-  title: string;
-  description: string;
-  publishedAt: string;
-  thumbnails: {
-    default?: YouTubeThumbnail;
-    medium?: YouTubeThumbnail;
-    high?: YouTubeThumbnail;
-    standard?: YouTubeThumbnail;
-    maxres?: YouTubeThumbnail;
-  };
-}
-
 interface YouTubePlaylistItem {
   id: string;
   snippet: {
@@ -39,58 +26,6 @@ interface YouTubePlaylistItem {
     };
   };
 }
-
-interface YouTubePlaylistResponse {
-  items: YouTubePlaylistItem[];
-  nextPageToken?: string;
-  prevPageToken?: string;
-  pageInfo: {
-    totalResults: number;
-    resultsPerPage: number;
-  };
-  error?: {
-    code: number;
-    message: string;
-    errors: Array<{
-      domain: string;
-      reason: string;
-      message: string;
-    }>;
-  };
-}
-
-interface YouTubeChannelResponse {
-  items: Array<{
-    contentDetails: {
-      relatedPlaylists: {
-        uploads: string;
-      };
-    };
-  }>;
-  error?: {
-    code: number;
-    message: string;
-    errors: Array<{
-      domain: string;
-      reason: string;
-      message: string;
-    }>;
-  };
-}
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  publishedAt: string;
-}
-
-// Truncate text utility function
-const truncateText = (text: string, maxLength: number): string => {
-  if (!text) return "";
-  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-};
 
 // Create a separate function to fetch videos (can be cached)
 async function fetchVideos(page = 1, token = "") {
