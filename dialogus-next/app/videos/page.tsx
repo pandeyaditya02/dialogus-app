@@ -79,8 +79,7 @@ async function fetchVideos(page = 1, token = "") {
       title: item.snippet.title,
       description: item.snippet.description,
       thumbnail:
-        item.snippet.thumbnails.maxres?.url ||
-        item.snippet.thumbnails.high?.url ||
+        item.snippet.thumbnails.high?.url || // Use high instead of maxres
         item.snippet.thumbnails.medium?.url ||
         item.snippet.thumbnails.default?.url ||
         "https://i.ytimg.com/vi/default.jpg",
@@ -162,9 +161,9 @@ export default async function VideosPage({
           </div>
 
           {/* Pass videos data to the client component */}
-          <VideosGrid 
-            videos={videos} 
-            currentPage={currentPage} 
+          <VideosGrid
+            videos={videos}
+            currentPage={currentPage}
             nextPageToken={nextPageToken}
             prevPageToken={prevPageToken}
           />

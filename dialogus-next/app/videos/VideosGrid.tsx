@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
+import Image from 'next/image';
 interface Video {
   id: string;
   title: string;
@@ -51,11 +51,14 @@ export default function VideosGrid({
                     className="w-full h-full flex items-center justify-center bg-gray-900 cursor-pointer"
                     onClick={() => setPlaying(video.id)}
                   >
-                    <img
+                    <Image
                       src={video.thumbnail}
                       alt={video.title}
+                      width={640} // Set appropriate width
+                      height={360} // Set appropriate height
                       className="w-full h-full object-cover"
                       loading="lazy"
+                      unoptimized // YouTube images are already optimized
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                       <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center transform hover:scale-110 transition-transform">
@@ -111,7 +114,9 @@ export default function VideosGrid({
             <div className="w-full sm:w-auto">
               {prevPageToken && (
                 <Link
-                  href={`/videos?page=${currentPage - 1}&token=${prevPageToken}`}
+                  href={`/videos?page=${
+                    currentPage - 1
+                  }&token=${prevPageToken}`}
                   className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                 >
                   <svg
@@ -138,7 +143,9 @@ export default function VideosGrid({
             <div className="w-full sm:w-auto">
               {nextPageToken && (
                 <Link
-                  href={`/videos?page=${currentPage + 1}&token=${nextPageToken}`}
+                  href={`/videos?page=${
+                    currentPage + 1
+                  }&token=${nextPageToken}`}
                   className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                 >
                   Next Page
