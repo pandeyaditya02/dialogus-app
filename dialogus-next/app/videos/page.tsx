@@ -93,9 +93,12 @@ const truncateText = (text: string, maxLength: number): string => {
 };
 
 // Main component - now an async Server Component
-export default async function VideosPage({ searchParams }: { searchParams: Promise<{ pageToken?: string }> }) {
-  // Get pagination token from search parameters
-  const { pageToken = '' } = await searchParams;
+export default async function VideosPage({ searchParams }: { searchParams: Promise<{ page?: string; token?: string }> }) {
+  // Get pagination parameters from search parameters
+  const { page = '1', token = '' } = await searchParams;
+  
+  // Convert page to number and validate
+  const currentPage = Math.max(1, parseInt(page) || 1);
   
   // Get API key and channel ID from environment variables
   const apiKey = process.env.YOUTUBE_API_KEY;
@@ -141,10 +144,9 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
     // Get the uploads playlist ID from channel data
     const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
     
-    // Now fetch videos from the uploads playlist (this gets ALL videos)
-    // CHANGED: maxResults=12 (was 10)
+    // Now fetch videos from the uploads playlist
     const playlistResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=12&pageToken=${pageToken}&key=${apiKey}`,
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=12&pageToken=${token}&key=${apiKey}`,
       {
         next: { revalidate: 3600 }
       }
@@ -189,11 +191,9 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
               </div>
             ) : (
               <>
-                {/* CHANGED: Increased gap sizes and added larger padding */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
                   {videos.map(video => (
                     <div key={video.id} className="video-card-container group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
-                      {/* CHANGED: Larger iframe container with increased padding */}
                       <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-black">
                         <iframe
                           src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
@@ -205,7 +205,6 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                         />
                       </div>
                       
-                      {/* CHANGED: Increased spacing and font sizes */}
                       <div className="px-5 pb-7">
                         <h3 className="text-white font-bold text-xl mb-3 line-clamp-2 hover:underline cursor-pointer transition-colors">
                           <Link
@@ -225,12 +224,12 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                   ))}
                 </div>
                 
-                {/* Pagination Controls */}
+                {/* Pagination Controls - FIXED: Now uses numbered format */}
                 <div className="flex flex-col sm:flex-row justify-between items-center mt-16 gap-4">
                   <div className="w-full sm:w-auto">
                     {playlistData.prevPageToken && (
                       <Link 
-                        href={`/videos?pageToken=${playlistData.prevPageToken}`}
+                        href={`/videos?page=${currentPage - 1}&token=${playlistData.prevPageToken}`}
                         className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -241,14 +240,15 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                     )}
                   </div>
                   
-                  <div className="text-gray-400 text-center text-lg">
-                    Page {playlistData.prevPageToken ? '2' : '1'} of {playlistData.nextPageToken ? '...' : '1'}
+                  {/* FIXED: Changed to numbered format "Page X" */}
+                  <div className="text-gray-400 text-center text-lg font-medium">
+                    Page {currentPage}
                   </div>
                   
                   <div className="w-full sm:w-auto">
                     {playlistData.nextPageToken && (
                       <Link 
-                        href={`/videos?pageToken=${playlistData.nextPageToken}`}
+                        href={`/videos?page=${currentPage + 1}&token=${playlistData.nextPageToken}`}
                         className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                       >
                         Next Page
