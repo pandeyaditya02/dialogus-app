@@ -102,8 +102,6 @@ async function fetchVideos(page = 1, token = "") {
     };
   }
 }
-
-// Main component - now using ISR
 export default async function VideosPage({
   searchParams,
 }: {
@@ -122,31 +120,14 @@ export default async function VideosPage({
   const apiKey = process.env.YOUTUBE_API_KEY;
   const channelId = process.env.YOUTUBE_CHANNEL_ID;
 
-  // Validate required environment variables
   if (!apiKey || !channelId) {
-    return (
-      <main className="pt-24">
-        <section className="py-20 md:py-28 bg-black">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-4xl text-white mb-4">
-                Error Loading Videos
-              </h2>
-              <p className="text-gray-400">
-                YouTube API configuration is missing. Please check your
-                .env.local file.
-              </p>
-              <p className="text-gray-500 mt-4 text-sm">
-                Required: YOUTUBE_API_KEY and YOUTUBE_CHANNEL_ID
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
+    // error handling...
   }
 
-  // Return the page structure with VideosGrid as a client component
+  if (error) {
+    // error handling...
+  }
+
   return (
     <main className="pt-24">
       <section id="videos" className="py-20 md:py-28 bg-black">
@@ -161,11 +142,12 @@ export default async function VideosPage({
           </div>
 
           {/* Pass videos data to the client component */}
-          <VideosGrid
-            videos={videos}
-            currentPage={currentPage}
+          <VideosGrid 
+            videos={videos} 
+            currentPage={currentPage} 
             nextPageToken={nextPageToken}
             prevPageToken={prevPageToken}
+            isLoading={false} // We're not loading anymore since this is server component
           />
         </div>
       </section>
