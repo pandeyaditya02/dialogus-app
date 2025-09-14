@@ -1,8 +1,7 @@
 // app/videos/page.tsx
-import Image from 'next/image';
 import Link from 'next/link';
 
-// Type definitions for YouTube API response
+// Type definitions for YouTube API responses
 interface YouTubeThumbnail {
   url: string;
   width: number;
@@ -22,17 +21,52 @@ interface YouTubeSnippet {
   };
 }
 
-interface YouTubeSearchResult {
-  id: {
-    videoId: string;
+interface YouTubePlaylistItem {
+  id: string;
+  snippet: {
+    resourceId: {
+      videoId: string;
+    };
+    title: string;
+    description: string;
+    publishedAt: string;
+    thumbnails: {
+      default?: YouTubeThumbnail;
+      medium?: YouTubeThumbnail;
+      high?: YouTubeThumbnail;
+      standard?: YouTubeThumbnail;
+      maxres?: YouTubeThumbnail;
+    };
   };
-  snippet: YouTubeSnippet;
 }
 
-interface YouTubeApiResponse {
-  items: YouTubeSearchResult[];
+interface YouTubePlaylistResponse {
+  items: YouTubePlaylistItem[];
   nextPageToken?: string;
   prevPageToken?: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  error?: {
+    code: number;
+    message: string;
+    errors: Array<{
+      domain: string;
+      reason: string;
+      message: string;
+    }>;
+  };
+}
+
+interface YouTubeChannelResponse {
+  items: Array<{
+    contentDetails: {
+      relatedPlaylists: {
+        uploads: string;
+      };
+    };
+  }>;
   error?: {
     code: number;
     message: string;
@@ -60,7 +94,7 @@ const truncateText = (text: string, maxLength: number): string => {
 
 // Main component - now an async Server Component
 export default async function VideosPage({ searchParams }: { searchParams: Promise<{ pageToken?: string }> }) {
-  // Get pagination token from search parameters - MUST BE AWAITED IN NEXT.JS 15
+  // Get pagination token from search parameters
   const { pageToken = '' } = await searchParams;
   
   // Get API key and channel ID from environment variables
@@ -89,32 +123,50 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
   }
   
   try {
-    // Construct YouTube API URL
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&type=video&maxResults=10&pageToken=${pageToken}&key=${apiKey}`;
-    
-    // Fetch data from YouTube API
-    const response = await fetch(url, {
-      next: { 
-        revalidate: 3600 // Revalidate every hour
+    // First, get the channel's uploads playlist ID
+    const channelResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`,
+      {
+        next: { revalidate: 3600 }
       }
-    });
-    const data = await response.json() as YouTubeApiResponse;
+    );
     
-    // Handle API errors
-    if (data.error) {
-      throw new Error(data.error.message || 'YouTube API error');
+    const channelData = await channelResponse.json() as YouTubeChannelResponse;
+    
+    // Handle channel API errors
+    if (channelData.error || channelData.items.length === 0) {
+      throw new Error(channelData.error?.message || 'Channel not found or invalid channel ID');
     }
     
-    // Process videos data - FIXED: Added fallback URL to ensure thumbnail is never undefined
-    const videos = data.items.map(item => ({
-      id: item.id.videoId,
+    // Get the uploads playlist ID from channel data
+    const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+    
+    // Now fetch videos from the uploads playlist (this gets ALL videos)
+    // CHANGED: maxResults=12 (was 10)
+    const playlistResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=12&pageToken=${pageToken}&key=${apiKey}`,
+      {
+        next: { revalidate: 3600 }
+      }
+    );
+    
+    const playlistData = await playlistResponse.json() as YouTubePlaylistResponse;
+    
+    // Handle playlist API errors
+    if (playlistData.error) {
+      throw new Error(playlistData.error.message || 'Failed to fetch playlist items');
+    }
+    
+    // Process videos data
+    const videos = playlistData.items.map(item => ({
+      id: item.snippet.resourceId.videoId,
       title: item.snippet.title,
       description: item.snippet.description,
       thumbnail: item.snippet.thumbnails.maxres?.url || 
                  item.snippet.thumbnails.high?.url || 
                  item.snippet.thumbnails.medium?.url ||
                  item.snippet.thumbnails.default?.url ||
-                 'https://i.ytimg.com/vi/default.jpg', // Critical fallback URL added
+                 'https://i.ytimg.com/vi/default.jpg', // Fallback URL
       publishedAt: item.snippet.publishedAt
     }));
     
@@ -127,7 +179,7 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                 All Videos
               </h2>
               <p className="text-gray-400 text-lg md:text-xl">
-                Browse our complete collection of podcasts and discussions
+                Watch our complete collection of videos directly on our website
               </p>
             </div>
             
@@ -137,61 +189,49 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                {/* CHANGED: Increased gap sizes and added larger padding */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
                   {videos.map(video => (
-                    <div key={video.id} className="video-card-container group relative rounded-lg overflow-hidden cursor-pointer">
-                      <Link
-                        href={`https://www.youtube.com/watch?v=${video.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <div className="relative w-full h-64">
-                          <Image
-                            src={video.thumbnail} // Now guaranteed to be a string
-                            alt={video.title}
-                            fill
-                            className="object-cover transition-transform duration-300 transform group-hover:scale-110"
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
-                          <div>
-                            <h4 className="text-white font-bold text-lg video-title-truncate">
-                              {video.title}
-                            </h4>
-                            <p className="text-gray-300 text-sm mt-2 video-synopsis-truncate">
-                              {truncateText(video.description, 120)}
-                            </p>
-                          </div>
-                          <div className="self-center">
-                            <svg 
-                              xmlns="http://www.w3.org/2000/svg" 
-                              viewBox="0 0 24 24" 
-                              fill="currentColor" 
-                              className="text-white h-12 w-12"
-                            >
-                              <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.27a2.325 2.325 0 01-2.78-.714.75.75 0 00-1.057-1.057c1.426-1.427 1.426-3.74 0-5.165z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                          <div></div>
-                        </div>
-                        <div className="absolute bottom-0 left-0 p-4 w-full bg-gradient-to-t from-black/80 to-transparent group-hover:opacity-0 transition-opacity duration-300">
-                          <h4 className="text-white font-bold text-lg video-title-truncate">
+                    <div key={video.id} className="video-card-container group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
+                      {/* CHANGED: Larger iframe container with increased padding */}
+                      <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-black">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full transition-transform duration-300 group-hover:scale-[1.02]"
+                          title={video.title}
+                          frameBorder="0"
+                        />
+                      </div>
+                      
+                      {/* CHANGED: Increased spacing and font sizes */}
+                      <div className="px-5 pb-7">
+                        <h3 className="text-white font-bold text-xl mb-3 line-clamp-2 hover:underline cursor-pointer transition-colors">
+                          <Link
+                            href={`https://www.youtube.com/watch?v=${video.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block"
+                          >
                             {video.title}
-                          </h4>
-                        </div>
-                      </Link>
+                          </Link>
+                        </h3>
+                        <p className="text-gray-300 text-base line-clamp-3">
+                          {truncateText(video.description, 150)}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
                 
                 {/* Pagination Controls */}
-                <div className="flex flex-col sm:flex-row justify-between items-center mt-12 gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-16 gap-4">
                   <div className="w-full sm:w-auto">
-                    {data.prevPageToken && (
+                    {playlistData.prevPageToken && (
                       <Link 
-                        href={`/videos?pageToken=${data.prevPageToken}`}
-                        className="flex items-center justify-center px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors w-full sm:w-auto"
+                        href={`/videos?pageToken=${playlistData.prevPageToken}`}
+                        className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -201,15 +241,15 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                     )}
                   </div>
                   
-                  <div className="text-gray-400 text-center">
-                    Page {data.prevPageToken ? '2' : '1'} of {data.nextPageToken ? '...' : '1'}
+                  <div className="text-gray-400 text-center text-lg">
+                    Page {playlistData.prevPageToken ? '2' : '1'} of {playlistData.nextPageToken ? '...' : '1'}
                   </div>
                   
                   <div className="w-full sm:w-auto">
-                    {data.nextPageToken && (
+                    {playlistData.nextPageToken && (
                       <Link 
-                        href={`/videos?pageToken=${data.nextPageToken}`}
-                        className="flex items-center justify-center px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors w-full sm:w-auto"
+                        href={`/videos?pageToken=${playlistData.nextPageToken}`}
+                        className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
                       >
                         Next Page
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
