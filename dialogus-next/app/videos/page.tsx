@@ -1,5 +1,7 @@
 // app/videos/page.tsx
+import { Suspense } from "react";
 import VideosGrid from "./VideosGrid"; // Import the new client component
+import VideoSkeleton from "./VideoSkeleton";
 
 // Type definitions for YouTube API responses
 interface YouTubeThumbnail {
@@ -29,8 +31,15 @@ interface YouTubePlaylistItem {
 
 // Create a separate function to fetch videos (can be cached)
 async function fetchVideos(page = 1, token = "") {
-  const apiKey = process.env.YOUTUBE_API_KEY;
-  const channelId = process.env.YOUTUBE_CHANNEL_ID;
+  // Cache environment variables
+  const apiKey = process.env.YOUTUBE_API_KEY!;
+  const channelId = process.env.YOUTUBE_CHANNEL_ID!;
+
+  // Use consistent cache tags
+  const CACHE_TAGS = {
+    CHANNEL: 'youtube-channel',
+    PLAYLIST: 'youtube-playlist'
+  };
 
   if (!apiKey || !channelId) {
     return {
@@ -42,11 +51,14 @@ async function fetchVideos(page = 1, token = "") {
   }
 
   try {
-    // First, get the channel's uploads playlist ID
+    // Channel data - cache for 24 hours (rarely changes)
     const channelResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`,
       {
-        next: { revalidate: 3600 }, // Cache channel data for 1 hour
+        next: { 
+          revalidate: 86400, // 24 hours - channel data rarely changes
+          tags: [CACHE_TAGS.CHANNEL]
+        }
       }
     );
 
@@ -63,7 +75,7 @@ async function fetchVideos(page = 1, token = "") {
     const playlistResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=12&pageToken=${token}&key=${apiKey}`,
       {
-        next: { revalidate: 1800 }, // Cache video data for 30 minutes
+        next: { revalidate: 7200 }, // Cache video data for 2 hour
       }
     );
 
@@ -122,10 +134,46 @@ export default async function VideosPage({
 
   if (!apiKey || !channelId) {
     // error handling...
+     return (
+      <main className="pt-24">
+        <section className="py-20 md:py-28 bg-black">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl text-white mb-4">
+                Configuration Error
+              </h2>
+              <p className="text-gray-400">
+                YouTube API configuration is missing. Please check your .env file.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   if (error) {
     // error handling...
+    return (
+      <main className="pt-24">
+        <section className="py-20 md:py-28 bg-black">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl text-white mb-4">
+                Error Loading Videos
+              </h2>
+              <p className="text-gray-400">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -142,13 +190,28 @@ export default async function VideosPage({
           </div>
 
           {/* Pass videos data to the client component */}
-          <VideosGrid 
+          {/* <VideosGrid 
             videos={videos} 
             currentPage={currentPage} 
             nextPageToken={nextPageToken}
             prevPageToken={prevPageToken}
             isLoading={false} // We're not loading anymore since this is server component
-          />
+          /> */}
+
+          <Suspense 
+              fallback={
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
+                  {[...Array(6)].map((_, i) => <VideoSkeleton key={i} />)}
+                </div>
+              }
+            >
+              <VideosGrid 
+                videos={videos} 
+                currentPage={currentPage} 
+                nextPageToken={nextPageToken}
+                prevPageToken={prevPageToken}
+              />
+            </Suspense>
         </div>
       </section>
     </main>

@@ -34,6 +34,9 @@ export default function RootLayout({
         {/* Tailwind CSS CDN */}
         <script src="https://cdn.tailwindcss.com"></script>
 
+        <link rel="preconnect" href="https://www.googleapis.com" />
+        <link rel="dns-prefetch" href="https://www.googleapis.com" />
+
         {/* Global Styles */}
         <style>
           {`
