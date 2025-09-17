@@ -1,92 +1,160 @@
 "use client";
 
-import React from "react";
-import FlagshipShows from "../components/FlagshipShows";
-// import Image from "next/image";
+import React, { useEffect } from "react";
+import Image from "next/image";
 
-// // --- Shows Page Content ---
-// const showsData = [
-//   {
-//     imgSrc:
-//       "https://images.unsplash.com/photo-1620641788421-7a1c36226328?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
-//     alt: "Abstract colorful liquid podcast cover",
-//     title: "The Digital Dialogue",
-//     host: "With Ava Chen",
-//   },
-//   {
-//     imgSrc:
-//       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
-//     alt: "Abstract wave podcast cover",
-//     title: "Uncharted Territories",
-//     host: "With Leo Kim",
-//   },
-//   {
-//     imgSrc:
-//       "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
-//     alt: "Colorful gradient podcast cover",
-//     title: "The Creative Code",
-//     host: "With Mia Jones",
-//   },
-//   {
-//     imgSrc:
-//       "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
-//     alt: "Abstract 3D shapes podcast cover",
-//     title: "Blueprint",
-//     host: "With David Rodriguez",
-//   },
-// ];
+// Shows data with playlist information
+const showsData = [
+  {
+    title: "WORLD VIEW",
+    thumbnail: "/shows thumbnail/WORLD VIEW.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHI3c517bIrA7kVx0leH6v-y",
+    delay: "0ms",
+  },
+  {
+    title: "TALK IT OUT",
+    thumbnail: "/shows thumbnail/TALK IT OUT.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS",
+    delay: "100ms",
+  },
+  {
+    title: "SAMAJIK VIMARSH",
+    thumbnail: "/shows thumbnail/SAMAJIK VIMARSH.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHIBgML8hbZlpzMfbN4awCBt",
+    delay: "200ms",
+  },
+  {
+    title: "PRAWAH",
+    thumbnail: "/shows thumbnail/PRAWAH.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHI32tt2UdDEBsJ-6r_ccmMD",
+    delay: "300ms",
+  },
+  {
+    title: "GEARHEAD",
+    thumbnail: "/shows thumbnail/GEARHEAD.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHI43SXuLkOzNNA01Hh5RhiB",
+    delay: "400ms",
+  },
+  {
+    title: "CLEAR CUT",
+    thumbnail: "/shows thumbnail/CLEAR CUT.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHKVHzN80d4HjHYSz-mjpOhx",
+    delay: "500ms",
+  },
+  {
+    title: "BITS & PIECES",
+    thumbnail: "/shows thumbnail/BITS & PIECES.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHIJh5QCyMBS4YLNCVxC1Wxc",
+    delay: "600ms",
+  },
+  {
+    title: "BAAT TAKE KI",
+    thumbnail: "/shows thumbnail/BAAT TAKE KI.png",
+    playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHKXxhdLYg3uB-bl_T6U7jz1",
+    delay: "700ms",
+  },
+];
 
-// const ShowCard = ({
-//   imgSrc,
-//   alt,
-//   title,
-//   host,
-// }: {
-//   imgSrc: string;
-//   alt: string;
-//   title: string;
-//   host: string;
-// }) => (
-//   <div className="text-center group">
-//     <Image
-//       src={imgSrc}
-//       alt={alt}
-//       width={500}
-//       height={500}
-//       className="w-full h-auto rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105 shadow-2xl aspect-square object-cover"
-//     />
-//     <h3 className="font-bold text-lg text-white">{title}</h3>
-//     <p className="text-gray-400 text-sm">{host}</p>
-//   </div>
-// );
+const ShowCard = ({
+  title,
+  thumbnail,
+  playlistUrl,
+  delay,
+}: {
+  title: string;
+  thumbnail: string;
+  playlistUrl: string;
+  delay: string;
+}) => (
+  <div
+    className="fade-in group cursor-pointer"
+    style={{ transitionDelay: delay }}
+    onClick={() => window.open(playlistUrl, "_blank", "noopener,noreferrer")}
+  >
+    <div className="relative overflow-hidden rounded-2xl bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-fuchsia-500 hover:shadow-2xl hover:shadow-fuchsia-500/20 hover:-translate-y-2">
+      {/* Thumbnail Image */}
+      <div className="relative aspect-video overflow-hidden">
+        <Image
+          src={thumbnail}
+          alt={`${title} show thumbnail`}
+          width={800}
+          height={450}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          priority={title === "WORLD VIEW" || title === "TALK IT OUT"}
+        />
+        
+        {/* Overlay with play icon */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-fuchsia-600 flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-lg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-white ml-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      {/* Title Section */}
+      <div className="p-6">
+        <h3 className="font-bold text-xl text-white mb-2 group-hover:text-fuchsia-400 transition-colors">
+          {title}
+        </h3>
+        <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+          Watch on YouTube
+        </p>
+      </div>
+    </div>
+  </div>
+);
 
-// const ShowsContent = () => {
-//   return (
-//     <main className="pt-24">
-//       <section id="podcasts" className="py-20 md:py-28 bg-black">
-//         <div className="container mx-auto px-6">
-//           <div className="text-center max-w-2xl mx-auto mb-16">
-//             <h2 className="section-title text-3xl md:text-4xl mb-4">
-//               Flagship Shows
-//             </h2>
-//             <p className="text-gray-400">
-//               Our chart-topping podcasts are where culture-defining
-//               conversations happen. Tune in and get inspired.
-//             </p>
-//           </div>
-//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-//             {showsData.map((show) => (
-//               <ShowCard key={show.title} {...show} />
-//             ))}
-//           </div>
-//         </div>
-//       </section>
-//     </main>
-//   );
-// };
-
-// --- Main Shows Page Component ---
 export default function ShowsPage() {
-  // return <ShowsContent />;
-  return <FlagshipShows />;
+  // Intersection Observer for fade-in effect
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const targets = document.querySelectorAll(".fade-in");
+    targets.forEach((target) => observer.observe(target));
+
+    return () => targets.forEach((target) => observer.unobserve(target));
+  }, []);
+
+  return (
+    <main className="pt-24">
+      <section id="shows" className="py-20 md:py-28 bg-black">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="section-title text-3xl md:text-5xl mb-6 font-bold fade-in">
+              Our Shows
+            </h2>
+            <p className="text-gray-400 text-lg md:text-xl fade-in" style={{ transitionDelay: "100ms" }}>
+              Explore our diverse collection of shows. Click on any show to watch the complete playlist on YouTube.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
+            {showsData.map((show) => (
+              <ShowCard key={show.title} {...show} />
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
