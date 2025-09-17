@@ -6,13 +6,18 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+interface NavLink {
+  href: string;
+  label: string;
+}
+
+const Header: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       if (window.scrollY > 20) {
         setIsScrolled(true);
       } else {
@@ -26,15 +31,15 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => {
+  const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const closeMenu = () => {
+  const closeMenu = (): void => {
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { href: "/", label: "Home" },
     { href: "/videos", label: "Videos" },
     { href: "/shows", label: "Shows" },
@@ -42,7 +47,7 @@ const Header = () => {
     { href: "/insights", label: "Insights" },
   ];
 
-  const isActive = (href) => {
+  const isActive = (href: string): boolean => {
     if (href === "/") {
       return pathname === "/";
     }
