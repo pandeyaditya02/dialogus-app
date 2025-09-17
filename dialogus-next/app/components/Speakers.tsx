@@ -15,7 +15,7 @@ const speakersData = [
     ],
   },
   {
-    name: "Vishal Dahia",
+    name: "Vishal Dahiya",
     image: "/Vishal Dahia.jpg",
     delay: "100ms",
     intro: [
@@ -35,7 +35,7 @@ const speakersData = [
     ],
   },
   {
-    name: "Sweta",
+    name: "Sweta Ranjan",
     image: "/Sweta.jpg",
     delay: "300ms",
     intro: [
@@ -67,17 +67,17 @@ const SpeakerCard = ({
       />
     </div>
 
-    {/* Text Card - Overlay Layer */}
-    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/95 via-gray-900/90 to-black/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center items-center p-6 z-10 border border-gray-700/30">
-      <div className="text-center max-w-full">
-        <h4 className="font-bold text-2xl text-fuchsia-400 mb-4 drop-shadow-lg">
+    {/* Text Card - Overlay Layer (Responsive) */}
+    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/95 via-gray-900/90 to-black/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center items-center p-4 sm:p-6 z-10 border border-gray-700/30">
+      <div className="text-center max-w-xs sm:max-w-md">
+        <h4 className="font-bold text-xl md:text-2xl text-fuchsia-400 mb-3 sm:mb-4 drop-shadow-lg">
           {name}
         </h4>
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {intro.map((line, index) => (
             <p
               key={index}
-              className="leading-relaxed text-gray-100 text-sm drop-shadow-md"
+              className="leading-relaxed text-gray-100 text-xs sm:text-sm drop-shadow-md"
             >
               {line}
             </p>
@@ -88,7 +88,7 @@ const SpeakerCard = ({
 
     {/* Speaker Name - Always Visible */}
     <div className="mt-4">
-      <h3 className="font-bold text-lg text-white">{name}</h3>
+      <h3 className="font-bold text-base md:text-lg text-white">{name}</h3>
     </div>
   </div>
 );
@@ -128,7 +128,7 @@ const Speakers = () => {
             production
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 pt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
           {speakersData.map((speaker) => (
             <SpeakerCard key={speaker.name} {...speaker} />
           ))}

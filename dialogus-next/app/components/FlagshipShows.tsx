@@ -84,10 +84,10 @@ const FlagshipShows = () => {
             className="text-gray-400 text-lg md:text-xl fade-in"
             style={{ transitionDelay: "100ms" }}
           >
-            Explore our curated playlists hosted by brilliant voices. All content embedded directly on this page.
+            Our Curated playlists… Brilliant voices... Just hit play…
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {showsData.map((show) => (
             <ShowCard key={show.title} {...show} />

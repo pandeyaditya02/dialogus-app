@@ -130,7 +130,7 @@ export default async function InsightsPage() {
             </h2>
             <p className="text-gray-400">
               See the evolving global geopolitical landscape through our lens
-              and uncover the forces transforming the world around us.
+              and uncover the forces transforming the world around us
             </p>
           </div>
 

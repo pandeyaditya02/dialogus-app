@@ -182,10 +182,10 @@ export default async function VideosPage({
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="section-title text-3xl md:text-5xl mb-4 font-bold">
-              All Videos
+            Watch It All
             </h2>
             <p className="text-gray-400 text-lg md:text-xl">
-              Watch our complete collection of videos directly on our website
+            Binge the complete collection of Dialogus shows here
             </p>
           </div>
 
