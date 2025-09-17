@@ -85,10 +85,10 @@ const ShowCard = ({
         
         {/* Overlay with play icon */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-fuchsia-600 flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-lg">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-fuchsia-600 flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-white ml-1"
+              className="h-10 w-10 md:h-12 md:w-12 text-white ml-1"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -103,11 +103,11 @@ const ShowCard = ({
       </div>
       
       {/* Title Section */}
-      <div className="p-6">
-        <h3 className="font-bold text-xl text-white mb-2 group-hover:text-fuchsia-400 transition-colors">
+      <div className="p-8">
+        <h3 className="font-bold text-2xl md:text-3xl text-white mb-3 group-hover:text-fuchsia-400 transition-colors">
           {title}
         </h3>
-        <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+        <p className="text-gray-400 text-base group-hover:text-gray-300 transition-colors">
           Watch on YouTube
         </p>
       </div>
@@ -148,7 +148,7 @@ export default function ShowsPage() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10 md:gap-12">
             {showsData.map((show) => (
               <ShowCard key={show.title} {...show} />
             ))}
