@@ -1,9 +1,10 @@
 // app/videos/page.tsx
 import { Suspense } from "react";
-import VideosGrid from "./VideosGrid"; // Import the new client component
-import VideoSkeleton from "./VideoSkeleton";
+import VideosGrid from "./VideosGrid"; // Ensure this component exists
+import VideoSkeleton from "./VideoSkeleton"; // Ensure this component exists
 
-// Type definitions for YouTube API responses
+// --- TYPE DEFINITIONS ---
+// These remain the same as they correctly define the API response structure.
 interface YouTubeThumbnail {
   url: string;
   width: number;
@@ -29,125 +30,55 @@ interface YouTubePlaylistItem {
   };
 }
 
-// NEW: Helper function to parse ISO 8601 duration format from YouTube API
-function parseDurationToSeconds(isoDuration: string): number {
-  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-  const matches = isoDuration.match(regex);
+// --- DATA FETCHING FUNCTION (OPTIMIZED) ---
 
-  if (!matches) {
-    return 0;
-  }
-
-  const hours = parseInt(matches[1] || '0', 10);
-  const minutes = parseInt(matches[2] || '0', 10);
-  const seconds = parseInt(matches[3] || '0', 10);
-
-  return hours * 3600 + minutes * 60 + seconds;
-}
-
-
-// Create a separate function to fetch videos (can be cached)
+/**
+ * Fetches a page of videos directly from a specified YouTube playlist.
+ * @param page The current page number (for context).
+ * @param token The page token from the YouTube API to fetch the correct page.
+ * @returns An object containing the videos, pagination tokens, and any errors.
+ */
 async function fetchVideos(page = 1, token = "") {
-  // Cache environment variables
   const apiKey = process.env.YOUTUBE_API_KEY!;
-  const channelId = process.env.YOUTUBE_CHANNEL_ID!;
+  
+  // The ID of your dedicated playlist.
+  // It's recommended to move this to your .env file (e.g., YOUTUBE_PLAYLIST_ID)
+  const dedicatedPlaylistId = "PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS";
+  const videosPerPage = 9;
 
-  // Use consistent cache tags
-  const CACHE_TAGS = {
-    CHANNEL: 'youtube-channel',
-    PLAYLIST: 'youtube-playlist'
-  };
-
-  if (!apiKey || !channelId) {
+  if (!apiKey || !dedicatedPlaylistId) {
     return {
       videos: [],
       nextPageToken: null,
       prevPageToken: null,
-      error: "Missing YouTube API configuration",
+      error: "Missing YouTube API Key or Playlist ID configuration.",
     };
   }
 
   try {
-    // 1. Get Channel data to find the uploads playlist ID
-    const channelResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`,
+    // A single, efficient API call to get the videos for the current page.
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${dedicatedPlaylistId}&maxResults=${videosPerPage}&pageToken=${token}&key=${apiKey}`,
       {
-        next: {
-          revalidate: 86400, // 24 hours
-          tags: [CACHE_TAGS.CHANNEL]
-        }
+        // Adjust the revalidation time based on how often you update the playlist.
+        // 43200 seconds = 12 hours.
+        next: { revalidate: 43200 }, 
       }
     );
 
-    const channelData = await channelResponse.json();
+    const data = await response.json();
 
-    if (channelData.error || channelData.items?.length === 0) {
-      throw new Error(channelData.error?.message || "Channel not found");
+    if (data.error) {
+      throw new Error(data.error.message || "Failed to fetch videos from the playlist");
     }
 
-    const uploadsPlaylistId =
-      channelData.items[0].contentDetails.relatedPlaylists.uploads;
-
-    // 2. Fetch video items from the uploads playlist
-    const playlistResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=40&pageToken=${token}&key=${apiKey}`, // Fetched more to account for filtering
-      {
-        next: { revalidate: 7200 }, // Cache for 2 hours
-      }
-    );
-
-    const playlistData = await playlistResponse.json();
-
-    if (playlistData.error) {
-      throw new Error(playlistData.error.message || "Failed to fetch videos");
-    }
-    
-    if (!playlistData.items || playlistData.items.length === 0) {
-      return {
-        videos: [],
-        nextPageToken: null,
-        prevPageToken: null,
-        error: null,
-      };
+    if (!data.items) {
+        // Handle cases where the playlist might be empty
+        return { videos: [], nextPageToken: null, prevPageToken: null, error: null };
     }
 
-    // --- START: NEW LOGIC TO FILTER SHORTS ---
-
-    // 3. Extract video IDs from the playlist items
-    const videoIds = playlistData.items
-      .map((item: YouTubePlaylistItem) => item.snippet.resourceId.videoId)
-      .join(',');
-
-    // 4. Fetch contentDetails for all videos at once to get their duration
-    const videoDetailsResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${apiKey}`,
-      {
-        next: { revalidate: 7200 }, // Use same caching as playlist
-      }
-    );
-    const videoDetailsData = await videoDetailsResponse.json();
-    
-    if (videoDetailsData.error) {
-      throw new Error(videoDetailsData.error.message || "Failed to fetch video details");
-    }
-
-    // Create a Map for quick duration lookup
-    const durationMap = new Map<string, number>();
-    videoDetailsData.items.forEach((item: any) => {
-      durationMap.set(item.id, parseDurationToSeconds(item.contentDetails.duration));
-    });
-
-    // 5. Filter out Shorts (videos <= 60 seconds)
-    const regularVideos = playlistData.items.filter((item: YouTubePlaylistItem) => {
-      const duration = durationMap.get(item.snippet.resourceId.videoId);
-      return duration !== undefined && duration > 300;
-    });
-
-    // --- END: NEW LOGIC TO FILTER SHORTS ---
-
-
-    // 6. Process the filtered videos data
-    const videos = regularVideos.map((item: YouTubePlaylistItem) => ({
+    // Map the API response to the format your components expect.
+    const videos = data.items.map((item: YouTubePlaylistItem) => ({
       id: item.snippet.resourceId.videoId,
       title: item.snippet.title,
       description: item.snippet.description,
@@ -155,14 +86,14 @@ async function fetchVideos(page = 1, token = "") {
         item.snippet.thumbnails.high?.url ||
         item.snippet.thumbnails.medium?.url ||
         item.snippet.thumbnails.default?.url ||
-        "https://i.ytimg.com/vi/default.jpg",
+        "https://i.ytimg.com/vi/default.jpg", // Fallback image
       publishedAt: item.snippet.publishedAt,
     }));
 
     return {
       videos,
-      nextPageToken: playlistData.nextPageToken,
-      prevPageToken: playlistData.prevPageToken,
+      nextPageToken: data.nextPageToken,
+      prevPageToken: data.prevPageToken,
       error: null,
     };
   } catch (error) {
@@ -171,12 +102,12 @@ async function fetchVideos(page = 1, token = "") {
       videos: [],
       nextPageToken: null,
       prevPageToken: null,
-      error: error instanceof Error ? error.message : "Failed to fetch videos",
+      error: error instanceof Error ? error.message : "An unknown error occurred while fetching videos",
     };
   }
 }
 
-// Your VideosPage component (NO CHANGES NEEDED HERE)
+// --- REACT SERVER COMPONENT (OPTIMIZED) ---
 export default async function VideosPage({
   searchParams,
 }: {
@@ -190,32 +121,7 @@ export default async function VideosPage({
     token
   );
 
-  const apiKey = process.env.YOUTUBE_API_KEY;
-  const channelId = process.env.YOUTUBE_CHANNEL_ID;
-
-  if (!apiKey || !channelId) {
-    return (
-      <main className="pt-24">
-        <section className="py-20 md:py-28 bg-black">
-          <div className="container mx-auto px-6 max-w-7xl">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-4xl text-white mb-4">
-                Configuration Error
-              </h2>
-              <p className="text-gray-400">
-                YouTube API configuration is missing. Please check your .env file.
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
-
   if (error) {
-    // This is not a client component, so window is not available. 
-    // You might want to pass this to a client component for interactive retry.
-    // For this example, I'll remove the onClick.
     return (
       <main className="pt-24">
         <section className="py-20 md:py-28 bg-black">
@@ -225,9 +131,6 @@ export default async function VideosPage({
                 Error Loading Videos
               </h2>
               <p className="text-gray-400">{error}</p>
-              {/* <button className="mt-4 px-4 py-2 bg-gray-700 rounded hover:bg-gray-600">
-                Try Again
-              </button> */}
             </div>
           </div>
         </section>
@@ -241,16 +144,18 @@ export default async function VideosPage({
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="section-title text-3xl md:text-5xl mb-4 font-bold">
-            Watch It All
+              Watch It All
             </h2>
             <p className="text-gray-400 text-lg md:text-xl">
-            Binge the complete collection of Dialogus shows here
+              Binge the complete collection of Dialogus shows here
             </p>
           </div>
+
           <Suspense
+            key={token} // Add a key to Suspense to make it re-render on page change
             fallback={
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
-                {[...Array(6)].map((_, i) => <VideoSkeleton key={i} />)}
+                {[...Array(9)].map((_, i) => <VideoSkeleton key={i} />)}
               </div>
             }
           >
