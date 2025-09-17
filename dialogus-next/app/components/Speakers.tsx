@@ -6,7 +6,7 @@ import Image from "next/image";
 const speakersData = [
   {
     name: "Pawan Kumar",
-    image: "/pawan kumar.jpg",
+    image: "/hosts/pawan kumar.jpg",
     delay: "0ms",
     intro: [
       "PAWAN KUMAR is a veteran financial journalist and policy specialist with nearly three decades of experience in navigating India’s economy, politics and the corporate landscape.",
@@ -16,7 +16,7 @@ const speakersData = [
   },
   {
     name: "Vishal Dahiya",
-    image: "/Vishal Dahia.jpg",
+    image: "/hosts/Vishal Dahia.jpg",
     delay: "100ms",
     intro: [
       "VISHAL DAHIYA is a noted journalist and strategic communicator with a distinguished career in news analysis and public discourse.",
@@ -26,7 +26,7 @@ const speakersData = [
   },
   {
     name: "Sonia Singh",
-    image: "/Sonia Singh.jpg",
+    image: "/hosts/Sonia Singh.jpg",
     delay: "200ms",
     intro: [
       "Sonia blends creativity with sharp analysis in her approach to storytelling.",
@@ -36,7 +36,7 @@ const speakersData = [
   },
   {
     name: "Sweta Ranjan",
-    image: "/Sweta.jpg",
+    image: "/hosts/Sweta.jpg",
     delay: "300ms",
     intro: [
       "SWETA RANJAN is a seasoned journalist with over 18 years of excellence across electronic and print media.",
