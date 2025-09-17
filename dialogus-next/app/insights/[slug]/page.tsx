@@ -44,21 +44,22 @@ const calculateReadTime = (body: PortableTextBlock[] = []): string => {
 export async function generateStaticParams() {
   const query = groq`*[_type == "insightPost"]{"slug": slug.current}`;
   const slugs: { slug: string }[] = await client.fetch(query);
-  
-  // ✅ **THE SECOND, CRUCIAL FIX IS HERE**
-  // Add (slugs || []) to handle cases where no posts exist at all
   return (slugs || []).map((s) => ({ slug: s.slug }));
 }
 
 // --- Generate metadata for each post ---
 export async function generateMetadata({ params }: Props) {
+  // ✅ **THE FIX IS HERE:** Destructure slug immediately
+  const slug = await params.slug;
+
   const query = groq`*[_type == "insightPost" && slug.current == $slug][0]{
     title,
     description,
     date,
     "authorName": author->name
   }`;
-  const post = await client.fetch(query, { slug: params.slug });
+  // Use the local 'slug' variable
+  const post = await client.fetch(query, { slug });
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -104,6 +105,9 @@ const ptComponents = {
 
 // --- Main Blog Post Page Component ---
 export default async function BlogPost({ params }: Props) {
+  // ✅ **AND THE FIX IS HERE:** Destructure slug immediately
+  const slug = await params.slug;
+  
   const postQuery = groq`*[_type == "insightPost" && slug.current == $slug][0]{
     _id,
     title,
@@ -115,7 +119,8 @@ export default async function BlogPost({ params }: Props) {
     "categoryId": category->_id
   }`;
 
-  const rawPost: Omit<InsightPostDetail, 'readTime'> = await client.fetch(postQuery, { slug: params.slug });
+  // Use the local 'slug' variable
+  const rawPost: Omit<InsightPostDetail, 'readTime'> = await client.fetch(postQuery, { slug });
 
   if (!rawPost) {
     return notFound();
