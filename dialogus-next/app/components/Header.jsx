@@ -78,7 +78,7 @@ const Header = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8 text-sm font-medium">
+        <nav className="hidden md:flex flex-grow justify-center items-center space-x-6 lg:space-x-8 text-sm font-medium">
           {navLinks.map((link) => (
             <Link
               key={link.href}

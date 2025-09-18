@@ -6,6 +6,10 @@ body {
   color: #e4e4e7;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 /* Apply Space Grotesk to the header and hero title */
 #header,
 .hero-title {
@@ -86,6 +90,49 @@ body {
   pointer-events: none;
 }
 
+/* Custom gradient overlay for better left-to-right fade */
+.hero-gradient-overlay {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.7) 100%);
+}
+
+@media (min-width: 768px) {
+  .hero-gradient-overlay {
+    background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.05) 90%, transparent 100%);
+  }
+}
+
+/* Netflix-style Slider */
+.slider-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-arrow {
+  background: rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease-in-out;
+  opacity: 0;
+}
+
+.slider-wrapper:hover .slider-arrow {
+  opacity: 1;
+}
+
+.slider-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.video-card-thumbnail {
+  transition: transform 0.3s ease-in-out;
+}
+
+.video-card:hover .video-card-thumbnail {
+  transform: scale(1.05);
+}
+
 /* Card Styles */
 .card-base {
   background: linear-gradient(
@@ -111,25 +158,27 @@ body {
 }
 
 /* Productions Page Grid and Card Styles */
-.video-card-container {
-  aspect-ratio: 16 / 9;
-}
 
 .video-title-truncate {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+}
+
+/* Alternative truncate style for single line */
+.video-title-truncate-single {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .video-synopsis-truncate {
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.5;
 }
 
 /* General Styles */
@@ -169,11 +218,27 @@ body {
   overflow: hidden;
   aspect-ratio: 4 / 5;
   transition: transform 0.3s ease;
-  background-color: #18181b; /* Added background color */
 }
 
 .speaker-card:hover {
   transform: scale(1.03);
+}
+
+.speaker-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  padding: 1.5rem 1rem 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.speaker-card:hover .speaker-info {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .fade-in {
@@ -245,7 +310,14 @@ body {
   text-decoration: underline;
 }
 
-/* Line clamp utility */
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;

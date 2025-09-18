@@ -18,7 +18,7 @@ interface VideoCardProps {
 export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) {
   return (
     <div className="video-card-container group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
-      <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-black">
+      <div className="relative w-full aspect-video mb-4 rounded-xl overflow-hidden bg-black">
         <div
           className="w-full h-full flex items-center justify-center bg-gray-900 cursor-pointer"
           onClick={onPlay}
@@ -62,18 +62,18 @@ export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) 
           />
         )}
       </div>
-      <div className="px-5 pb-7">
-        <h3 className="text-white font-bold text-xl mb-3 line-clamp-2 hover:underline cursor-pointer transition-colors">
+      <div className="px-6 pb-6">
+        <h3 className="text-white font-bold text-lg mb-3 leading-tight video-title-truncate">
           <Link
             href={`https://www.youtube.com/watch?v=${video.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block"
+            className="block text-white hover:text-gray-200 transition-colors"
           >
             {video.title}
           </Link>
         </h3>
-        <p className="text-gray-300 text-base line-clamp-3">
+        <p className="text-gray-400 text-sm leading-relaxed video-synopsis-truncate">
           {video.description.substring(0, 150)}{video.description.length > 150 ? "..." : ""}
         </p>
       </div>

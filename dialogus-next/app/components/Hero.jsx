@@ -19,7 +19,7 @@ const Hero = () => {
       </div>
 
       {/* 2. Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/60 md:to-transparent z-10"></div>
+      <div className="absolute inset-0 hero-gradient-overlay z-10"></div>
 
       {/* 3. Content */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 w-full text-center md:text-left">
