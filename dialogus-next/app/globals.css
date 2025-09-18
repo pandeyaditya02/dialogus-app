@@ -12,6 +12,22 @@ body {
   font-family: "Space Grotesk", sans-serif;
 }
 
+/* Enhanced mobile responsiveness for hero title */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.5rem !important; /* ~24px for very small screens */
+    line-height: 1.3 !important;
+    letter-spacing: -0.025em !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 639px) {
+  .hero-title {
+    font-size: 1.875rem !important; /* ~30px for small screens */
+    line-height: 1.25 !important;
+  }
+}
+
 /* Dark Navigation Bar Styles with Scroll Effect */
 .dark-glass-nav {
   background: transparent;

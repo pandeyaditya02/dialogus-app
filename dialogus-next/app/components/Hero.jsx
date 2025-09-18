@@ -22,10 +22,10 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/60 md:to-transparent z-10"></div>
 
       {/* 3. Content */}
-      <div className="relative z-20 container mx-auto px-6 w-full text-center md:text-left">
-        <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-16 md:py-0">
+      <div className="relative z-20 container mx-auto px-4 sm:px-6 w-full text-center md:text-left">
+        <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-12 sm:pb-16 md:py-0">
           {/* Title */}
-          <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">
+          <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
             Casteism in the Cockpit: Indigo&apos;s Dark Side Under the Radar
           </h1>
 
