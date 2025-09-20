@@ -65,7 +65,8 @@ const Header = () => {
             className="flex items-center gap-2 sm:gap-4"
           >
             <Image
-              src="/NEW LOGO.png"
+              // src="/NEW LOGO.png"
+              src="/logo3.jpg"
               alt="Dialogus Logo"
               width={200}
               height={67}
