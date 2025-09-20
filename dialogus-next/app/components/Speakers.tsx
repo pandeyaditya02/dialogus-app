@@ -44,6 +44,36 @@ const speakersData = [
       "A trusted voice in journalism, Sweta now anchors Clear Cut and Bits & Pieces on Dialogus, where her trademark depth and clarity continue to engage and enlighten audiences."
     ],
   },
+  {
+    name: "Nishmanya",
+    image: "/hosts/NISHMANYA SIR.JPG",
+    delay: "400ms",
+    intro: [
+      "NISHMANYA is a dynamic media professional with a passion for uncovering stories that matter.",
+      "With his sharp analytical mind and engaging communication style, he brings fresh perspectives to complex issues.",
+      "At Dialogus, Nishmany explores the intersection of technology, society, and policy, making complex topics accessible to all audiences."
+    ],
+  },
+  {
+    name: "Preeta",
+    image: "/hosts/PREETA MA'AM2.JPG",
+    delay: "500ms",
+    intro: [
+      "PREETA is an accomplished journalist and thought leader with extensive experience in political and social commentary.",
+      "Known for her incisive questioning and balanced approach, she navigates sensitive topics with grace and professionalism.",
+      "Her expertise in governance and public policy makes her a valuable voice in Dialogus's mission to foster informed public discourse."
+    ],
+  },
+  {
+    name: "Sunetra",
+    image: "/hosts/SUNETRA MA'AM .png",
+    delay: "600ms",
+    intro: [
+      "SUNETRA is a seasoned media veteran with a deep understanding of India's socio-political landscape.",
+      "Her years of experience in broadcast journalism have honed her skills in presenting complex issues with clarity and nuance.",
+      "At Dialogus, Sunetra brings her wealth of knowledge to create meaningful conversations that resonate with diverse audiences across the nation."
+    ],
+  },
 ];
 
 const SpeakerCard = ({
@@ -57,7 +87,7 @@ const SpeakerCard = ({
     style={{ transitionDelay: delay }}
   >
     {/* Image Card - Background Layer */}
-    <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-fuchsia-500/20 transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl">
+    <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-fuchsia-500/20 transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl aspect-[1/1.5]">
       <Image
         src={image}
         alt={name}
@@ -128,7 +158,7 @@ const Speakers = () => {
             production
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-8">
           {speakersData.map((speaker) => (
             <SpeakerCard key={speaker.name} {...speaker} />
           ))}
