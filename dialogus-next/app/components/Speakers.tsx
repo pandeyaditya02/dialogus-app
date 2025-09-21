@@ -46,7 +46,7 @@ const speakersData = [
   },
   {
     name: "Nishmanya",
-    image: "/hosts/NISHMANYA SIR.jpg",
+    image: "/hosts/nishmanya_new.JPG",
     delay: "400ms",
     intro: [
       "NISHMANYA is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
@@ -56,7 +56,7 @@ const speakersData = [
   },
   {
     name: "Preeta",
-    image: "/hosts/preeta.png",
+    image: "/hosts/preeta_new.png",
     delay: "500ms",
     intro: [
       "PREETA is an accomplished journalist and thought leader with extensive experience in political and social commentary.",
