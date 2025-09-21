@@ -56,7 +56,7 @@ const speakersData = [
   },
   {
     name: "Preeta",
-    image: "/hosts/PREETA MA'AM3.PNG",
+    image: "/hosts/PREETA.PNG",
     delay: "500ms",
     intro: [
       "PREETA is an accomplished journalist and thought leader with extensive experience in political and social commentary.",
@@ -66,7 +66,7 @@ const speakersData = [
   },
   {
     name: "Sunetra Chakraborty",
-    image: "/hosts/SUNETRA MA'AM .png",
+    image: "/hosts/SUNETRA.png",
     delay: "600ms",
     intro: [
       "SUNETRA CHAKRABORTY is a Content Creator who covers spiritual and religious topics, practices, and perspectives with the aim of fostering understanding and promoting dialogue.",
