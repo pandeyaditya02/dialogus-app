@@ -49,8 +49,8 @@ export async function generateStaticParams() {
 
 // --- Generate metadata for each post ---
 export async function generateMetadata({ params }: Props) {
-  // ✅ **THE FIX IS HERE:** Destructure slug immediately
-  const slug = await params.slug;
+  // ✅ CORRECT: Await params first, THEN destructure
+  const { slug } = await params;
 
   const query = groq`*[_type == "insightPost" && slug.current == $slug][0]{
     title,
@@ -105,8 +105,8 @@ const ptComponents = {
 
 // --- Main Blog Post Page Component ---
 export default async function BlogPost({ params }: Props) {
-  // ✅ **AND THE FIX IS HERE:** Destructure slug immediately
-  const slug = await params.slug;
+  // ✅ CORRECT: Await params first, THEN destructure
+  const { slug } = await params;
   
   const postQuery = groq`*[_type == "insightPost" && slug.current == $slug][0]{
     _id,

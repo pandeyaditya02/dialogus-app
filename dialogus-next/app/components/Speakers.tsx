@@ -49,14 +49,14 @@ const speakersData = [
     image: "/hosts/NISHMANYA SIR.JPG",
     delay: "400ms",
     intro: [
-      "NISHMANYA is a dynamic media professional with a passion for uncovering stories that matter.",
-      "With his sharp analytical mind and engaging communication style, he brings fresh perspectives to complex issues.",
-      "At Dialogus, Nishmany explores the intersection of technology, society, and policy, making complex topics accessible to all audiences."
+      "NISHMANYA is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
+      "He has a background in mainstream automotive journalism, with around half a decade of experience in print and news writing.",
+      "He now makes independent, enthusiast centric car content on YouTube, bringing his automotive expertise to Dialogus audiences."
     ],
   },
   {
     name: "Preeta",
-    image: "/hosts/PREETA MA'AM2.JPG",
+    image: "/hosts/PREETA MA'AM3.PNG",
     delay: "500ms",
     intro: [
       "PREETA is an accomplished journalist and thought leader with extensive experience in political and social commentary.",
@@ -65,13 +65,23 @@ const speakersData = [
     ],
   },
   {
-    name: "Sunetra",
+    name: "Sunetra Chakraborty",
     image: "/hosts/SUNETRA MA'AM .png",
     delay: "600ms",
     intro: [
-      "SUNETRA is a seasoned media veteran with a deep understanding of India's socio-political landscape.",
-      "Her years of experience in broadcast journalism have honed her skills in presenting complex issues with clarity and nuance.",
-      "At Dialogus, Sunetra brings her wealth of knowledge to create meaningful conversations that resonate with diverse audiences across the nation."
+      "SUNETRA CHAKRABORTY is a Content Creator who covers spiritual and religious topics, practices, and perspectives with the aim of fostering understanding and promoting dialogue.",
+      "Currently, she hosts the Prawah show on our Dialogus channel, blending spirituality with the modern world.",
+      "Her unique approach to spiritual content makes complex religious concepts accessible and relevant to contemporary audiences."
+    ],
+  },
+  {
+    name: "Neeta Butalia",
+    image: "/hosts/Neeta Butalia.jpg",
+    delay: "700ms",
+    intro: [
+      "NEETA BUTALIA is a seasoned media professional with extensive experience in broadcast journalism and content creation.",
+      "Known for her insightful analysis and engaging presentation style, she brings depth and clarity to complex topics.",
+      "At Dialogus, Neeta contributes her expertise to create compelling narratives that resonate with diverse audiences across different platforms."
     ],
   },
 ];
