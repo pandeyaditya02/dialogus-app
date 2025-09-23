@@ -1,11 +1,14 @@
+// file: dialogus-next/app/insights/[slug]/page.tsx
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image"; // <-- Import Next.js Image component
 import { groq } from "next-sanity";
-import { client } from "@/lib/sanity.client"; // Adjust path if needed
+import { client, urlFor } from "@/lib/sanity.client"; // <-- Import urlFor
 import { PortableText } from "@portabletext/react";
 import { type PortableTextBlock } from "sanity";
 
-// Define the TypeScript interface for a single detailed post
+// --- TypeScript Interfaces ---
 interface InsightPostDetail {
   _id: string;
   title: string;
@@ -14,29 +17,17 @@ interface InsightPostDetail {
   body: PortableTextBlock[];
   authorName: string;
   categoryTitle: string;
-  categoryId: string; // We need this to find related posts
-  readTime: string; // Calculated property
+  categoryId: string;
+  readTime: string;
 }
 
-// Define the type for the component props
 type Props = {
   params: { slug: string };
 };
 
 // --- Helper function to calculate reading time ---
 const calculateReadTime = (body: PortableTextBlock[] = []): string => {
-  // const wordsPerMinute = 200; // Average reading speed
-  // const text = body
-  //   .map((block) => {
-  //     if (block._type === 'block' && block.children) {
-  //       return block.children.map((child: any) => child.text).join('');
-  //     }
-  //     return '';
-  //   })
-  //   .join(' ');
-  
-  // const wordCount = text.split(/\s+/).filter(Boolean).length;
-  // const readTime = Math.ceil(wordCount / wordsPerMinute);
+  // Keeping your original logic
   return `5 min read`;
 };
 
@@ -58,7 +49,6 @@ export async function generateMetadata({ params }: Props) {
     date,
     "authorName": author->name
   }`;
-  // Use the local 'slug' variable
   const post = await client.fetch(query, { slug });
 
   if (!post) {
@@ -86,7 +76,22 @@ export async function generateMetadata({ params }: Props) {
 // --- Custom components for PortableText ---
 const ptComponents = {
   types: {
-    // You can add custom renderers for images, etc. here
+    // This is the new part that handles rendering images
+    image: ({ value }: { value: any }) => {
+      if (!value?.asset?._ref) {
+        return null;
+      }
+      return (
+        <div className="relative w-full h-96 my-12 mx-auto rounded-lg overflow-hidden">
+          <Image
+            className="object-cover" // Changed to object-cover for better aesthetics
+            src={urlFor(value).url()}
+            alt={value.alt || "Insight Post Image"}
+            fill
+          />
+        </div>
+      );
+    },
   },
   block: {
     h2: ({ children }: any) => (
@@ -119,7 +124,6 @@ export default async function BlogPost({ params }: Props) {
     "categoryId": category->_id
   }`;
 
-  // Use the local 'slug' variable
   const rawPost: Omit<InsightPostDetail, 'readTime'> = await client.fetch(postQuery, { slug });
 
   if (!rawPost) {
@@ -182,11 +186,11 @@ export default async function BlogPost({ params }: Props) {
                 <p className="text-white font-medium">{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 <p className="text-gray-400">Published</p>
               </div>
-              <div className="h-8 w-px bg-gray-600" />
-              <div className="text-sm">
+              {/* <div className="h-8 w-px bg-gray-600" /> */}
+              {/* <div className="text-sm">
                 <p className="text-white font-medium">{post.readTime}</p>
                 <p className="text-gray-400">Read time</p>
-              </div>
+              </div> */}
             </div>
             <p className="text-xl text-gray-300 leading-relaxed max-w-3xl">
               {post.description}
@@ -199,9 +203,11 @@ export default async function BlogPost({ params }: Props) {
       <article className="py-16">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
+            {/* THIS IS THE KEY CHANGE */}
             <div className="prose prose-lg prose-invert max-w-none">
               <PortableText value={post.body} components={ptComponents} />
             </div>
+            {/* END OF KEY CHANGE */}
 
             {/* Article Footer */}
             <div className="mt-16 pt-8 border-t border-gray-800">

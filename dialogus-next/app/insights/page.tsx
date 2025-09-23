@@ -30,20 +30,21 @@ export interface InsightPost {
 
 // Helper function to calculate reading time
 const calculateReadTime = (body: any[]): string => {
-  const wordsPerMinute = 200;
-  // Extract text from all portable text blocks
-  const text = body
-    .map((block) => {
-      if (block._type === 'block' && block.children) {
-        return block.children.map((child: any) => child.text).join('');
-      }
-      return '';
-    })
-    .join(' ');
+  // const wordsPerMinute = 200;
+  // // Extract text from all portable text blocks
+  // const text = body
+  //   .map((block) => {
+  //     if (block._type === 'block' && block.children) {
+  //       return block.children.map((child: any) => child.text).join('');
+  //     }
+  //     return '';
+  //   })
+  //   .join(' ');
   
-  const wordCount = text.split(/\s+/).length;
-  const readTime = Math.ceil(wordCount / wordsPerMinute);
-  return `${readTime} min read`;
+  // const wordCount = text.split(/\s+/).length;
+  // const readTime = Math.ceil(wordCount / wordsPerMinute);
+  // return `${readTime} min read`;
+  return `5 min read`;
 };
 
 // --- Featured Article Component ---
@@ -63,7 +64,7 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
         <span>·</span>
         <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</span>
         <span>·</span>
-        <span>{post.readTime}</span>
+        {/* <span>{post.readTime}</span> */}
       </div>
       <span className="inline-block mt-3 font-semibold text-fuchsia-400 text-sm">
         Read Article →
