@@ -8,9 +8,14 @@ const Hero = () => {
     description?: string;
   }>({});
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Configure the 40-second loop
+  const LOOP_START = 0; // Start time in seconds
+  const LOOP_DURATION = 40; // Duration in seconds
+  const LOOP_END = LOOP_START + LOOP_DURATION;
 
   // Function to truncate description to 25 words
-  const truncateDescription = (desc: string, wordLimit: number = 65) => {
+  const truncateDescription = (desc: string, wordLimit: number = 55) => {
     if (!desc) return '';
     
     // Clean up description (remove URLs, normalize whitespace)
@@ -80,7 +85,7 @@ const Hero = () => {
         {latestVideo.id && (
           <iframe
             className="hero-video-bg"
-            src={`https://www.youtube.com/embed/${latestVideo.id}?autoplay=1&mute=1&loop=1&playlist=${latestVideo.id}&controls=0&showinfo=0&autohide=1&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${latestVideo.id}?autoplay=1&mute=1&loop=1&start=${LOOP_START}&end=${LOOP_END}&playlist=${latestVideo.id}&controls=0&showinfo=0&autohide=1&modestbranding=1`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
@@ -97,16 +102,13 @@ const Hero = () => {
         <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-12 sm:pb-16 md:py-0">
           {/* Title */}
           <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
-            {/* {latestVideo.title || "Latest Video"} */}
             {latestVideo.title 
               ? truncateDescription(latestVideo.title) 
-              : "Latest Video..."}
+              : "Latest Video"}
           </h1>
 
           {/* Description */}
           <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8">
-            {/* {latestVideo.description || "Loading description..."} */}
-
             {latestVideo.description 
               ? truncateDescription(latestVideo.description) 
               : "Loading description..."}
