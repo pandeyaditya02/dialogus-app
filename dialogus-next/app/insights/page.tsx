@@ -1,42 +1,38 @@
 import React from "react";
 import Link from "next/link";
 import { groq } from "next-sanity";
-import { client } from "@/lib/sanity.client"; // Adjust this import path if needed
-import InsightsPaginationControls from "./InsightsPaginationControls"; // Import the pagination component
+import { client } from "@/lib/sanity.client";
+import InsightsPaginationControls from "./InsightsPaginationControls";
 
-const POSTS_PER_PAGE = 9;
+const POSTS_PER_PAGE = 12;
 
-// The GROQ query to fetch all posts and their related author/category data
 const query = groq`*[_type == "insightPost"] | order(date desc) {
   _id,
   title,
   "slug": slug.current,
   description,
   date,
-  body, // We need the body to calculate read time
+  body,
   "authorName": author->name,
   "categoryTitle": category->title
 }`;
 
-// Define the TypeScript interface for a post fetched from Sanity
 export interface InsightPost {
   _id: string;
   title: string;
   slug: string;
   description: string;
   date: string;
-  body: any[]; // Portable Text content
+  body: any[];
   authorName: string;
   categoryTitle: string;
-  readTime: string; // We will add this property after fetching
+  readTime: string;
 }
 
-// Helper function to calculate reading time
 const calculateReadTime = (body: any[]): string => {
   return `5 min read`;
 };
 
-// --- Featured Article Component ---
 const FeaturedArticle = ({ post }: { post: InsightPost }) => (
   <Link
     href={`/insights/${post.slug}`}
@@ -60,7 +56,6 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
   </Link>
 );
 
-// --- Grid Article Component ---
 const GridArticle = ({ post }: { post: InsightPost }) => (
   <Link
     href={`/insights/${post.slug}`}
@@ -81,66 +76,54 @@ const GridArticle = ({ post }: { post: InsightPost }) => (
   </Link>
 );
 
-// This tells Next.js to re-generate this page every 60 seconds
 export const revalidate = 60;
 
+// FIX: Changed the component signature to be more robust for dynamic searchParams.
 export default async function InsightsPage({
   searchParams,
 }: {
-  searchParams?: {
-    page?: string;
-  };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  // Fetch the raw data from Sanity
   const rawPosts: Omit<InsightPost, 'readTime'>[] = await client.fetch(query);
-  
-  // Process posts to add calculated readTime
+
   const posts: InsightPost[] = rawPosts.map(post => ({
     ...post,
     readTime: calculateReadTime(post.body),
   }));
 
-  // FIX: Read the page number from searchParams safely to avoid the error.
-  const page = Number(searchParams?.page) || 1;
+  // FIX: Safely parse the page number from searchParams.
+  const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1;
 
   const totalPosts = posts.length;
-  // Calculate total pages based on 1 featured post + 12 grid posts per page.
   const totalPages = totalPosts > 1 ? Math.ceil((totalPosts - 1) / POSTS_PER_PAGE) : 1;
-
 
   if (!posts || posts.length === 0) {
     return (
       <main className="pt-24 bg-black text-white min-h-screen">
-         <div className="text-center py-20">
-           <h2 className="text-3xl font-bold">No posts found.</h2>
-           <p className="text-gray-400 mt-4">Check back later for new insights!</p>
-         </div>
+        <div className="text-center py-20">
+          <h2 className="text-3xl font-bold">No posts found.</h2>
+          <p className="text-gray-400 mt-4">Check back later for new insights!</p>
+        </div>
       </main>
-    )
+    );
   }
 
   const isPage1 = page === 1;
   const featured = isPage1 ? posts[0] : null;
 
   let rest: InsightPost[];
-  
-  // FIX: Correctly calculate the posts for the grid on each page.
   if (isPage1) {
-    // Page 1: Show posts from index 1 to 12
     rest = posts.slice(1, 1 + POSTS_PER_PAGE);
   } else {
-    // Page > 1: Calculate the start index based on the featured post and posts on previous pages.
     const startIndex = 1 + (page - 1) * POSTS_PER_PAGE;
     const endIndex = startIndex + POSTS_PER_PAGE;
     rest = posts.slice(startIndex, endIndex);
   }
 
-
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
       <section id="blog" className="py-20 md:py-28">
         <div className="container mx-auto px-6">
-          {/* Page Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="section-title text-4xl md:text-5xl mb-4 font-bold">
               News & Voices
@@ -151,22 +134,19 @@ export default async function InsightsPage({
             </p>
           </div>
 
-          {/* Featured Article */}
           {isPage1 && featured && (
             <div className="mb-16">
               <FeaturedArticle post={featured} />
             </div>
           )}
 
-          {/* Grid of Other Articles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {rest.map((post) => (
               <GridArticle key={post._id} post={post} />
             ))}
           </div>
 
-           {/* Pagination */}
-           <div className="flex justify-center mt-16">
+          <div className="flex justify-center mt-16">
             {totalPages > 1 && (
               <InsightsPaginationControls totalPages={totalPages} />
             )}
