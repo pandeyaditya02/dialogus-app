@@ -82,12 +82,16 @@ const ptComponents = {
         return null;
       }
       return (
-        <div className="relative w-full h-96 my-12 mx-auto rounded-lg overflow-hidden">
+        <div className="relative w-full my-12 mx-auto rounded-lg">
           <Image
-            className="object-cover" // Changed to object-cover for better aesthetics
+            className="object-contain w-full" // Changed to object-contain
             src={urlFor(value).url()}
             alt={value.alt || "Insight Post Image"}
-            fill
+            width={value.asset?.metadata?.dimensions?.width || 1200}
+            height={value.asset?.metadata?.dimensions?.height || 630}
+            style={{
+              aspectRatio: `${value.asset?.metadata?.dimensions?.width} / ${value.asset?.metadata?.dimensions?.height}`
+            }}
           />
         </div>
       );
@@ -112,7 +116,7 @@ const ptComponents = {
 export default async function BlogPost({ params }: Props) {
   // ✅ CORRECT: Await params first, THEN destructure
   const { slug } = await params;
-  
+
   const postQuery = groq`*[_type == "insightPost" && slug.current == $slug][0]{
     _id,
     title,
@@ -211,21 +215,21 @@ export default async function BlogPost({ params }: Props) {
 
             {/* Article Footer */}
             <div className="mt-16 pt-8 border-t border-gray-800">
-               <div className="flex flex-wrap items-center justify-between gap-6">
-                 <div className="flex items-center gap-4">
-                   <div className="w-16 h-16 rounded-full border-2 border-fuchsia-500/30 bg-fuchsia-500/20 flex items-center justify-center">
-                     <span className="text-fuchsia-400 font-semibold text-2xl">
-                       {post.authorName.charAt(0)}
-                     </span>
-                   </div>
-                   <div>
-                     <h3 className="text-xl font-semibold text-white">
-                       {post.authorName}
-                     </h3>
-                     <p className="text-gray-400">Content Creator</p>
-                   </div>
-                 </div>
-               </div>
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full border-2 border-fuchsia-500/30 bg-fuchsia-500/20 flex items-center justify-center">
+                    <span className="text-fuchsia-400 font-semibold text-2xl">
+                      {post.authorName.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {post.authorName}
+                    </h3>
+                    <p className="text-gray-400">Content Creator</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -254,15 +258,15 @@ export default async function BlogPost({ params }: Props) {
                           {relatedPost.description}
                         </p>
                         <div className="flex items-center gap-3 text-sm text-gray-500">
-                           <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
-                             <span className="text-fuchsia-400 font-semibold text-xs">
-                               {relatedPost.authorName.charAt(0)}
-                             </span>
-                           </div>
-                           <span>{relatedPost.authorName}</span>
-                           <span>·</span>
-                           <span>{relatedPost.readTime}</span>
-                         </div>
+                          <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
+                            <span className="text-fuchsia-400 font-semibold text-xs">
+                              {relatedPost.authorName.charAt(0)}
+                            </span>
+                          </div>
+                          <span>{relatedPost.authorName}</span>
+                          <span>·</span>
+                          <span>{relatedPost.readTime}</span>
+                        </div>
                       </div>
                     </article>
                   </Link>
