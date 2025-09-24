@@ -4,7 +4,7 @@ import { groq } from "next-sanity";
 import { client } from "@/lib/sanity.client";
 import InsightsPaginationControls from "./InsightsPaginationControls";
 
-const POSTS_PER_PAGE = 12;
+const POSTS_PER_PAGE = 9;
 
 const query = groq`*[_type == "insightPost"] | order(date desc) {
   _id,
