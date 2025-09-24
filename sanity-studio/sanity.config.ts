@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'dialogus',
 
-  projectId: 'w77riyw5',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_API_PROJECT_ID!,
+  dataset: process.env.SANITY_STUDIO_API_DATASET!,
 
   plugins: [structureTool(), visionTool()],
 
