@@ -3,6 +3,8 @@ import Link from "next/link";
 import { groq } from "next-sanity";
 import { client } from "@/lib/sanity.client"; // Adjust this import path if needed
 
+const POSTS_PER_PAGE = 12;
+
 // The GROQ query to fetch all posts and their related author/category data
 const query = groq`*[_type == "insightPost"] | order(date desc) {
   _id,
@@ -97,15 +99,29 @@ const GridArticle = ({ post }: { post: InsightPost }) => (
 // This tells Next.js to re-generate this page every 60 seconds
 export const revalidate = 60;
 
-export default async function InsightsPage() {
+export default async function InsightsPage({
+  searchParams,
+}: {
+  searchParams?: {
+    page?: string;
+  };
+}) {
   // Fetch the raw data from Sanity
   const rawPosts: Omit<InsightPost, 'readTime'>[] = await client.fetch(query);
+
+  const totalPosts = rawPosts.length;
+  const totalPages = Math.ceil((totalPosts -1) / POSTS_PER_PAGE) ;
+
 
   // Process posts to add calculated readTime
   const posts: InsightPost[] = rawPosts.map(post => ({
     ...post,
     readTime: calculateReadTime(post.body),
   }));
+
+  const page = Number(searchParams?.page) || 1;
+  const startIndex = (page - 1) * POSTS_PER_PAGE;
+  const endIndex = startIndex + POSTS_PER_PAGE;
 
   if (!posts || posts.length === 0) {
     return (
@@ -118,7 +134,9 @@ export default async function InsightsPage() {
     )
   }
 
-  const [featured, ...rest] = posts;
+  const isPage1 = page === 1;
+  const featured = isPage1 ? posts[0] : null;
+  const rest = isPage1 ? posts.slice(1, 1 + POSTS_PER_PAGE) : posts.slice(startIndex +1, endIndex +1);
 
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
@@ -136,15 +154,31 @@ export default async function InsightsPage() {
           </div>
 
           {/* Featured Article */}
-          <div className="mb-16">
-            <FeaturedArticle post={featured} />
-          </div>
+          {isPage1 && featured && (
+            <div className="mb-16">
+              <FeaturedArticle post={featured} />
+            </div>
+          )}
 
           {/* Grid of Other Articles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {rest.map((post) => (
               <GridArticle key={post._id} post={post} />
             ))}
+          </div>
+
+           {/* Pagination */}
+           <div className="flex justify-center mt-16">
+            {page > 1 && (
+              <Link href={`/insights?page=${page - 1}`} className="bg-fuchsia-500 text-white font-bold py-2 px-4 rounded-l">
+                  Previous
+              </Link>
+            )}
+            {page < totalPages && (
+                 <Link href={`/insights?page=${page + 1}`} className="bg-fuchsia-500 text-white font-bold py-2 px-4 rounded-r">
+                   Next
+                 </Link>
+            )}
           </div>
         </div>
       </section>
