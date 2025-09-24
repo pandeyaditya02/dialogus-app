@@ -43,7 +43,7 @@ async function fetchVideos(page = 1, token = "") {
   
   // The ID of your dedicated playlist.
   // It's recommended to move this to your .env file (e.g., YOUTUBE_PLAYLIST_ID)
-  const dedicatedPlaylistId = "PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS";
+  const dedicatedPlaylistId = "PLiWELLjBSGHJegQWqDl9EImihEW0Rakzc";
   const videosPerPage = 9;
 
   if (!apiKey || !dedicatedPlaylistId) {

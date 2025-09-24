@@ -43,7 +43,7 @@ async function fetchShorts(page = 1, token = "") {
   
   // The ID of your dedicated shorts playlist.
   // Updated to use the playlist ID from the provided URL
-  const shortsPlaylistId = "PLiWELLjBSGHIMAEvQRZgAEJilyYjEjaBx";
+  const shortsPlaylistId = "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
   const shortsPerPage = 12; // More items per page for shorts
 
   if (!apiKey || !shortsPlaylistId) {
