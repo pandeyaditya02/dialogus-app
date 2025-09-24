@@ -2,8 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { groq } from "next-sanity";
 import { client } from "@/lib/sanity.client"; // Adjust this import path if needed
+import InsightsPaginationControls from "./InsightsPaginationControls"; // Import the pagination component
 
-const POSTS_PER_PAGE = 12;
+const POSTS_PER_PAGE = 9;
 
 // The GROQ query to fetch all posts and their related author/category data
 const query = groq`*[_type == "insightPost"] | order(date desc) {
@@ -32,20 +33,6 @@ export interface InsightPost {
 
 // Helper function to calculate reading time
 const calculateReadTime = (body: any[]): string => {
-  // const wordsPerMinute = 200;
-  // // Extract text from all portable text blocks
-  // const text = body
-  //   .map((block) => {
-  //     if (block._type === 'block' && block.children) {
-  //       return block.children.map((child: any) => child.text).join('');
-  //     }
-  //     return '';
-  //   })
-  //   .join(' ');
-  
-  // const wordCount = text.split(/\s+/).length;
-  // const readTime = Math.ceil(wordCount / wordsPerMinute);
-  // return `${readTime} min read`;
   return `5 min read`;
 };
 
@@ -65,8 +52,6 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
         <span className="text-white">{post.authorName}</span>
         <span>·</span>
         <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-        <span>·</span>
-        {/* <span>{post.readTime}</span> */}
       </div>
       <span className="inline-block mt-3 font-semibold text-fuchsia-400 text-sm">
         Read Article →
@@ -108,20 +93,20 @@ export default async function InsightsPage({
 }) {
   // Fetch the raw data from Sanity
   const rawPosts: Omit<InsightPost, 'readTime'>[] = await client.fetch(query);
-
-  const totalPosts = rawPosts.length;
-  const totalPages = Math.ceil((totalPosts -1) / POSTS_PER_PAGE) ;
-
-
+  
   // Process posts to add calculated readTime
   const posts: InsightPost[] = rawPosts.map(post => ({
     ...post,
     readTime: calculateReadTime(post.body),
   }));
 
+  // FIX: Read the page number from searchParams safely to avoid the error.
   const page = Number(searchParams?.page) || 1;
-  const startIndex = (page - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
+
+  const totalPosts = posts.length;
+  // Calculate total pages based on 1 featured post + 12 grid posts per page.
+  const totalPages = totalPosts > 1 ? Math.ceil((totalPosts - 1) / POSTS_PER_PAGE) : 1;
+
 
   if (!posts || posts.length === 0) {
     return (
@@ -136,7 +121,20 @@ export default async function InsightsPage({
 
   const isPage1 = page === 1;
   const featured = isPage1 ? posts[0] : null;
-  const rest = isPage1 ? posts.slice(1, 1 + POSTS_PER_PAGE) : posts.slice(startIndex +1, endIndex +1);
+
+  let rest: InsightPost[];
+  
+  // FIX: Correctly calculate the posts for the grid on each page.
+  if (isPage1) {
+    // Page 1: Show posts from index 1 to 12
+    rest = posts.slice(1, 1 + POSTS_PER_PAGE);
+  } else {
+    // Page > 1: Calculate the start index based on the featured post and posts on previous pages.
+    const startIndex = 1 + (page - 1) * POSTS_PER_PAGE;
+    const endIndex = startIndex + POSTS_PER_PAGE;
+    rest = posts.slice(startIndex, endIndex);
+  }
+
 
   return (
     <main className="pt-24 bg-black text-white min-h-screen">
@@ -169,15 +167,8 @@ export default async function InsightsPage({
 
            {/* Pagination */}
            <div className="flex justify-center mt-16">
-            {page > 1 && (
-              <Link href={`/insights?page=${page - 1}`} className="bg-fuchsia-500 text-white font-bold py-2 px-4 rounded-l">
-                  Previous
-              </Link>
-            )}
-            {page < totalPages && (
-                 <Link href={`/insights?page=${page + 1}`} className="bg-fuchsia-500 text-white font-bold py-2 px-4 rounded-r">
-                   Next
-                 </Link>
+            {totalPages > 1 && (
+              <InsightsPaginationControls totalPages={totalPages} />
             )}
           </div>
         </div>
