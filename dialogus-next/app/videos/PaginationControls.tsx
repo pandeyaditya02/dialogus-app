@@ -43,7 +43,7 @@ export default function PaginationControls({
             href={`/videos?page=${currentPage + 1}&token=${nextPageToken}`}
             className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
           >
-            Next Page
+            Next Page 1
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 ml-2"
