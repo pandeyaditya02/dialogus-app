@@ -91,8 +91,8 @@ export default async function InsightsPage({
     readTime: calculateReadTime(post.body),
   }));
 
-  // FIX: Safely parse the page number from searchParams.
-  const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1;
+  const awaitedSearchParams = await searchParams;
+  const page = typeof awaitedSearchParams.page === 'string' ? Number(awaitedSearchParams.page) : 1;
 
   const totalPosts = posts.length;
   const totalPages = totalPosts > 1 ? Math.ceil((totalPosts - 1) / POSTS_PER_PAGE) : 1;
