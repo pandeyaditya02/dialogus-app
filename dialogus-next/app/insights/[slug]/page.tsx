@@ -214,7 +214,7 @@ export default async function BlogPost({ params }: Props) {
             {/* END OF KEY CHANGE */}
 
             {/* Article Footer */}
-            <div className="mt-16 pt-8 border-t border-gray-800">
+            {/* <div className="mt-16 pt-8 border-t border-gray-800">
               <div className="flex flex-wrap items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full border-2 border-fuchsia-500/30 bg-fuchsia-500/20 flex items-center justify-center">
@@ -230,7 +230,7 @@ export default async function BlogPost({ params }: Props) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </article>
