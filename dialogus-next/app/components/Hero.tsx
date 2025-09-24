@@ -9,6 +9,26 @@ const Hero = () => {
   }>({});
   const [isLoading, setIsLoading] = useState(true);
 
+  // Function to truncate description to 25 words
+  const truncateDescription = (desc: string, wordLimit: number = 65) => {
+    if (!desc) return '';
+    
+    // Clean up description (remove URLs, normalize whitespace)
+    const cleanDesc = desc
+      .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
+      .replace(/\|/g, '') // Remove | character as requested
+      .replace(/\n/g, ' ') // Replace line breaks with spaces
+      .replace(/\s{2,}/g, ' ') // Replace multiple spaces with single space
+      .trim();
+    
+    const words = cleanDesc.split(' ');
+    if (words.length <= wordLimit) {
+      return cleanDesc;
+    }
+    
+    return words.slice(0, wordLimit).join(' ') + '...';
+  };
+
   useEffect(() => {
     const fetchLatestVideo = async () => {
       try {
@@ -77,12 +97,19 @@ const Hero = () => {
         <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-12 sm:pb-16 md:py-0">
           {/* Title */}
           <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
-            {latestVideo.title || "Latest Video"}
+            {/* {latestVideo.title || "Latest Video"} */}
+            {latestVideo.title 
+              ? truncateDescription(latestVideo.title) 
+              : "Latest Video..."}
           </h1>
 
           {/* Description */}
           <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8">
-            {latestVideo.description || "Loading description..."}
+            {/* {latestVideo.description || "Loading description..."} */}
+
+            {latestVideo.description 
+              ? truncateDescription(latestVideo.description) 
+              : "Loading description..."}
           </p>
 
           {/* CTAs */}
