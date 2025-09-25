@@ -43,7 +43,6 @@ const Hero = () => {
     if (!title) return '';
     
     const cleanTitle = title
-      .replace(/\|/g, '') 
       .replace(/\n/g, ' ') 
       .replace(/\s{2,}/g, ' ') 
       .trim();
