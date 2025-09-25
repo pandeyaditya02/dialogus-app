@@ -84,9 +84,7 @@ const termsSections = [
         icon: <Mail size={24} />,
         title: "10. Contact Us",
         content: [
-            "For questions or concerns about these Terms, please contact us at:",
-            "<span class='mt-4 block text-gray-200'>[Official email address]</span>",
-            "<span class='text-gray-400 text-sm'>[Registered address]</span>"
+            "For questions or concerns about these Terms, please contact us at:<br/><a href='mailto:info@dialogus.co.in' class='mt-2 text-gray-200 hover:underline'>info@dialogus.co.in</a>"
         ]
     }
 ];

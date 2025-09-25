@@ -24,7 +24,7 @@ const showsData = [
     delay: "200ms",
   },
   {
-    title: "PRAWAH",
+    title: "RELIGION & SPRITUALITY",
     thumbnail: "/shows thumbnail/PRAWAH.png",
     playlistUrl: "https://www.youtube.com/playlist?list=PLiWELLjBSGHI32tt2UdDEBsJ-6r_ccmMD",
     delay: "300ms",

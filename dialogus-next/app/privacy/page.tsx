@@ -81,8 +81,8 @@ const policySections = [
         title: "9. Contact Us",
         content: [
             "If you have any questions or concerns about this Privacy Policy or our practices, please contact us at:",
-            "<span class='mt-4 block text-gray-200'>[Official email address]</span>",
-            "<span class='text-gray-400 text-sm'>[Registered address]</span>"
+            "<a href='mailto:info@dialogus.co.in' class='mt-4 block text-gray-200 hover:underline'>info@dialogus.co.in</a>",
+            // "<span class='text-gray-400 text-sm'>[Registered address]</span>"
         ]
     }
 ];
