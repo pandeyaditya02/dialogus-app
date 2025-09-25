@@ -2,12 +2,10 @@
 
 import React from "react";
 import Hero from "./components/Hero";
-import dynamic from 'next/dynamic'
+import Videos from "./components/Videos";
+import Speakers from "./components/Speakers";
 
 export default function Home() {
-
-  const Videos = dynamic(() => import('./components/Videos'))
-  const Speakers = dynamic(() => import('./components/Speakers'))
 
   return (
     <main>
