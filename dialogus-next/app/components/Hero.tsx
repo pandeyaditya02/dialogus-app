@@ -14,6 +14,10 @@ const Hero = () => {
   const LOOP_DURATION = 40; // Duration in seconds
   const LOOP_END = LOOP_START + LOOP_DURATION;
 
+  // Cache configuration
+  const CACHE_KEY = 'latestVideoCache';
+  const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+
   // Function to truncate description to 25 words
   const truncateDescription = (desc: string, wordLimit: number = 55) => {
     if (!desc) return '';
@@ -35,7 +39,31 @@ const Hero = () => {
   };
 
   useEffect(() => {
+    // Check if we have valid cached data
+    const getCachedData = () => {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return null;
+        
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_DURATION) {
+          return data;
+        }
+      } catch (error) {
+        console.error("Error reading cache:", error);
+      }
+      return null;
+    };
+
     const fetchLatestVideo = async () => {
+      // Try to get from cache first
+      const cachedData = getCachedData();
+      if (cachedData) {
+        setLatestVideo(cachedData);
+        setIsLoading(false);
+        return; // Skip network request if we have valid cache
+      }
+
       try {
         const response = await fetch('/api/youtube/latest-video');
         const data = await response.json();
@@ -49,16 +77,26 @@ const Hero = () => {
             description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
           });
         } else {
+          // Store in cache with timestamp
+          localStorage.setItem(CACHE_KEY, JSON.stringify({
+            data,
+            timestamp: Date.now()
+          }));
           setLatestVideo(data);
         }
       } catch (error) {
         console.error("Error fetching latest video:", error);
-        // Fallback to hardcoded values
-        setLatestVideo({
-          id: "j7F5KNw5F20",
-          title: "Casteism in the Cockpit: Indigo's Dark Side Under the Radar",
-          description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
-        });
+        // If cache exists, use it; otherwise fallback to hardcoded values
+        const cachedData = getCachedData();
+        if (cachedData) {
+          setLatestVideo(cachedData);
+        } else {
+          setLatestVideo({
+            id: "j7F5KNw5F20",
+            title: "Casteism in the Cockpit: Indigo's Dark Side Under the Radar",
+            description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
+          });
+        }
       } finally {
         setIsLoading(false);
       }
