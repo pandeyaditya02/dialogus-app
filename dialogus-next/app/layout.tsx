@@ -4,42 +4,42 @@ import Footer from "./components/Footer";
 import { Inter, Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "Dialogus - Debate Discuss Decide",
-  description:
-    "Dialogus is a digital media platform bringing clarity in a noisy world. We cover politics, business, law, and culture with data-driven analysis and storytelling.",
+    title: "Dialogus - Debate Discuss Decide",
+    description:
+        "Dialogus is a digital media platform bringing clarity in a noisy world. We cover politics, business, law, and culture with data-driven analysis and storytelling.",
     icons: {
-    icon: "/NEW LOGO.png", // ✅ path relative to /public
-  },
+        icon: "/NEW LOGO.png", // ✅ path relative to /public
+    },
 };
 
 // Inter for body text
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+    subsets: ["latin"],
+    variable: "--font-inter",
 });
 
 // Space Grotesk for headers / hero titles
 const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
+    subsets: ["latin"],
+    variable: "--font-space-grotesk",
 });
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
-      <head>
-        {/* Tailwind CSS CDN */}
-        <script src="https://cdn.tailwindcss.com"></script>
+    return (
+        <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
+            <head>
+                {/* Tailwind CSS CDN */}
+                <script src="https://cdn.tailwindcss.com"></script>
 
-        <link rel="preconnect" href="https://www.googleapis.com" />
-        <link rel="dns-prefetch" href="https://www.googleapis.com" />
+                <link rel="preconnect" href="https://www.googleapis.com" />
+                <link rel="dns-prefetch" href="https://www.googleapis.com" />
 
-        {/* Global Styles */}
-        <style>
-          {`
+                {/* Global Styles */}
+                <style>
+                    {`
             /* Base Styles */
             body {
                 font-family: 'Inter', sans-serif;
@@ -232,14 +232,31 @@ export default function RootLayout({
                 color: #c026d3;
                 transform: scale(1.1);
             }
+            /* Add to your global CSS */
+            .hero-title {
+                line-height: 1.1;
+            }
+
+            @media (max-width: 768px) {
+                .hero-title {
+                    line-height: 1.2;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .hero-title {
+                    line-height: 1.3;
+                    font-size: 1.5rem !important;
+                }
+            }
           `}
-        </style>
-      </head>
-      <body className="antialiased">
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-  );
+                </style>
+            </head>
+            <body className="antialiased">
+                <Header />
+                {children}
+                <Footer />
+            </body>
+        </html>
+    );
 }

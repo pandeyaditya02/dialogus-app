@@ -19,7 +19,7 @@ const Hero = () => {
   const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
 
   // Function to truncate description to 25 words
-  const truncateDescription = (desc: string, wordLimit: number = 55) => {
+  const truncateDescription = (desc: string, wordLimit: number = 45) => {
     if (!desc) return '';
     
     // Clean up description (remove URLs, normalize whitespace)
@@ -33,6 +33,24 @@ const Hero = () => {
     const words = cleanDesc.split(' ');
     if (words.length <= wordLimit) {
       return cleanDesc;
+    }
+    
+    return words.slice(0, wordLimit).join(' ') + '...';
+  };
+
+  // Add a separate truncate function specifically for titles
+  const truncateTitle = (title: string, wordLimit: number = 15) => {
+    if (!title) return '';
+    
+    const cleanTitle = title
+      .replace(/\|/g, '') 
+      .replace(/\n/g, ' ') 
+      .replace(/\s{2,}/g, ' ') 
+      .trim();
+      
+    const words = cleanTitle.split(' ');
+    if (words.length <= wordLimit) {
+      return cleanTitle;
     }
     
     return words.slice(0, wordLimit).join(' ') + '...';
@@ -137,16 +155,16 @@ const Hero = () => {
 
       {/* 3. Content */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 w-full text-center md:text-left">
-        <div className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 pb-12 sm:pb-16 md:py-0">
+        <div className="w-full md:w-4/5 lg:w-3/4 xl:w-2/3 pb-12 sm:pb-16 md:py-0">
           {/* Title */}
-          <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
+          <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight max-w-4xl hyphens-auto break-words">
             {latestVideo.title 
-              ? truncateDescription(latestVideo.title) 
+              ? truncateTitle(latestVideo.title) 
               : "Latest Video"}
           </h1>
 
           {/* Description */}
-          <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8">
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8 max-w-3xl hyphens-auto break-words">
             {latestVideo.description 
               ? truncateDescription(latestVideo.description) 
               : "Loading description..."}
