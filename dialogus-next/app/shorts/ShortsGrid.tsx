@@ -17,8 +17,8 @@ interface Short {
 interface ShortsGridProps {
   shorts: Short[];
   currentPage: number;
-  nextPageToken?: string;
-  prevPageToken?: string;
+  nextPageToken?: string | null;
+  prevPageToken?: string | null;
   isLoading?: boolean;
 }
 

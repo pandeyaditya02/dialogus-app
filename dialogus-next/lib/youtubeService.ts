@@ -291,3 +291,66 @@ export async function fetchPlaylistVideos(
     };
   }
 }
+
+
+/**
+ * Fetches a page of shorts from a YouTube shorts playlist
+ * @param page Current page number
+ * @param token Page token for pagination
+ * @param playlistId Optional custom shorts playlist ID (defaults to the shorts playlist)
+ */
+export async function fetchYouTubeShorts(
+  page = 1,
+  token = "",
+  playlistId?: string
+): Promise<VideosResponse> {
+  try {
+    validateEnv();
+    
+    // Default to shorts playlist ID if not provided
+    const shortsPlaylistId = playlistId || 
+                            process.env.YOUTUBE_SHORTS_PLAYLIST_ID || 
+                            "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
+    
+    const params = {
+      playlistId: shortsPlaylistId,
+      maxResults: 12,
+      pageToken: token
+    };
+    
+    const data = await fetchYouTubeApi(params);
+    
+    if (data.error) {
+      throw new Error(data.error.message || 'Failed to fetch shorts from YouTube API');
+    }
+    
+    if (!data.items || data.items.length === 0) {
+      return {
+        videos: [],
+        nextPageToken: null,
+        prevPageToken: null,
+        error: null
+      };
+    }
+    
+    return {
+      videos: transformVideos(data.items),
+      nextPageToken: data.nextPageToken || null,
+      prevPageToken: data.prevPageToken || null,
+      error: null
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'An unknown error occurred while fetching shorts';
+      
+    console.error('YouTube shorts fetch error:', errorMessage);
+    
+    return {
+      videos: [],
+      nextPageToken: null,
+      prevPageToken: null,
+      error: errorMessage
+    };
+  }
+}
