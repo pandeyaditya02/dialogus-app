@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "./components/Hero";
-import Videos from "./components/Videos";
+import VideosWrapper from "./components/VideosWrapper";
 import Speakers from "./components/Speakers";
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
-      <Videos />
+      <VideosWrapper />
       <Speakers />
     </main>
   );

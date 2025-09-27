@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-// Types
+// Types - kept in sync with youtubeService
 interface Video {
   id: string;
   title: string;
@@ -16,46 +16,7 @@ interface Video {
 interface PlaylistData {
   title: string;
   videos: Video[];
-  loading: boolean;
   error: string | null;
-}
-
-// Playlist configurations
-const PLAYLISTS = {
-  exclusiveInterviews: {
-    id: "PLiWELLjBSGHIlwS-6Btqaze1rQko3otMP",
-    title: "EXCLUSIVE INTERVIEWS"
-  },
-  talkItOut: {
-    id: "PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS", 
-    title: "TALK IT OUT"
-  },
-  worldView: {
-    id: "PLiWELLjBSGHI3c517bIrA7kVx0leH6v-y",
-    title: "WORLD VIEW"
-  }
-};
-
-// Fetch videos from a playlist
-async function fetchPlaylistVideos(playlistId: string): Promise<Video[]> {
-  try {
-    const response = await fetch(`/api/playlist-videos?playlistId=${playlistId}&maxResults=10`);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch playlist: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    
-    if (data.error) {
-      throw new Error(data.error);
-    }
-    
-    return data.videos || [];
-  } catch (error) {
-    console.error(`Error fetching playlist ${playlistId}:`, error);
-    throw error;
-  }
 }
 
 // Video Card Component
@@ -94,15 +55,23 @@ const VideoCardSkeleton = () => (
 const VideoSlider = ({
   title,
   videos,
-  loading,
   error,
 }: {
   title: string;
   videos: Video[];
-  loading: boolean;
   error: string | null;
 }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Add a brief loading state for better UX
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const scroll = (direction: "left" | "right") => {
     if (sliderRef.current) {
@@ -169,69 +138,19 @@ const VideoSlider = ({
   );
 };
 
-const Videos = () => {
-  // State for each playlist
-  const [playlistsData, setPlaylistsData] = useState<{
-    [key: string]: PlaylistData;
-  }>({
-    exclusiveInterviews: {
-      title: PLAYLISTS.exclusiveInterviews.title,
-      videos: [],
-      loading: true,
-      error: null,
-    },
-    talkItOut: {
-      title: PLAYLISTS.talkItOut.title,
-      videos: [],
-      loading: true,
-      error: null,
-    },
-    worldView: {
-      title: PLAYLISTS.worldView.title,
-      videos: [],
-      loading: true,
-      error: null,
-    },
-  });
-
-  // Fetch videos for all playlists
-  useEffect(() => {
-    const loadPlaylistVideos = async () => {
-      const playlistKeys = Object.keys(PLAYLISTS) as Array<keyof typeof PLAYLISTS>;
-      
-      // Fetch all playlists concurrently
-      const playlistPromises = playlistKeys.map(async (key) => {
-        try {
-          const videos = await fetchPlaylistVideos(PLAYLISTS[key].id);
-          return { key, videos, error: null };
-        } catch (error) {
-          return { 
-            key, 
-            videos: [], 
-            error: error instanceof Error ? error.message : 'Unknown error' 
-          };
-        }
-      });
-
-      const results = await Promise.all(playlistPromises);
-      
-      // Update state with results
-      setPlaylistsData(prev => {
-        const newData = { ...prev };
-        results.forEach(({ key, videos, error }) => {
-          newData[key] = {
-            title: PLAYLISTS[key as keyof typeof PLAYLISTS].title,
-            videos,
-            loading: false,
-            error,
-          };
-        });
-        return newData;
-      });
+interface VideosProps {
+  initialData: {
+    [key: string]: {
+      title: string;
+      videos: Video[];
+      error: string | null;
     };
+  };
+}
 
-    loadPlaylistVideos();
-  }, []);
+const Videos = ({ initialData }: VideosProps) => {
+  // Initialize state with the server-fetched data
+  const [playlistsData, setPlaylistsData] = useState(initialData);
 
   // Intersection Observer for fade-in effect
   useEffect(() => {
@@ -265,19 +184,16 @@ const Videos = () => {
           <VideoSlider 
             title={playlistsData.exclusiveInterviews.title}
             videos={playlistsData.exclusiveInterviews.videos}
-            loading={playlistsData.exclusiveInterviews.loading}
             error={playlistsData.exclusiveInterviews.error}
           />
           <VideoSlider 
             title={playlistsData.talkItOut.title}
             videos={playlistsData.talkItOut.videos}
-            loading={playlistsData.talkItOut.loading}
             error={playlistsData.talkItOut.error}
           />
           <VideoSlider 
             title={playlistsData.worldView.title}
             videos={playlistsData.worldView.videos}
-            loading={playlistsData.worldView.loading}
             error={playlistsData.worldView.error}
           />
         </div>

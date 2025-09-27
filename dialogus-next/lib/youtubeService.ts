@@ -13,6 +13,37 @@ export interface Video {
     prevPageToken: string | null;
     error: string | null;
   }
+
+  // Types - Ensure these are also defined or imported here if they don't exist
+interface YouTubeThumbnail {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface YouTubePlaylistItemSnippet {
+  resourceId: {
+    videoId: string;
+  };
+  title: string;
+  description: string;
+  publishedAt: string;
+  thumbnails: {
+    default?: YouTubeThumbnail;
+    medium?: YouTubeThumbnail;
+    high?: YouTubeThumbnail;
+    standard?: YouTubeThumbnail;
+    maxres?: YouTubeThumbnail;
+  };
+}
+
+export interface Video {
+  id: string;
+  title: string;
+  thumbnail: string;
+  description: string;
+  publishedAt: string;
+}
   
 export async function fetchYouTubeVideos(page = 1, token = ""): Promise<VideosResponse> {
     const apiKey = process.env.YOUTUBE_API_KEY;
@@ -134,6 +165,63 @@ export async function fetchLatestVideo(): Promise<{
     console.error("Latest video fetch error in youtubeService:", error);
     return {
       error: error instanceof Error ? error.message : "Failed to fetch latest video"
+    };
+  }
+}
+
+
+// New function for fetching playlist videos
+export async function fetchPlaylistVideos(
+  playlistId: string, 
+  maxResults: number = 10
+): Promise<{ videos: Video[]; error: string | null }> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+
+  if (!apiKey) {
+    return {
+      videos: [],
+      error: "Missing YouTube API Key configuration."
+    };
+  }
+
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${maxResults}&key=${apiKey}`,
+      {
+        next: { revalidate: 43200 } // Cache for 12 hours (43200 seconds)
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error.message || 'Failed to fetch playlist videos from YouTube API');
+    }
+
+    if (!data.items) {
+      return { videos: [], error: null };
+    }
+
+    // Transform the YouTube API response to our format
+    const videos: Video[] = data.items.map((item: { snippet: YouTubePlaylistItemSnippet }) => ({
+      id: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      thumbnail:
+        item.snippet.thumbnails.high?.url ||
+        item.snippet.thumbnails.medium?.url ||
+        item.snippet.thumbnails.default?.url ||
+        `https://i3.ytimg.com/vi/${item.snippet.resourceId.videoId}/maxresdefault.jpg`, // Fallback
+      publishedAt: item.snippet.publishedAt,
+    }));
+
+    return { videos, error: null };
+
+  } catch (error) {
+    console.error(`Error fetching playlist ${playlistId} in youtubeService:`, error);
+    return {
+      videos: [],
+      error: error instanceof Error ? error.message : 'Failed to fetch playlist videos'
     };
   }
 }
