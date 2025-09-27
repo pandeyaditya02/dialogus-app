@@ -18,8 +18,8 @@ interface Video {
 interface VideosGridProps {
   videos: Video[];
   currentPage: number;
-  nextPageToken?: string;
-  prevPageToken?: string;
+  nextPageToken: string | null;
+  prevPageToken: string | null;
   isLoading?: boolean;
 }
 

@@ -1,131 +1,66 @@
+// app/components/Hero.tsx
 import { Play, Star } from "lucide-react";
-import { useState, useEffect } from "react";
+import { fetchLatestVideo } from "@/lib/youtubeService"; // Import the function
+// No need for "use client", useState, useEffect here anymore
 
-const Hero = () => {
-  const [latestVideo, setLatestVideo] = useState<{
-    id?: string;
-    title?: string;
-    description?: string;
-  }>({});
-  const [isLoading, setIsLoading] = useState(true);
+// Configure the 40-second loop
+const LOOP_START = 0; // Start time in seconds
+const LOOP_DURATION = 40; // Duration in seconds
+const LOOP_END = LOOP_START + LOOP_DURATION;
+
+// Function to truncate description to 45 words
+const truncateDescription = (desc: string, wordLimit: number = 45) => {
+  if (!desc) return '';
   
-  // Configure the 40-second loop
-  const LOOP_START = 0; // Start time in seconds
-  const LOOP_DURATION = 40; // Duration in seconds
-  const LOOP_END = LOOP_START + LOOP_DURATION;
+  // Clean up description (remove URLs, normalize whitespace)
+  const cleanDesc = desc
+    .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
+    .replace(/\|/g, '') // Remove | character
+    .replace(/\n/g, ' ') // Replace line breaks with spaces
+    .replace(/\s{2,}/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  const words = cleanDesc.split(' ');
+  if (words.length <= wordLimit) {
+    return cleanDesc;
+  }
+  
+  return words.slice(0, wordLimit).join(' ') + '...';
+};
 
-  // Cache configuration
-  const CACHE_KEY = 'latestVideoCache';
-  const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+// Add a separate truncate function specifically for titles
+const truncateTitle = (title: string, wordLimit: number = 15) => {
+  if (!title) return '';
+  
+  const cleanTitle = title
+    .replace(/\n/g, ' ') 
+    .replace(/\s{2,}/g, ' ') 
+    .trim();
+    
+  const words = cleanTitle.split(' ');
+  if (words.length <= wordLimit) {
+    return cleanTitle;
+  }
+  
+  return words.slice(0, wordLimit).join(' ') + '...';
+};
 
-  // Function to truncate description to 25 words
-  const truncateDescription = (desc: string, wordLimit: number = 45) => {
-    if (!desc) return '';
-    
-    // Clean up description (remove URLs, normalize whitespace)
-    const cleanDesc = desc
-      .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
-      .replace(/\|/g, '') // Remove | character as requested
-      .replace(/\n/g, ' ') // Replace line breaks with spaces
-      .replace(/\s{2,}/g, ' ') // Replace multiple spaces with single space
-      .trim();
-    
-    const words = cleanDesc.split(' ');
-    if (words.length <= wordLimit) {
-      return cleanDesc;
-    }
-    
-    return words.slice(0, wordLimit).join(' ') + '...';
+const Hero = async () => { // Make the component async
+  const latestVideoResult = await fetchLatestVideo(); // Call the server-side function directly
+
+  // Fallback to hardcoded values if API fails
+  const fallbackVideo = {
+    id: "j7F5KNw5F20",
+    title: "Casteism in the Cockpit: Indigo's Dark Side Under the Radar",
+    description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
   };
 
-  // Add a separate truncate function specifically for titles
-  const truncateTitle = (title: string, wordLimit: number = 15) => {
-    if (!title) return '';
-    
-    const cleanTitle = title
-      .replace(/\n/g, ' ') 
-      .replace(/\s{2,}/g, ' ') 
-      .trim();
-      
-    const words = cleanTitle.split(' ');
-    if (words.length <= wordLimit) {
-      return cleanTitle;
-    }
-    
-    return words.slice(0, wordLimit).join(' ') + '...';
-  };
+  const videoData = latestVideoResult.error ? fallbackVideo : latestVideoResult;
 
-  useEffect(() => {
-    // Check if we have valid cached data
-    const getCachedData = () => {
-      try {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (!cached) return null;
-        
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_DURATION) {
-          return data;
-        }
-      } catch (error) {
-        console.error("Error reading cache:", error);
-      }
-      return null;
-    };
-
-    const fetchLatestVideo = async () => {
-      // Try to get from cache first
-      const cachedData = getCachedData();
-      if (cachedData) {
-        setLatestVideo(cachedData);
-        setIsLoading(false);
-        return; // Skip network request if we have valid cache
-      }
-
-      try {
-        const response = await fetch('/api/youtube/latest-video');
-        const data = await response.json();
-        
-        if (data.error) {
-          console.error("Error fetching latest video:", data.error);
-          // Fallback to hardcoded values if API fails
-          setLatestVideo({
-            id: "j7F5KNw5F20",
-            title: "Casteism in the Cockpit: Indigo's Dark Side Under the Radar",
-            description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
-          });
-        } else {
-          // Store in cache with timestamp
-          localStorage.setItem(CACHE_KEY, JSON.stringify({
-            data,
-            timestamp: Date.now()
-          }));
-          setLatestVideo(data);
-        }
-      } catch (error) {
-        console.error("Error fetching latest video:", error);
-        // If cache exists, use it; otherwise fallback to hardcoded values
-        const cachedData = getCachedData();
-        if (cachedData) {
-          setLatestVideo(cachedData);
-        } else {
-          setLatestVideo({
-            id: "j7F5KNw5F20",
-            title: "Casteism in the Cockpit: Indigo's Dark Side Under the Radar",
-            description: "Dalit Pilot vs IndiGo Airlines: Explosive casteism allegations revealed in this eye-opening episode. We dive deep into systemic discrimination in India's aviation sector and question the silence of those who claim to speak for Dalit rights."
-          });
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchLatestVideo();
-  }, []);
-
-  if (isLoading) {
+  if (!videoData.id) { // If even fallback doesn't provide an ID
     return (
       <section id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-        <div className="text-white">Loading latest video...</div>
+        <div className="text-white">Failed to load latest video. Please try again later.</div>
       </section>
     );
   }
@@ -137,10 +72,10 @@ const Hero = () => {
     >
       {/* 1. Video Background */}
       <div className="absolute top-0 left-0 w-full h-full">
-        {latestVideo.id && (
+        {videoData.id && (
           <iframe
             className="hero-video-bg"
-            src={`https://www.youtube.com/embed/${latestVideo.id}?autoplay=1&mute=1&loop=1&start=${LOOP_START}&end=${LOOP_END}&playlist=${latestVideo.id}&controls=0&showinfo=0&autohide=1&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${videoData.id}?autoplay=1&mute=1&loop=1&start=${LOOP_START}&end=${LOOP_END}&playlist=${videoData.id}&controls=0&showinfo=0&autohide=1&modestbranding=1`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
@@ -157,22 +92,22 @@ const Hero = () => {
         <div className="w-full md:w-4/5 lg:w-3/4 xl:w-2/3 pb-12 sm:pb-16 md:py-0">
           {/* Title */}
           <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight max-w-4xl hyphens-auto break-words">
-            {latestVideo.title 
-              ? truncateTitle(latestVideo.title) 
+            {videoData.title 
+              ? truncateTitle(videoData.title) 
               : "Latest Video"}
           </h1>
 
           {/* Description */}
           <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8 max-w-3xl hyphens-auto break-words">
-            {latestVideo.description 
-              ? truncateDescription(latestVideo.description) 
+            {videoData.description 
+              ? truncateDescription(videoData.description) 
               : "Loading description..."}
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
             <a
-              href={`https://www.youtube.com/watch?v=${latestVideo.id}`}
+              href={`https://www.youtube.com/watch?v=${videoData.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="primary-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-semibold py-3 px-6 rounded-full"

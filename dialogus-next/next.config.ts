@@ -17,19 +17,19 @@ const nextConfig = {
       },
     ],
   },
-  async headers() {
-    return [
-      {
-        source: '/videos/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=43200, stale-while-revalidate=7200',
-          }
-        ],
-      },
-    ];
-  },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: '/videos/:path*',
+  //       headers: [
+  //         {
+  //           key: 'Cache-Control',
+  //           value: 'public, max-age=43200, stale-while-revalidate=7200',
+  //         }
+  //       ],
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

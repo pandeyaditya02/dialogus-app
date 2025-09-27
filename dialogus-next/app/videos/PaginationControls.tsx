@@ -5,8 +5,8 @@ export default function PaginationControls({
   prevPageToken,
 }: {
   currentPage: number;
-  nextPageToken?: string;
-  prevPageToken?: string;
+  nextPageToken: string | null;
+  prevPageToken: string | null;
 }) {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center mt-16 gap-4">
