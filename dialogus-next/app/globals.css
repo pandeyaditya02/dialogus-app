@@ -119,7 +119,7 @@ body {
 
 .slider-arrow:hover {
   background: rgba(0, 0, 0, 0.8);
-  transform: translateY(-50%) scale(1.1);
+  transform: translateX(-30%) scale(1.1);
 }
 
 .video-card-thumbnail {
@@ -156,12 +156,14 @@ body {
 
 /* Productions Page Grid and Card Styles */
 .video-card-container {
-  aspect-ratio: 16 / 9;
+  /* aspect-ratio: 16 / 9; */
+  min-height: 320px;
 }
 
 .video-title-truncate {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -171,6 +173,7 @@ body {
 .video-synopsis-truncate {
   display: -webkit-box;
   -webkit-line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -316,6 +319,7 @@ body {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
