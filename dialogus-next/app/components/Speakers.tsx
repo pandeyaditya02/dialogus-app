@@ -45,16 +45,6 @@ const speakersData = [
     ],
   },
   {
-    name: "Nishmanya",
-    image: "/hosts/nishmanya_new.JPG",
-    delay: "400ms",
-    intro: [
-      "NISHMANYA is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
-      "He has a background in mainstream automotive journalism, with around half a decade of experience in print and news writing.",
-      "He now makes independent, enthusiast centric car content on YouTube, bringing his automotive expertise to Dialogus audiences."
-    ],
-  },
-  {
     name: "Preeta",
     image: "/hosts/preeta_new.png",
     delay: "500ms",
@@ -82,6 +72,16 @@ const speakersData = [
       "NEETA BUTALIA is a seasoned media professional with extensive experience in broadcast journalism and content creation.",
       "Known for her insightful analysis and engaging presentation style, she brings depth and clarity to complex topics.",
       "At Dialogus, Neeta contributes her expertise to create compelling narratives that resonate with diverse audiences across different platforms."
+    ],
+  },
+  {
+    name: "Nishmanya",
+    image: "/hosts/nishmanya_new.JPG",
+    delay: "400ms",
+    intro: [
+      "NISHMANYA is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
+      "He has a background in mainstream automotive journalism, with around half a decade of experience in print and news writing.",
+      "He now makes independent, enthusiast centric car content on YouTube, bringing his automotive expertise to Dialogus audiences."
     ],
   },
 ];

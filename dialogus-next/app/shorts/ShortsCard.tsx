@@ -1,16 +1,10 @@
-import Link from "next/link";
-import Image from "next/image";
-
-interface Short {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  publishedAt: string;
-}
+// app/shorts/ShortsCard.tsx
+import Image from 'next/image';
+import Link from "next/link"; // Ensure Link is imported
+import { Video } from '@/lib/youtubeService'; // Import Video type
 
 interface ShortsCardProps {
-  short: Short;
+  short: Video; // Renamed 'video' to 'short' and used Video type
   isPlaying: boolean;
   onPlay: () => void;
 }
@@ -87,3 +81,4 @@ export default function ShortsCard({ short, isPlaying, onPlay }: ShortsCardProps
     </div>
   );
 }
+

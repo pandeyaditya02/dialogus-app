@@ -5,28 +5,19 @@ import { useState, useEffect } from "react";
 import ShortsCard from "./ShortsCard";
 import ShortsSkeleton from "./ShortsSkeleton";
 import ShortsPaginationControls from "./ShortsPaginationControls";
-
-interface Short {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  publishedAt: string;
-}
+import { Video } from "@/lib/youtubeService";
 
 interface ShortsGridProps {
-  shorts: Short[];
+  shorts: Video[];
   currentPage: number;
-  nextPageToken?: string | null;
-  prevPageToken?: string | null;
+  totalPages: number;
   isLoading?: boolean;
 }
 
 export default function ShortsGrid({
   shorts,
   currentPage,
-  nextPageToken,
-  prevPageToken,
+  totalPages,
   isLoading = false,
 }: ShortsGridProps) {
   const [localLoading, setLocalLoading] = useState(true);
@@ -34,15 +25,12 @@ export default function ShortsGrid({
   
   // Handle the initial loading state
   useEffect(() => {
-    // If parent component passes isLoading prop, use that
     if (isLoading !== undefined) {
       setLocalLoading(isLoading);
     } else {
-      // Otherwise, implement a minimum loading time for better UX
       const timer = setTimeout(() => {
         setLocalLoading(false);
-      }, 300); // Minimum 300ms loading time
-      
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [isLoading]);
@@ -60,10 +48,9 @@ export default function ShortsGrid({
     return () => document.removeEventListener('click', handleClickOutside);
   }, [playing]);
 
-  // Show skeleton states while loading
   if (localLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
         {[...Array(12)].map((_, i) => (
           <ShortsSkeleton key={`skeleton-${i}`} />
         ))}
@@ -71,7 +58,6 @@ export default function ShortsGrid({
     );
   }
 
-  // Show "no shorts" message if no shorts and not loading
   if (shorts.length === 0) {
     return (
       <div className="text-center py-12">
@@ -95,9 +81,9 @@ export default function ShortsGrid({
 
       <ShortsPaginationControls
         currentPage={currentPage}
-        nextPageToken={nextPageToken}
-        prevPageToken={prevPageToken}
+        totalPages={totalPages}
       />
     </>
   );
 }
+

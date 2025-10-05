@@ -13,7 +13,8 @@ export default async function VideosPage({
   const { page = "1", token = "" } = await searchParams;
   const currentPage = Math.max(1, parseInt(page) || 1);
 
-  const { videos, nextPageToken, prevPageToken, error } = await fetchYouTubeVideos(
+  // Destructure the new totalPages property
+  const { videos, nextPageToken, prevPageToken, totalPages, error } = await fetchYouTubeVideos(
     currentPage,
     token
   );
@@ -49,7 +50,7 @@ export default async function VideosPage({
           </div>
 
           <Suspense
-            key={token}
+            key={token || 'initial'} // Use token or a fallback key
             fallback={
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
                 {[...Array(9)].map((_, i) => <VideoSkeleton key={i} />)}
@@ -61,6 +62,7 @@ export default async function VideosPage({
               currentPage={currentPage}
               nextPageToken={nextPageToken}
               prevPageToken={prevPageToken}
+              totalPages={totalPages} // Pass totalPages down
             />
           </Suspense>
         </div>
