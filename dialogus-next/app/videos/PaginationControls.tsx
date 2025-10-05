@@ -43,9 +43,9 @@ export default function PaginationControls({
     <div className="flex flex-col sm:flex-row justify-between items-center mt-16 gap-4">
       {/* --- PREVIOUS BUTTON --- */}
       <div className="w-full sm:w-auto">
-        {prevPageToken ? (
+        {currentPage > 1 ? (
           <Link
-            href={`/videos?page=${currentPage - 1}&token=${prevPageToken}`}
+            href={`/videos?page=${currentPage - 1}`}
             className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -67,26 +67,27 @@ export default function PaginationControls({
       <div className="hidden md:flex items-center gap-2">
         {totalPages > 5 && currentPage > 3 && (
             <>
-                <span className="px-4 py-2 text-gray-400">1</span>
+                <Link href="/videos?page=1" className="px-4 py-2 text-gray-400 hover:text-white transition-colors">1</Link>
                 <span className="text-gray-600">...</span>
             </>
         )}
         {pageNumbers.map(number => (
-           <span
+           <Link
              key={number}
-             className={`px-4 py-2 rounded-lg font-bold ${
+             href={`/videos?page=${number}`}
+             className={`px-4 py-2 rounded-lg font-bold transition-colors ${
                currentPage === number
-                 ? 'bg-fuchsia-700 text-white' // Changed color here
-                 : 'text-gray-400'
+                 ? 'bg-fuchsia-700 text-white'
+                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
              }`}
            >
              {number}
-           </span>
+           </Link>
         ))}
         {totalPages > 5 && currentPage < totalPages - 2 && (
             <>
                 <span className="text-gray-600">...</span>
-                <span className="px-4 py-2 text-gray-400">{totalPages}</span>
+                <Link href={`/videos?page=${totalPages}`} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">{totalPages}</Link>
             </>
         )}
       </div>
@@ -98,9 +99,9 @@ export default function PaginationControls({
 
       {/* --- NEXT BUTTON --- */}
       <div className="w-full sm:w-auto">
-        {nextPageToken ? (
+        {currentPage < totalPages ? (
           <Link
-            href={`/videos?page=${currentPage + 1}&token=${nextPageToken}`}
+            href={`/videos?page=${currentPage + 1}`}
             className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
           >
             Next
@@ -120,3 +121,4 @@ export default function PaginationControls({
     </div>
   );
 }
+
