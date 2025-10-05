@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     icons: {
         icon: "/NEW LOGO.png", // ✅ path relative to /public
     },
+    other: {
+        "google-adsense-account": "ca-pub-1871872152018500",
+    },
 };
 
 // Inter for body text
@@ -32,14 +35,14 @@ export default function RootLayout({
     return (
         <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
             <head>
+                <Adsense />
+
                 {/* Tailwind CSS CDN */}
                 <script src="https://cdn.tailwindcss.com"></script>
 
                 <link rel="preconnect" href="https://www.googleapis.com" />
                 <link rel="dns-prefetch" href="https://www.googleapis.com" />
-
-                <Adsense/>
-
+                
                 {/* Global Styles */}
                 <style>
                     {`
