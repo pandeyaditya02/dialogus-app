@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Adsense from "./components/Adsense";
 import { Inter, Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
@@ -36,6 +37,8 @@ export default function RootLayout({
 
                 <link rel="preconnect" href="https://www.googleapis.com" />
                 <link rel="dns-prefetch" href="https://www.googleapis.com" />
+
+                <Adsense/>
 
                 {/* Global Styles */}
                 <style>
