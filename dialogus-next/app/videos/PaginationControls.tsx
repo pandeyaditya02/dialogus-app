@@ -76,7 +76,7 @@ export default function PaginationControls({
              key={number}
              className={`px-4 py-2 rounded-lg font-bold ${
                currentPage === number
-                 ? 'bg-blue-600 text-white'
+                 ? 'bg-fuchsia-700 text-white' // Changed color here
                  : 'text-gray-400'
              }`}
            >

@@ -12,17 +12,21 @@ export default function ShortsPaginationControls({
   prevPageToken: string | null;
   totalPages: number;
 }) {
-  // Helper to generate a window of page numbers to display
+  // Helper to generate a range of numbers for pagination
   const generatePageNumbers = () => {
     if (totalPages <= 1) return [];
 
     const pages = [];
+    // Show a few pages around the current page
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
 
+    // Adjust window if near the start
     if (currentPage < 3) {
       endPage = Math.min(totalPages, 5);
     }
+
+    // Adjust window if near the end
     if (currentPage > totalPages - 3) {
       startPage = Math.max(1, totalPages - 4);
     }
@@ -50,7 +54,7 @@ export default function ShortsPaginationControls({
             Previous
           </Link>
         ) : (
-          <div className="flex items-center justify-center px-6 py-4 bg-gray-900 text-gray-600 rounded-xl w-full sm:w-auto font-medium text-lg cursor-not-allowed">
+          <div className="px-6 py-4 bg-gray-900 text-gray-600 rounded-xl w-full sm:w-auto font-medium text-lg cursor-not-allowed flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
@@ -59,7 +63,7 @@ export default function ShortsPaginationControls({
         )}
       </div>
 
-      {/* --- PAGE NUMBERS (Desktop) --- */}
+      {/* --- PAGE NUMBERS --- */}
       <div className="hidden md:flex items-center gap-2">
         {totalPages > 5 && currentPage > 3 && (
             <>
@@ -72,7 +76,7 @@ export default function ShortsPaginationControls({
              key={number}
              className={`px-4 py-2 rounded-lg font-bold ${
                currentPage === number
-                 ? 'bg-blue-600 text-white'
+                 ? 'bg-fuchsia-700 text-white' // Changed color here
                  : 'text-gray-400'
              }`}
            >
@@ -87,7 +91,7 @@ export default function ShortsPaginationControls({
         )}
       </div>
       
-       {/* --- PAGE INDICATOR (Mobile) --- */}
+       {/* Page indicator for mobile */}
        <div className="md:hidden text-gray-400 text-center text-lg font-medium">
          Page {currentPage} of {totalPages}
        </div>
@@ -105,7 +109,7 @@ export default function ShortsPaginationControls({
             </svg>
           </Link>
         ) : (
-          <div className="flex items-center justify-center px-6 py-4 bg-gray-900 text-gray-600 rounded-xl w-full sm:w-auto font-medium text-lg cursor-not-allowed">
+          <div className="px-6 py-4 bg-gray-900 text-gray-600 rounded-xl w-full sm:w-auto font-medium text-lg cursor-not-allowed flex items-center justify-center">
             Next
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -116,3 +120,4 @@ export default function ShortsPaginationControls({
     </div>
   );
 }
+
