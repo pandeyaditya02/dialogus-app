@@ -13,6 +13,7 @@ export interface VideosResponse {
   videos: Video[];
   nextPageToken: string | null;
   prevPageToken: string | null;
+  totalPages: number;
   error: string | null;
 }
 
@@ -52,101 +53,75 @@ interface YouTubeApiResponse {
   };
 }
 
-// === SHARED UTILITIES ===
-const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3/playlistItems';
-const DEFAULT_PLAYLIST_ID = 'PLiWELLjBSGHJegQWqDl9EImihEW0Rakzc';
-const DEFAULT_CACHE_DURATION = 43200; // 12 hours in seconds
+interface YouTubePlaylistDetails {
+  items: {
+    contentDetails: {
+      itemCount: number;
+    };
+  }[];
+}
 
-/**
- * Standardized YouTube API fetcher with consistent error handling
- * @param params Query parameters for the YouTube API
- * @param cacheConfig Cache revalidation settings
- * @returns Parsed API response or error
- */
-async function fetchYouTubeApi(
+
+// === SHARED UTILITIES ===
+const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
+const DEFAULT_PLAYLIST_ID = 'PLiWELLjBSGHJegQWqDl9EImihEW0Rakzc';
+const DEFAULT_CACHE_DURATION = 43200; // 12 hours
+const VIDEOS_PER_PAGE = 12;
+
+async function fetchYouTubeApi<T>(
+  endpoint: string,
   params: Record<string, string | number>,
   cacheConfig = { revalidate: DEFAULT_CACHE_DURATION }
-): Promise<YouTubeApiResponse> {
+): Promise<T> {
   try {
-    // Build query string safely
     const queryString = new URLSearchParams({
-      part: 'snippet',
       key: process.env.YOUTUBE_API_KEY || '',
-      ...params
+      ...params,
     }).toString();
-    
-    const url = `${YOUTUBE_BASE_URL}?${queryString}`;
-    
-    const response = await fetch(url, {
-      next: cacheConfig
-    });
 
-    return await response.json();
+    const url = `${YOUTUBE_API_BASE_URL}/${endpoint}?${queryString}`;
+    const response = await fetch(url, { next: cacheConfig });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error.message || `API Error: ${response.status}`);
+    }
+    return await response.json() as T;
   } catch (error) {
-    console.error('YouTube API network error:', error);
-    return {
-      error: {
-        message: 'Network error while connecting to YouTube API'
-      }
-    };
+    console.error(`YouTube API fetch error on endpoint '${endpoint}':`, error);
+    throw error;
   }
 }
 
-/**
- * Validates required environment variables
- */
 function validateEnv() {
   if (!process.env.YOUTUBE_API_KEY) {
-    throw new Error('YOUTUBE_API_KEY is not configured');
+    throw new Error('YOUTUBE_API_KEY is not configured in environment variables.');
   }
 }
 
-/**
- * Gets the playlist ID with proper validation
- * @param customId Optional custom playlist ID
- */
 function getPlaylistId(customId?: string): string {
-  if (customId) return customId;
-  if (process.env.YOUTUBE_PLAYLIST_ID) return process.env.YOUTUBE_PLAYLIST_ID;
-  return DEFAULT_PLAYLIST_ID;
+  return customId || process.env.YOUTUBE_PLAYLIST_ID || DEFAULT_PLAYLIST_ID;
 }
 
-/**
- * Safely gets the highest quality thumbnail available
- * @param thumbnails YouTube thumbnail object
- * @param videoId Video ID for fallback URL
- */
 function getThumbnailUrl(thumbnails: YouTubeSnippet['thumbnails'], videoId: string): string {
-  // Trim any extra spaces from URLs
   const highRes = thumbnails.high?.url?.trim();
   const mediumRes = thumbnails.medium?.url?.trim();
   const defaultRes = thumbnails.default?.url?.trim();
-  
-  return highRes || mediumRes || defaultRes || `https://i.ytimg.com/vi/${videoId}/default.jpg`;
+  return highRes || mediumRes || defaultRes || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 }
 
-/**
- * Transforms YouTube API response to our Video format
- * @param items YouTube API items
- */
 function transformVideos(items: YouTubePlaylistItem[]): Video[] {
   return items.map(item => ({
     id: item.snippet.resourceId.videoId,
     title: item.snippet.title,
     description: item.snippet.description,
     thumbnail: getThumbnailUrl(item.snippet.thumbnails, item.snippet.resourceId.videoId),
-    publishedAt: item.snippet.publishedAt
+    publishedAt: item.snippet.publishedAt,
   }));
 }
 
 // === PUBLIC API FUNCTIONS ===
 
-/**
- * Fetches a page of videos from a YouTube playlist
- * @param page Current page number
- * @param token Page token for pagination
- * @param playlistId Optional custom playlist ID
- */
 export async function fetchYouTubeVideos(
   page = 1,
   token = "",
@@ -154,47 +129,84 @@ export async function fetchYouTubeVideos(
 ): Promise<VideosResponse> {
   try {
     validateEnv();
-    
-    const params = {
-      playlistId: getPlaylistId(playlistId),
-      maxResults: 12,
-      pageToken: token
-    };
-    
-    const data = await fetchYouTubeApi(params);
-    
-    if (data.error) {
-      throw new Error(data.error.message || 'Failed to fetch videos from YouTube API');
+    const currentPlaylistId = getPlaylistId(playlistId);
+    let totalPages = 0;
+
+    try {
+      const playlistDetails = await fetchYouTubeApi<YouTubePlaylistDetails>('playlists', {
+        part: 'contentDetails',
+        id: currentPlaylistId,
+      });
+      if (playlistDetails?.items?.length > 0) {
+        const totalVideos = playlistDetails.items[0].contentDetails.itemCount;
+        totalPages = Math.ceil(totalVideos / VIDEOS_PER_PAGE);
+      }
+    } catch (error) {
+      console.error("Could not fetch playlist details for total count.", error);
     }
-    
-    if (!data.items || data.items.length === 0) {
-      return {
-        videos: [],
-        nextPageToken: null,
-        prevPageToken: null,
-        error: null
-      };
-    }
-    
+
+    const videosData = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', {
+      part: 'snippet', // Ensure part is specified
+      playlistId: currentPlaylistId,
+      maxResults: VIDEOS_PER_PAGE,
+      pageToken: token,
+    });
+
     return {
-      videos: transformVideos(data.items),
-      nextPageToken: data.nextPageToken || null,
-      prevPageToken: data.prevPageToken || null,
-      error: null
+      videos: videosData.items ? transformVideos(videosData.items) : [],
+      nextPageToken: videosData.nextPageToken || null,
+      prevPageToken: videosData.prevPageToken || null,
+      totalPages,
+      error: null,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'An unknown error occurred while fetching videos';
-      
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     console.error('YouTube videos fetch error:', errorMessage);
-    
+    return { videos: [], nextPageToken: null, prevPageToken: null, totalPages: 0, error: errorMessage };
+  }
+}
+
+export async function fetchYouTubeShorts(
+  page = 1,
+  token = "",
+  playlistId?: string
+): Promise<VideosResponse> {
+  try {
+    validateEnv();
+    const shortsPlaylistId = playlistId || process.env.YOUTUBE_SHORTS_PLAYLIST_ID || "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
+    let totalPages = 0;
+
+    try {
+      const playlistDetails = await fetchYouTubeApi<YouTubePlaylistDetails>('playlists', {
+        part: 'contentDetails',
+        id: shortsPlaylistId,
+      });
+      if (playlistDetails?.items?.length > 0) {
+        const totalVideos = playlistDetails.items[0].contentDetails.itemCount;
+        totalPages = Math.ceil(totalVideos / VIDEOS_PER_PAGE);
+      }
+    } catch (error) {
+      console.error("Could not fetch shorts playlist details.", error);
+    }
+
+    const shortsData = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', {
+      part: 'snippet', // Ensure part is specified
+      playlistId: shortsPlaylistId,
+      maxResults: VIDEOS_PER_PAGE,
+      pageToken: token,
+    });
+
     return {
-      videos: [],
-      nextPageToken: null,
-      prevPageToken: null,
-      error: errorMessage
+      videos: shortsData.items ? transformVideos(shortsData.items) : [],
+      nextPageToken: shortsData.nextPageToken || null,
+      prevPageToken: shortsData.prevPageToken || null,
+      totalPages,
+      error: null,
     };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    console.error('YouTube shorts fetch error:', errorMessage);
+    return { videos: [], nextPageToken: null, prevPageToken: null, totalPages: 0, error: errorMessage };
   }
 }
 
@@ -207,40 +219,26 @@ export async function fetchLatestVideo(
 ): Promise<{ id?: string; title?: string; description?: string; error?: string }> {
   try {
     validateEnv();
-    
     const params = {
+      part: 'snippet', // FIX: Ensure 'snippet' is requested
       playlistId: getPlaylistId(playlistId),
       maxResults: 1
     };
-    
-    const data = await fetchYouTubeApi(params);
-    
-    if (data.error) {
-      throw new Error(data.error.message || 'Failed to fetch latest video from YouTube API');
-    }
-    
+    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', params);
+
     if (!data.items || data.items.length === 0) {
-      return {
-        error: 'No videos found in the playlist'
-      };
+      return { error: 'No videos found in the playlist' };
     }
-    
     const item = data.items[0].snippet;
     return {
       id: item.resourceId.videoId,
       title: item.title,
-      description: item.description
+      description: item.description,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'Failed to fetch latest video';
-      
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch latest video';
     console.error('Latest video fetch error:', errorMessage);
-    
-    return {
-      error: errorMessage
-    };
+    return { error: errorMessage };
   }
 }
 
@@ -250,107 +248,29 @@ export async function fetchLatestVideo(
  * @param maxResults Maximum number of results to return
  */
 export async function fetchPlaylistVideos(
-  playlistId: string, 
+  playlistId: string,
   maxResults: number = 10
 ): Promise<{ videos: Video[]; error: string | null }> {
   try {
     validateEnv();
-    
     const params = {
+      part: 'snippet',
       playlistId,
-      maxResults
+      maxResults,
     };
-    
-    const data = await fetchYouTubeApi(params);
-    
-    if (data.error) {
-      throw new Error(data.error.message || 'Failed to fetch playlist videos from YouTube API');
-    }
-    
+    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', params);
+
     if (!data.items || data.items.length === 0) {
-      return {
-        videos: [],
-        error: null
-      };
+      return { videos: [], error: null };
     }
-    
     return {
       videos: transformVideos(data.items),
-      error: null
+      error: null,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'Failed to fetch playlist videos';
-      
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch playlist videos';
     console.error(`Error fetching playlist ${playlistId}:`, errorMessage);
-    
-    return {
-      videos: [],
-      error: errorMessage
-    };
+    return { videos: [], error: errorMessage };
   }
 }
 
-
-/**
- * Fetches a page of shorts from a YouTube shorts playlist
- * @param page Current page number
- * @param token Page token for pagination
- * @param playlistId Optional custom shorts playlist ID (defaults to the shorts playlist)
- */
-export async function fetchYouTubeShorts(
-  page = 1,
-  token = "",
-  playlistId?: string
-): Promise<VideosResponse> {
-  try {
-    validateEnv();
-    
-    // Default to shorts playlist ID if not provided
-    const shortsPlaylistId = playlistId || 
-                            process.env.YOUTUBE_SHORTS_PLAYLIST_ID || 
-                            "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
-    
-    const params = {
-      playlistId: shortsPlaylistId,
-      maxResults: 12,
-      pageToken: token
-    };
-    
-    const data = await fetchYouTubeApi(params);
-    
-    if (data.error) {
-      throw new Error(data.error.message || 'Failed to fetch shorts from YouTube API');
-    }
-    
-    if (!data.items || data.items.length === 0) {
-      return {
-        videos: [],
-        nextPageToken: null,
-        prevPageToken: null,
-        error: null
-      };
-    }
-    
-    return {
-      videos: transformVideos(data.items),
-      nextPageToken: data.nextPageToken || null,
-      prevPageToken: data.prevPageToken || null,
-      error: null
-    };
-  } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'An unknown error occurred while fetching shorts';
-      
-    console.error('YouTube shorts fetch error:', errorMessage);
-    
-    return {
-      videos: [],
-      nextPageToken: null,
-      prevPageToken: null,
-      error: errorMessage
-    };
-  }
-}

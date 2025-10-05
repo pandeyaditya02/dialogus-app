@@ -6,7 +6,6 @@ import VideoCard from "./VideoCard";
 import VideoSkeleton from "./VideoSkeleton";
 import PaginationControls from "./PaginationControls";
 
-
 interface Video {
   id: string;
   title: string;
@@ -20,50 +19,26 @@ interface VideosGridProps {
   currentPage: number;
   nextPageToken: string | null;
   prevPageToken: string | null;
+  totalPages: number; // Accept the new totalPages prop
   isLoading?: boolean;
 }
-
-// In VideosGrid.tsx
-// Add this useEffect to handle data fetching from the client side if needed
-// useEffect(() => {
-//   const fetchData = async () => {
-//     if (videos.length === 0) {
-//       setLocalLoading(true);
-//       try {
-//         const response = await fetch(`/api/videos?page=${currentPage}&token=${token}`);
-//         const data = await response.json();
-//         // Update with new data
-//       } catch (error) {
-//         console.error('Failed to fetch videos:', error);
-//       } finally {
-//         setLocalLoading(false);
-//       }
-//     }
-//   };
-
-//   // Only fetch if we're in client-side navigation
-//   if (typeof window !== 'undefined' && videos.length === 0) {
-//     fetchData();
-//   }
-// }, [currentPage, token, videos.length]);
 
 export default function VideosGrid({
   videos,
   currentPage,
   nextPageToken,
   prevPageToken,
+  totalPages, // Destructure the totalPages prop
   isLoading = false,
 }: VideosGridProps) {
   const [localLoading, setLocalLoading] = useState(true);
   const [playing, setPlaying] = useState<string | null>(null);
   
-  // Handle the initial loading state
+  // Handle the initial loading state for better UX
   useEffect(() => {
-    // If parent component passes isLoading prop, use that
     if (isLoading !== undefined) {
       setLocalLoading(isLoading);
     } else {
-      // Otherwise, implement a minimum loading time for better UX
       const timer = setTimeout(() => {
         setLocalLoading(false);
       }, 300); // Minimum 300ms loading time
@@ -72,7 +47,7 @@ export default function VideosGrid({
     }
   }, [isLoading]);
   
-  // Close video player when clicking outside
+  // Close video player when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -85,7 +60,7 @@ export default function VideosGrid({
     return () => document.removeEventListener('click', handleClickOutside);
   }, [playing]);
 
-  // Show skeleton states while loading
+  // Show skeleton loaders while data is being fetched
   if (localLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
@@ -96,11 +71,11 @@ export default function VideosGrid({
     );
   }
 
-  // Show "no videos" message if no videos and not loading
+  // Show a message if no videos are found
   if (videos.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-400 text-xl">No videos found</p>
+        <p className="text-gray-400 text-xl">No videos found.</p>
       </div>
     );
   }
@@ -122,8 +97,8 @@ export default function VideosGrid({
         currentPage={currentPage}
         nextPageToken={nextPageToken}
         prevPageToken={prevPageToken}
+        totalPages={totalPages} // Pass totalPages down to the controls
       />
     </>
   );
 }
-
