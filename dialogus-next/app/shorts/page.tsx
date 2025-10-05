@@ -4,17 +4,18 @@ import ShortsGrid from "./ShortsGrid";
 import ShortsSkeleton from "./ShortsSkeleton";
 import { fetchYouTubeShorts } from '@/lib/youtubeService';
 
+// --- REACT SERVER COMPONENT (OPTIMIZED) ---
 export default async function ShortsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; token?: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const { page = "1", token = "" } = await searchParams;
+  const { page = "1" } = await searchParams;
   const currentPage = Math.max(1, parseInt(page) || 1);
 
-  const { videos, nextPageToken, prevPageToken, totalPages, error } = await fetchYouTubeShorts(
-    currentPage,
-    token
+  // Fetch shorts using the page number
+  const { videos, totalPages, error } = await fetchYouTubeShorts(
+    currentPage
   );
 
   if (error) {
@@ -40,15 +41,15 @@ export default async function ShortsPage({
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="section-title text-3xl md:text-5xl mb-4 font-bold">
-              Catch The Action
+              Watch Our Shorts
             </h2>
             <p className="text-gray-400 text-lg md:text-xl">
-              Quick insights and highlights from the world of Dialogus
+              Quick insights and highlights from our shows.
             </p>
           </div>
 
           <Suspense
-            key={token || 'initial-shorts'}
+            key={currentPage} // Use currentPage as the key for Suspense
             fallback={
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-8">
                 {[...Array(12)].map((_, i) => <ShortsSkeleton key={i} />)}
@@ -56,10 +57,8 @@ export default async function ShortsPage({
             }
           >
             <ShortsGrid
-              videos={videos}
+              shorts={videos}
               currentPage={currentPage}
-              nextPageToken={nextPageToken}
-              prevPageToken={prevPageToken}
               totalPages={totalPages}
             />
           </Suspense>
@@ -68,3 +67,4 @@ export default async function ShortsPage({
     </main>
   );
 }
+

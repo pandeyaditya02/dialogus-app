@@ -3,13 +3,9 @@ import Link from "next/link";
 
 export default function ShortsPaginationControls({
   currentPage,
-  nextPageToken,
-  prevPageToken,
   totalPages,
 }: {
   currentPage: number;
-  nextPageToken: string | null;
-  prevPageToken: string | null;
   totalPages: number;
 }) {
   // Helper to generate a range of numbers for pagination
@@ -17,16 +13,13 @@ export default function ShortsPaginationControls({
     if (totalPages <= 1) return [];
 
     const pages = [];
-    // Show a few pages around the current page
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
 
-    // Adjust window if near the start
     if (currentPage < 3) {
       endPage = Math.min(totalPages, 5);
     }
 
-    // Adjust window if near the end
     if (currentPage > totalPages - 3) {
       startPage = Math.max(1, totalPages - 4);
     }
@@ -43,9 +36,9 @@ export default function ShortsPaginationControls({
     <div className="flex flex-col sm:flex-row justify-between items-center mt-16 gap-4">
       {/* --- PREVIOUS BUTTON --- */}
       <div className="w-full sm:w-auto">
-        {prevPageToken ? (
+        {currentPage > 1 ? (
           <Link
-            href={`/shorts?page=${currentPage - 1}&token=${prevPageToken}`}
+            href={`/shorts?page=${currentPage - 1}`}
             className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -67,26 +60,27 @@ export default function ShortsPaginationControls({
       <div className="hidden md:flex items-center gap-2">
         {totalPages > 5 && currentPage > 3 && (
             <>
-                <span className="px-4 py-2 text-gray-400">1</span>
+                <Link href="/shorts?page=1" className="px-4 py-2 text-gray-400 hover:text-white transition-colors">1</Link>
                 <span className="text-gray-600">...</span>
             </>
         )}
         {pageNumbers.map(number => (
-           <span
+           <Link
              key={number}
-             className={`px-4 py-2 rounded-lg font-bold ${
+             href={`/shorts?page=${number}`}
+             className={`px-4 py-2 rounded-lg font-bold transition-colors ${
                currentPage === number
-                 ? 'bg-fuchsia-700 text-white' // Changed color here
-                 : 'text-gray-400'
+                 ? 'bg-fuchsia-700 text-white'
+                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
              }`}
            >
              {number}
-           </span>
+           </Link>
         ))}
         {totalPages > 5 && currentPage < totalPages - 2 && (
             <>
                 <span className="text-gray-600">...</span>
-                <span className="px-4 py-2 text-gray-400">{totalPages}</span>
+                <Link href={`/shorts?page=${totalPages}`} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">{totalPages}</Link>
             </>
         )}
       </div>
@@ -98,9 +92,9 @@ export default function ShortsPaginationControls({
 
       {/* --- NEXT BUTTON --- */}
       <div className="w-full sm:w-auto">
-        {nextPageToken ? (
+        {currentPage < totalPages ? (
           <Link
-            href={`/shorts?page=${currentPage + 1}&token=${nextPageToken}`}
+            href={`/shorts?page=${currentPage + 1}`}
             className="flex items-center justify-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors w-full sm:w-auto font-medium text-lg"
           >
             Next
