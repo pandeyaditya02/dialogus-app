@@ -52,10 +52,7 @@ const Header = () => {
   return (
     <header
       id="header"
-      className={`dark-glass-nav fixed top-0 left-0 right-0 z-50 ${
-        isScrolled ? "scrolled" : ""
-      }`}
-    >
+      className={`dark-glass-nav backdrop-blur-[16px] fixed top-0 left-0 right-0 z-50 ${isScrolled ? "scrolled" : ""}`}>
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo and Tagline */}
         <div className="flex-shrink-0">
@@ -84,9 +81,8 @@ const Header = () => {
             <Link
               key={link.href}
               href={link.href}
-              className={`nav-link whitespace-nowrap ${
-                isActive(link.href) ? "active" : ""
-              }`}
+              className={`nav-link whitespace-nowrap ${isActive(link.href) ? "active" : ""
+                }`}
             >
               {link.label}
             </Link>
@@ -122,9 +118,8 @@ const Header = () => {
       {/* Mobile Menu */}
       <div
         id="mobile-menu"
-        className={`absolute top-0 left-0 right-0 pt-20 bg-black/90 backdrop-blur-md md:hidden transform transition-transform duration-300 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`absolute top-0 left-0 right-0 pt-20 bg-black/90 backdrop-blur-md md:hidden transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         style={{ minHeight: "100vh" }}
       >
         {navLinks.map((link) => (
@@ -132,9 +127,8 @@ const Header = () => {
             key={link.href}
             href={link.href}
             onClick={closeMenu}
-            className={`block text-gray-300 text-center text-lg py-4 px-4 hover:bg-gray-900 transition-colors duration-300 nav-link ${
-              isActive(link.href) ? "active" : ""
-            }`}
+            className={`block text-gray-300 text-center text-lg py-4 px-4 hover:bg-gray-900 transition-colors duration-300 nav-link ${isActive(link.href) ? "active" : ""
+              }`}
           >
             {link.label}
           </Link>
