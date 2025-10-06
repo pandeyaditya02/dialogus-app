@@ -75,11 +75,11 @@ const speakersData = [
     ],
   },
   {
-    name: "Nishmanya",
+    name: "Nishmanya Bahadur",
     image: "/hosts/nishmanya_new.JPG",
     delay: "400ms",
     intro: [
-      "NISHMANYA is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
+      "NISHMANYA BAHADUR is an avid automobile enthusiast with a deep love and passion for anything on 4 wheels! (and occasionally for 2 wheeler too).",
       "He has a background in mainstream automotive journalism, with around half a decade of experience in print and news writing.",
       "He now makes independent, enthusiast centric car content on YouTube, bringing his automotive expertise to Dialogus audiences."
     ],
