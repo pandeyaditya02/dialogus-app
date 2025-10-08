@@ -20,12 +20,18 @@ export const metadata: Metadata = {
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
+    display: "swap",
+    weight: ["300", "400", "500", "600", "700", "800"],
+    preload: true,
 });
 
 // Space Grotesk for headers / hero titles
 const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
     variable: "--font-space-grotesk",
+    display: "swap",
+    weight: ["300", "400", "500", "600", "700"],
+    preload: true,
 });
 export default function RootLayout({
     children,
@@ -258,7 +264,7 @@ export default function RootLayout({
           `}
                 </style>
             </head>
-            <body className="antialiased">
+            <body className="antialiased font-smooth">
                 <Header />
                 {children}
                 <Footer />
