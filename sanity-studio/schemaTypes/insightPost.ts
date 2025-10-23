@@ -46,6 +46,15 @@ export default defineType({
       to: [{type: 'author'}],
       validation: (Rule) => Rule.required(),
     }),
+
+    defineField({
+      name: 'coverImage',
+      title: 'Cover Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
     defineField({
       name: 'category',
       title: 'Category',
@@ -64,6 +73,7 @@ export default defineType({
     select: {
       title: 'title',
       author: 'author.name',
+      media: 'author.authorImage',
     },
     prepare(selection) {
       const {author} = selection

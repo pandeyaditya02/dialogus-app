@@ -21,10 +21,19 @@ export default defineType({
         maxLength: 96,
       },
     }),
+    defineField({
+      name: 'authorImage',
+      title: 'Author Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
   ],
   preview: {
     select: {
       title: 'name',
+      media: 'authorImage',
     },
   },
 })
