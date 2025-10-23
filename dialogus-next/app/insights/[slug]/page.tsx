@@ -157,86 +157,87 @@ export default async function BlogPost({ params }: Props) {
     <main className="pt-24 bg-black text-white min-h-screen">
       {/* Hero Section with Cover Image and Overlapping Text */}
       {/* Hero Section with Cover Image and Overlapping Text */}
-<section className="relative w-full min-h-[70vh] md:min-h-[85vh] flex items-end">
-  {/* Cover Image */}
-  {post.coverImage && (
-    <Image
-      src={urlFor(post.coverImage).url()}
-      alt={post.title}
-      fill
-      className="object-cover brightness-90"
-      priority
-    />
-  )}
+      <section className="relative w-full min-h-[70vh] md:min-h-[85vh] flex items-end">
+        {/* Cover Image */}
+        {post.coverImage && (
+          <Image
+            src={urlFor(post.coverImage).url()}
+            alt={post.title}
+            fill
+            className="object-cover brightness-90"
+            priority
+          />
+        )}
 
-  {/* Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-  {/* Text Content */}
-  <div className="relative z-10 w-full px-4 sm:px-6 md:px-10 pb-10 sm:pb-16">
-    <div className="max-w-4xl mx-auto text-center md:text-left">
-      {/* Category Badge */}
-      <div className="mb-3 sm:mb-4">
-        <span className="inline-block px-3 py-1 sm:px-4 sm:py-2 bg-fuchsia-500/30 text-fuchsia-300 rounded-full text-xs sm:text-sm font-semibold border border-fuchsia-500/40">
-          {post.categoryTitle}
-        </span>
-      </div>
+        {/* Text Content */}
+        <div className="relative z-10 w-full px-4 sm:px-6 md:px-10 pb-10 sm:pb-16">
+          <div className="max-w-4xl mx-auto text-center md:text-left">
+            {/* Category Badge */}
+            <div className="mb-3 sm:mb-4">
+              <span className="inline-block px-3 py-1 sm:px-4 sm:py-2 bg-fuchsia-500/30 text-fuchsia-300 rounded-full text-xs sm:text-sm font-semibold border border-fuchsia-500/40">
+                {post.categoryTitle}
+              </span>
+            </div>
 
-      {/* Title */}
-      <h1
-        className="
+            {/* Title */}
+            <h1
+              className="
           text-3xl sm:text-4xl md:text-6xl lg:text-7xl
           font-bold mb-4 sm:mb-6 leading-tight text-white drop-shadow-xl
         "
-      >
-        {post.title}
-      </h1>
+            >
+              {post.title}
+            </h1>
 
-      {/* Author + Meta Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center md:justify-start gap-4 text-gray-300 mb-4 sm:mb-6">
-        <div className="flex items-center gap-3">
-          {post.authorImage ? (
-            <Image
-              src={urlFor(post.authorImage).url()}
-              alt={post.authorName}
-              width={48}
-              height={48}
-              className="rounded-full border-2 border-fuchsia-400 shadow-md sm:w-14 sm:h-14"
-            />
-          ) : (
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-white/30 bg-fuchsia-500/30 flex items-center justify-center">
-              <span className="text-fuchsia-300 font-semibold text-lg sm:text-xl">
-                {post.authorName.charAt(0)}
-              </span>
+            {/* Author + Meta Info */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center md:justify-start gap-4 text-gray-300 mb-4 sm:mb-6">
+              <div className="flex items-center gap-3">
+                {post.authorImage ? (
+                  <Image
+                    src={urlFor(post.authorImage).url()}
+                    alt={post.authorName}
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl border-2 border-fuchsia-400 shadow-md object-cover"
+                  />
+                ) : (
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl border-2 border-white/30 bg-fuchsia-500/30 flex items-center justify-center">
+                    <span className="text-fuchsia-300 font-semibold text-lg sm:text-xl">
+                      {post.authorName.charAt(0)}
+                    </span>
+                  </div>
+                )}
+                <div>
+                  <p className="font-semibold text-white text-base sm:text-lg">{post.authorName}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">Author</p>
+                </div>
+              </div>
+
+              <div className="hidden sm:block h-8 w-px bg-gray-600" />
+
+              <div className="text-xs sm:text-sm text-center sm:text-left">
+                <p className="text-white font-medium">
+                  {new Date(post.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="text-gray-400">Published</p>
+              </div>
             </div>
-          )}
-          <div>
-            <p className="font-semibold text-white text-base sm:text-lg">{post.authorName}</p>
-            <p className="text-xs sm:text-sm text-gray-400">Author</p>
+
+
+            {/* Short Description */}
+            <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl sm:max-w-3xl mx-auto md:mx-0 drop-shadow-md">
+              {post.description}
+            </p>
           </div>
         </div>
-
-        <div className="hidden sm:block h-8 w-px bg-gray-600" />
-
-        <div className="text-xs sm:text-sm text-center sm:text-left">
-          <p className="text-white font-medium">
-            {new Date(post.date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <p className="text-gray-400">Published</p>
-        </div>
-      </div>
-
-      {/* Short Description */}
-      <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl sm:max-w-3xl mx-auto md:mx-0 drop-shadow-md">
-        {post.description}
-      </p>
-    </div>
-  </div>
-</section>
+      </section>
 
 
 
