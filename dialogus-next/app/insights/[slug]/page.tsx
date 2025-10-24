@@ -170,13 +170,13 @@ export default async function BlogPost({ params }: Props) {
         )}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
         {/* Text Content */}
         <div className="relative z-10 w-full px-4 sm:px-6 md:px-10 pb-10 sm:pb-16">
           <div className="max-w-4xl mx-auto text-center md:text-left">
             {/* Category Badge */}
-            <div className="mb-3 sm:mb-4">
+            <div className="mt-3 mb-3 sm:mb-4">
               <span className="inline-block px-3 py-1 sm:px-4 sm:py-2 bg-fuchsia-500/30 text-fuchsia-300 rounded-full text-xs sm:text-sm font-semibold border border-fuchsia-500/40">
                 {post.categoryTitle}
               </span>
@@ -193,7 +193,7 @@ export default async function BlogPost({ params }: Props) {
             </h1>
 
             {/* Author + Meta Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center md:justify-start gap-4 text-gray-300 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center md:justify-start gap-4 text-gray-300 mb-4 sm:mb-6 items-center">
               <div className="flex items-center gap-3">
                 {post.authorImage ? (
                   <Image
@@ -253,50 +253,52 @@ export default async function BlogPost({ params }: Props) {
       </article>
 
       {/* Related Articles */}
-      {relatedPosts.length > 0 && (
-        <section className="py-16 bg-gray-900/50">
-          <div className="container mx-auto px-6">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl font-bold text-white mb-12 text-center">
-                Related Articles
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {relatedPosts.map((relatedPost: any) => (
-                  <Link
-                    key={relatedPost.slug}
-                    href={`/insights/${relatedPost.slug}`}
-                    className="group block"
-                  >
-                    <article className="bg-gray-800/50 rounded-2xl overflow-hidden hover:bg-gray-800/70 transition-all duration-300 hover:transform hover:scale-105">
-                      <div className="p-6">
-                        <span className="inline-block px-3 py-1 bg-fuchsia-500/20 text-fuchsia-400 rounded-full text-xs font-semibold mb-3">
-                          {relatedPost.categoryTitle}
-                        </span>
-                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-fuchsia-400 transition-colors">
-                          {relatedPost.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                          {relatedPost.description}
-                        </p>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
-                            <span className="text-fuchsia-400 font-semibold text-xs">
-                              {relatedPost.authorName.charAt(0)}
-                            </span>
+      {
+        relatedPosts.length > 0 && (
+          <section className="py-16 bg-gray-900/50">
+            <div className="container mx-auto px-6">
+              <div className="max-w-6xl mx-auto">
+                <h2 className="text-3xl font-bold text-white mb-12 text-center">
+                  Related Articles
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {relatedPosts.map((relatedPost: any) => (
+                    <Link
+                      key={relatedPost.slug}
+                      href={`/insights/${relatedPost.slug}`}
+                      className="group block"
+                    >
+                      <article className="bg-gray-800/50 rounded-2xl overflow-hidden hover:bg-gray-800/70 transition-all duration-300 hover:transform hover:scale-105">
+                        <div className="p-6">
+                          <span className="inline-block px-3 py-1 bg-fuchsia-500/20 text-fuchsia-400 rounded-full text-xs font-semibold mb-3">
+                            {relatedPost.categoryTitle}
+                          </span>
+                          <h3 className="text-xl font-bold text-white mb-3 group-hover:text-fuchsia-400 transition-colors">
+                            {relatedPost.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                            {relatedPost.description}
+                          </p>
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <div className="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center">
+                              <span className="text-fuchsia-400 font-semibold text-xs">
+                                {relatedPost.authorName.charAt(0)}
+                              </span>
+                            </div>
+                            <span>{relatedPost.authorName}</span>
+                            <span>·</span>
+                            <span>{relatedPost.readTime}</span>
                           </div>
-                          <span>{relatedPost.authorName}</span>
-                          <span>·</span>
-                          <span>{relatedPost.readTime}</span>
                         </div>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
+                      </article>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
-    </main>
+          </section>
+        )
+      }
+    </main >
   );
 }
