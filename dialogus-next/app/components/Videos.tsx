@@ -186,7 +186,7 @@ const Videos = ({ initialData }: VideosProps) => {
             videos={playlistsData.exclusiveInterviews.videos}
             error={playlistsData.exclusiveInterviews.error}
           />
-          <VideoSlider 
+          {/* <VideoSlider 
             title={playlistsData.talkItOut.title}
             videos={playlistsData.talkItOut.videos}
             error={playlistsData.talkItOut.error}
@@ -195,7 +195,7 @@ const Videos = ({ initialData }: VideosProps) => {
             title={playlistsData.worldView.title}
             videos={playlistsData.worldView.videos}
             error={playlistsData.worldView.error}
-          />
+          /> */}
         </div>
       </div>
     </section>

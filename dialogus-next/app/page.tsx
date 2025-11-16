@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Hero from "./components/Hero";
+import VideosWrapper from "./components/VideosWrapper";
 import { groq } from "next-sanity";
 import { client } from "@/lib/sanity.client";
 
@@ -79,6 +80,7 @@ export default async function Home() {
   return (
     <main>
       <Hero />
+      <VideosWrapper />
       <section className="py-20 md:py-28 bg-black">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
