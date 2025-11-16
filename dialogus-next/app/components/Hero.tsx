@@ -1,32 +1,12 @@
 // app/components/Hero.tsx
 import { Play, Star } from "lucide-react";
 import { fetchLatestVideo } from "@/lib/youtubeService"; // Import the function
-// No need for "use client", useState, useEffect here anymore
+import ExpandableDescription from "./ExpandableDescription";
 
 // Configure the 40-second loop
 const LOOP_START = 0; // Start time in seconds
 const LOOP_DURATION = 40; // Duration in seconds
 const LOOP_END = LOOP_START + LOOP_DURATION;
-
-// Function to truncate description to 45 words
-const truncateDescription = (desc: string, wordLimit: number = 45) => {
-  if (!desc) return '';
-  
-  // Clean up description (remove URLs, normalize whitespace)
-  const cleanDesc = desc
-    .replace(/https?:\/\/[^\s]+/g, '') // Remove URLs
-    .replace(/\|/g, '') // Remove | character
-    .replace(/\n/g, ' ') // Replace line breaks with spaces
-    .replace(/\s{2,}/g, ' ') // Replace multiple spaces with single space
-    .trim();
-  
-  const words = cleanDesc.split(' ');
-  if (words.length <= wordLimit) {
-    return cleanDesc;
-  }
-  
-  return words.slice(0, wordLimit).join(' ') + '...';
-};
 
 // Add a separate truncate function specifically for titles
 const truncateTitle = (title: string, wordLimit: number = 15) => {
@@ -98,11 +78,9 @@ const Hero = async () => { // Make the component async
           </h1>
 
           {/* Description */}
-          <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-8 max-w-3xl hyphens-auto break-words">
-            {videoData.description 
-              ? truncateDescription(videoData.description) 
-              : "Loading description..."}
-          </p>
+          <div className="mb-8 max-w-3xl">
+            <ExpandableDescription description={videoData.description || ""} />
+          </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
