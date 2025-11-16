@@ -157,7 +157,7 @@ const Speakers = () => {
       <div className="container mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="section-title text-3xl md:text-4xl mb-4 fade-in">
-            The Voices Behind Dialogus
+           Voices Behind Dialogus
           </h2>
           <p
             className="text-gray-400 fade-in"

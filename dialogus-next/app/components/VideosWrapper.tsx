@@ -8,14 +8,14 @@ const PLAYLISTS = {
     id: "PLiWELLjBSGHIlwS-6Btqaze1rQko3otMP",
     title: "EXCLUSIVE INTERVIEWS"
   },
-  talkItOut: {
-    id: "PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS", 
-    title: "TALK IT OUT"
-  },
-  worldView: {
-    id: "PLiWELLjBSGHI3c517bIrA7kVx0leH6v-y",
-    title: "WORLD VIEW"
-  }
+  // talkItOut: {
+  //   id: "PLiWELLjBSGHKxeFFSKSKQBhunIhR_aIMS", 
+  //   title: "TALK IT OUT"
+  // },
+  // worldView: {
+  //   id: "PLiWELLjBSGHI3c517bIrA7kVx0leH6v-y",
+  //   title: "WORLD VIEW"
+  // }
 };
 
 export default async function VideosWrapper() {
