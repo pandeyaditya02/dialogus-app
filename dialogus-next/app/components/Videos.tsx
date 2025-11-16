@@ -85,7 +85,7 @@ const VideoSlider = ({
 
   return (
     <div className="fade-in slider-wrapper relative">
-      <h3 className="text-xl md:text-2xl font-bold text-white mb-4">{title}</h3>
+      <h3 className="text-2xl md:text-4xl font-bold text-white mb-4">{title}</h3>
       
       {error ? (
         <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
@@ -172,13 +172,13 @@ const Videos = ({ initialData }: VideosProps) => {
   }, []);
 
   return (
-    <section id="videos" className="py-20 md:py-28 bg-black/50">
+    <section id="videos" className="py-8 md:py-12 bg-black/50 ">
       <div className="container mx-auto px-6">
-        <div className="text-left max-w-2xl mb-12">
-          {/* <h2 className="section-title text-3xl md:text-4xl fade-in">
+        {/* <div className="text-left max-w-2xl mb-12">
+          <h2 className="section-title text-3xl md:text-4xl fade-in">
             Latest Videos
-          </h2> */}
-        </div>
+          </h2>
+        </div> */}
 
         <div className="space-y-16">
           <VideoSlider 
