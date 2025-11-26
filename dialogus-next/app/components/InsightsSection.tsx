@@ -12,7 +12,7 @@ interface InsightPost {
     date: string;
     authorName: string;
     categoryTitle: string;
-    mainImage: any;
+    coverImage: any;
 }
 
 const query = groq`*[_type == "insightPost"] | order(date desc) [0...13] {
@@ -23,7 +23,7 @@ const query = groq`*[_type == "insightPost"] | order(date desc) [0...13] {
   date,
   "authorName": author->name,
   "categoryTitle": category->title,
-  mainImage
+  coverImage
 }`;
 
 const FeaturedArticle = ({ post }: { post: InsightPost }) => (
@@ -33,9 +33,9 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
     >
         <div className="grid md:grid-cols-2 gap-6">
             <div className="relative h-64 md:h-full min-h-[300px]">
-                {post.mainImage ? (
+                {post.coverImage ? (
                     <Image
-                        src={urlFor(post.mainImage).url()}
+                        src={urlFor(post.coverImage).url()}
                         alt={post.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -73,9 +73,9 @@ const GridArticle = ({ post }: { post: InsightPost }) => (
         className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col group h-full"
     >
         <div className="relative h-48 w-full overflow-hidden">
-            {post.mainImage ? (
+            {post.coverImage ? (
                 <Image
-                    src={urlFor(post.mainImage).url()}
+                    src={urlFor(post.coverImage).url()}
                     alt={post.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
