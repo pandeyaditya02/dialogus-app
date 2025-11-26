@@ -1,32 +1,14 @@
 // app/components/Hero.tsx
-import { Play, Star } from "lucide-react";
-import { fetchLatestVideo } from "@/lib/youtubeService"; // Import the function
-import ExpandableDescription from "./ExpandableDescription";
+import { fetchLatestVideo } from "@/lib/youtubeService";
+import HeroContent from "./HeroContent";
 
 // Configure the 40-second loop
 const LOOP_START = 0; // Start time in seconds
 const LOOP_DURATION = 40; // Duration in seconds
 const LOOP_END = LOOP_START + LOOP_DURATION;
 
-// Add a separate truncate function specifically for titles
-const truncateTitle = (title: string, wordLimit: number = 15) => {
-  if (!title) return '';
-  
-  const cleanTitle = title
-    .replace(/\n/g, ' ') 
-    .replace(/\s{2,}/g, ' ') 
-    .trim();
-    
-  const words = cleanTitle.split(' ');
-  if (words.length <= wordLimit) {
-    return cleanTitle;
-  }
-  
-  return words.slice(0, wordLimit).join(' ') + '...';
-};
-
-const Hero = async () => { // Make the component async
-  const latestVideoResult = await fetchLatestVideo(); // Call the server-side function directly
+const Hero = async () => {
+  const latestVideoResult = await fetchLatestVideo();
 
   // Fallback to hardcoded values if API fails
   const fallbackVideo = {
@@ -37,7 +19,7 @@ const Hero = async () => { // Make the component async
 
   const videoData = latestVideoResult.error ? fallbackVideo : latestVideoResult;
 
-  if (!videoData.id) { // If even fallback doesn't provide an ID
+  if (!videoData.id) {
     return (
       <section id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         <div className="text-white">Failed to load latest video. Please try again later.</div>
@@ -68,43 +50,13 @@ const Hero = async () => { // Make the component async
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/60 md:to-transparent z-10"></div>
 
       {/* 3. Content */}
-      <div className="relative z-20 container mx-auto px-4 sm:px-6 w-full text-center md:text-left">
-        <div className="w-full md:w-4/5 lg:w-3/4 xl:w-2/3 pb-12 sm:pb-16 md:py-0">
-          {/* Title */}
-          <h1 className="hero-title text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight max-w-4xl hyphens-auto break-words">
-            {videoData.title 
-              ? truncateTitle(videoData.title) 
-              : "Latest Video"}
-          </h1>
-
-          {/* Description */}
-          <div className="mb-8 max-w-3xl">
-            <ExpandableDescription description={videoData.description || ""} />
-          </div>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
-            <a
-              href={`https://www.youtube.com/watch?v=${videoData.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="primary-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-semibold py-3 px-6 rounded-full"
-            >
-              <Play size={20} fill="currentColor" />
-              Watch Now
-            </a>
-            <a
-              href="https://www.youtube.com/@Dialogusdigital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="subscribe-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full"
-            >
-              <Star size={20} className="text-yellow-400" fill="currentColor" />
-              Subscribe to Dialogus
-            </a>
-          </div>
-        </div>
-      </div>
+      <HeroContent
+        videoData={{
+          id: videoData.id!,
+          title: videoData.title || "",
+          description: videoData.description || ""
+        }}
+      />
     </section>
   );
 };
