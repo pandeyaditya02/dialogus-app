@@ -1,10 +1,11 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { groq } from "next-sanity";
-import { client } from "@/lib/sanity.client";
+import { client, urlFor } from "@/lib/sanity.client";
 import InsightsPaginationControls from "./InsightsPaginationControls";
 
-const POSTS_PER_PAGE = 9;
+const POSTS_PER_PAGE = 12;
 
 const query = groq`*[_type == "insightPost"] | order(date desc) {
   _id,
@@ -14,7 +15,8 @@ const query = groq`*[_type == "insightPost"] | order(date desc) {
   date,
   body,
   "authorName": author->name,
-  "categoryTitle": category->title
+  "categoryTitle": category->title,
+  mainImage
 }`;
 
 export interface InsightPost {
@@ -27,6 +29,7 @@ export interface InsightPost {
   authorName: string;
   categoryTitle: string;
   readTime: string;
+  mainImage: any;
 }
 
 const calculateReadTime = (body: any[]): string => {
@@ -36,22 +39,40 @@ const calculateReadTime = (body: any[]): string => {
 const FeaturedArticle = ({ post }: { post: InsightPost }) => (
   <Link
     href={`/insights/${post.slug}`}
-    className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-gray-900"
+    className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-gray-900 group"
   >
-    <div className="p-6 space-y-3">
-      <span className="text-sm text-fuchsia-400 font-semibold uppercase">
-        {post.categoryTitle}
-      </span>
-      <h2 className="text-3xl font-bold text-white">{post.title}</h2>
-      <p className="text-gray-400">{post.description}</p>
-      <div className="flex items-center gap-3 text-sm text-gray-500 mt-3">
-        <span className="text-white">{post.authorName}</span>
-        <span>·</span>
-        <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+    <div className="grid md:grid-cols-2 gap-6">
+      <div className="relative h-64 md:h-full min-h-[300px]">
+        {post.mainImage ? (
+          <Image
+            src={urlFor(post.mainImage).url()}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+            <span className="text-gray-600 text-lg font-semibold">No Image</span>
+          </div>
+        )}
       </div>
-      <span className="inline-block mt-3 font-semibold text-fuchsia-400 text-sm">
-        Read Article →
-      </span>
+      <div className="p-6 md:p-8 flex flex-col justify-center space-y-4">
+        <span className="text-sm text-fuchsia-400 font-semibold uppercase tracking-wider">
+          {post.categoryTitle}
+        </span>
+        <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight group-hover:text-fuchsia-400 transition-colors">
+          {post.title}
+        </h2>
+        <p className="text-gray-400 text-lg line-clamp-3">{post.description}</p>
+        <div className="flex items-center gap-3 text-sm text-gray-500 pt-2">
+          <span className="text-white font-medium">{post.authorName}</span>
+          <span>·</span>
+          <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        </div>
+        <span className="inline-flex items-center mt-4 font-semibold text-fuchsia-400 text-sm group-hover:translate-x-2 transition-transform">
+          Read Article →
+        </span>
+      </div>
     </div>
   </Link>
 );
@@ -59,15 +80,31 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
 const GridArticle = ({ post }: { post: InsightPost }) => (
   <Link
     href={`/insights/${post.slug}`}
-    className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col"
+    className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col group h-full"
   >
-    <div className="p-5 flex flex-col flex-grow space-y-2">
-      <span className="text-sm text-fuchsia-400 font-semibold uppercase">
+    <div className="relative h-48 w-full overflow-hidden">
+      {post.mainImage ? (
+        <Image
+          src={urlFor(post.mainImage).url()}
+          alt={post.title}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+          <span className="text-gray-600 font-semibold">No Image</span>
+        </div>
+      )}
+    </div>
+    <div className="p-5 flex flex-col flex-grow space-y-3">
+      <span className="text-xs text-fuchsia-400 font-semibold uppercase tracking-wider">
         {post.categoryTitle}
       </span>
-      <h3 className="font-bold text-xl text-white">{post.title}</h3>
-      <p className="text-gray-400 text-sm flex-grow">{post.description}</p>
-      <div className="flex items-center gap-2 text-xs text-gray-500">
+      <h3 className="font-bold text-xl text-white leading-snug group-hover:text-fuchsia-400 transition-colors line-clamp-2">
+        {post.title}
+      </h3>
+      <p className="text-gray-400 text-sm flex-grow line-clamp-3">{post.description}</p>
+      <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 mt-auto">
         <span className="text-white">{post.authorName}</span>
         <span>·</span>
         <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</span>
