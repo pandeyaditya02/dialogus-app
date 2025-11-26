@@ -20,7 +20,7 @@ interface InsightPostDetail {
   categoryTitle: string;
   categoryId: string;
   readTime: string;
-  coverImage?: any; // <-- Added new field
+  coverImage: any; // <-- Added new field
 }
 
 type Props = {
