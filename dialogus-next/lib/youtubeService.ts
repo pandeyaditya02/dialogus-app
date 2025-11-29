@@ -29,7 +29,7 @@ interface YouTubeSnippet {
     videoId: string;
   };
   title: string;
-  description:string;
+  description: string;
   publishedAt: string;
   thumbnails: {
     default?: YouTubeThumbnail;
@@ -69,7 +69,7 @@ interface YouTubePlaylistDetails {
 // === SHARED UTILITIES ===
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 const DEFAULT_PLAYLIST_ID = 'PLiWELLjBSGHJegQWqDl9EImihEW0Rakzc';
-const DEFAULT_CACHE_DURATION = 43200; // 12 hours in seconds
+const DEFAULT_CACHE_DURATION = 3600; // 1 hour in seconds
 const VIDEOS_PER_PAGE = 12;
 
 /**
@@ -107,16 +107,16 @@ async function fetchYouTubeApi<T>(
       key: process.env.YOUTUBE_API_KEY || '',
       ...params,
     }).toString();
-    
+
     const url = `${YOUTUBE_API_BASE_URL}/${endpoint}?${queryString}`;
-    
+
     const response = await fetch(url, {
       next: cacheConfig,
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error.message || `API error: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.error.message || `API error: ${response.statusText}`);
     }
 
     return await response.json() as T;
@@ -193,7 +193,7 @@ export async function fetchYouTubeVideos(
   try {
     validateEnv();
     const currentPlaylistId = getPlaylistId(playlistId);
-    
+
     // Fetch the cached list of all page tokens
     const allTokens = await fetchAllPageTokens(currentPlaylistId);
     const totalPages = allTokens.length;
@@ -209,11 +209,11 @@ export async function fetchYouTubeVideos(
       maxResults: VIDEOS_PER_PAGE,
       pageToken: pageToken || '',
     });
-    
+
     if (videosData.error) {
       throw new Error(videosData.error.message || 'Failed to fetch videos');
     }
-    
+
     return {
       videos: transformVideos(videosData.items || []),
       nextPageToken: videosData.nextPageToken || null,
@@ -243,9 +243,9 @@ export async function fetchYouTubeShorts(
   page = 1,
   playlistId?: string
 ): Promise<VideosResponse> {
-  const shortsPlaylistId = playlistId || 
-                           process.env.YOUTUBE_SHORTS_PLAYLIST_ID || 
-                           "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
+  const shortsPlaylistId = playlistId ||
+    process.env.YOUTUBE_SHORTS_PLAYLIST_ID ||
+    "PLiWELLjBSGHI-W3KiwxHlOwaa9awYoq3H";
   // Re-use the same logic as fetchYouTubeVideos, just with the shorts playlist
   return fetchYouTubeVideos(page, shortsPlaylistId);
 }
@@ -259,7 +259,7 @@ export async function fetchLatestVideo(
 ): Promise<{ id?: string; title?: string; description?: string; error?: string }> {
   try {
     validateEnv();
-    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems',{
+    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', {
       part: 'snippet',
       playlistId: getPlaylistId(playlistId),
       maxResults: 1
@@ -268,13 +268,13 @@ export async function fetchLatestVideo(
     if (data.error) {
       throw new Error(data.error.message || 'Failed to fetch latest video from YouTube API');
     }
-    
+
     if (!data.items || data.items.length === 0) {
       return {
         error: 'No videos found in the playlist'
       };
     }
-    
+
     const item = data.items[0].snippet;
     return {
       id: item.resourceId.videoId,
@@ -282,31 +282,31 @@ export async function fetchLatestVideo(
       description: item.description
     };
   } catch (error) {
-     const errorMessage = error instanceof Error ? error.message : 'Failed to fetch latest video';
-     console.error('Latest video fetch error:', errorMessage);
-     return { error: errorMessage };
-   }
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch latest video';
+    console.error('Latest video fetch error:', errorMessage);
+    return { error: errorMessage };
+  }
 }
 
 /**
  * Fetches videos from a specific YouTube playlist
  */
 export async function fetchPlaylistVideos(
-  playlistId: string, 
+  playlistId: string,
   maxResults: number = 10
 ): Promise<{ videos: Video[]; error: string | null }> {
   try {
     validateEnv();
-    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems',{
+    const data = await fetchYouTubeApi<YouTubeApiResponse>('playlistItems', {
       part: 'snippet',
       playlistId,
       maxResults
     });
-    
+
     if (data.error) {
       throw new Error(data.error.message || 'Failed to fetch playlist videos');
     }
-    
+
     return {
       videos: transformVideos(data.items || []),
       error: null
