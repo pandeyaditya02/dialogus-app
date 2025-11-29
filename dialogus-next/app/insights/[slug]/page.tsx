@@ -7,6 +7,7 @@ import { groq } from "next-sanity";
 import { client, urlFor } from "@/lib/sanity.client";
 import { PortableText } from "@portabletext/react";
 import { type PortableTextBlock } from "sanity";
+import ShareButton from "@/app/components/ShareButton";
 
 // --- TypeScript Interfaces ---
 interface InsightPostDetail {
@@ -227,6 +228,15 @@ export default async function BlogPost({ params }: Props) {
                   })}
                 </p>
                 <p className="text-gray-400">Published</p>
+              </div>
+
+              <div className="hidden sm:block h-8 w-px bg-gray-600" />
+
+              <div className="flex items-center">
+                <ShareButton
+                  title={post.title}
+                  text={post.description}
+                />
               </div>
             </div>
 
