@@ -17,10 +17,10 @@ interface VideoCardProps {
 
 export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) {
   return (
-    <div className="group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
-      <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-black">
+    <div className="group relative rounded-2xl overflow-hidden bg-white border border-gray-200 transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
+      <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-gray-100">
         <div
-          className="w-full h-full flex items-center justify-center bg-gray-900 cursor-pointer"
+          className="w-full h-full flex items-center justify-center bg-gray-100 cursor-pointer"
           onClick={onPlay}
         >
           <Image
@@ -32,8 +32,8 @@ export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) 
             loading="lazy"
             unoptimized // YouTube images are already optimized
           />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center transform hover:scale-110 transition-transform">
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center transform hover:scale-110 transition-transform shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-white ml-1"
@@ -63,7 +63,7 @@ export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) 
         )}
       </div>
       <div className="px-5 pb-7">
-        <h3 className="text-white font-bold text-xl mb-3 line-clamp-2 hover:underline cursor-pointer transition-colors">
+        <h3 className="text-gray-900 font-bold text-xl mb-3 line-clamp-2 hover:underline cursor-pointer transition-colors">
           <Link
             href={`https://www.youtube.com/watch?v=${video.id}`}
             target="_blank"
@@ -73,7 +73,7 @@ export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) 
             {video.title}
           </Link>
         </h3>
-        <p className="text-gray-300 text-base line-clamp-3">
+        <p className="text-gray-600 text-base line-clamp-3">
           {video.description.substring(0, 150)}{video.description.length > 150 ? "..." : ""}
         </p>
       </div>

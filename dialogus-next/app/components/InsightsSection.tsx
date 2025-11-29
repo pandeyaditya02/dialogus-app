@@ -29,7 +29,7 @@ const query = groq`*[_type == "insightPost"] | order(date desc) [0...13] {
 const FeaturedArticle = ({ post }: { post: InsightPost }) => (
     <Link
         href={`/insights/${post.slug}`}
-        className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-gray-900 group"
+        className="block rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all bg-white group border border-gray-200"
     >
         <div className="grid md:grid-cols-2 gap-6">
             <div className="relative h-64 md:h-full min-h-[300px]">
@@ -41,25 +41,25 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                        <span className="text-gray-600 text-lg font-semibold">No Image</span>
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-400 text-lg font-semibold">No Image</span>
                     </div>
                 )}
             </div>
             <div className="p-6 md:p-8 flex flex-col justify-center space-y-4">
-                <span className="text-sm text-fuchsia-400 font-semibold uppercase tracking-wider">
+                <span className="text-sm text-fuchsia-600 font-semibold uppercase tracking-wider">
                     {post.categoryTitle}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight group-hover:text-fuchsia-400 transition-colors">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight group-hover:text-fuchsia-600 transition-colors">
                     {post.title}
                 </h2>
-                <p className="text-gray-400 text-lg line-clamp-3">{post.description}</p>
+                <p className="text-gray-600 text-lg line-clamp-3">{post.description}</p>
                 <div className="flex items-center gap-3 text-sm text-gray-500 pt-2">
-                    <span className="text-white font-medium">{post.authorName}</span>
+                    <span className="text-gray-900 font-medium">{post.authorName}</span>
                     <span>·</span>
                     <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
-                <span className="inline-flex items-center mt-4 font-semibold text-fuchsia-400 text-sm group-hover:translate-x-2 transition-transform">
+                <span className="inline-flex items-center mt-4 font-semibold text-fuchsia-600 text-sm group-hover:translate-x-2 transition-transform">
                     Read Article →
                 </span>
             </div>
@@ -70,7 +70,7 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
 const GridArticle = ({ post }: { post: InsightPost }) => (
     <Link
         href={`/insights/${post.slug}`}
-        className="rounded-2xl overflow-hidden bg-gray-900 hover:shadow-lg transition-all flex flex-col group h-full"
+        className="rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all flex flex-col group h-full border border-gray-200"
     >
         <div className="relative h-48 w-full overflow-hidden">
             {post.coverImage ? (
@@ -81,21 +81,21 @@ const GridArticle = ({ post }: { post: InsightPost }) => (
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             ) : (
-                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                    <span className="text-gray-600 font-semibold">No Image</span>
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <span className="text-gray-400 font-semibold">No Image</span>
                 </div>
             )}
         </div>
         <div className="p-5 flex flex-col flex-grow space-y-3">
-            <span className="text-xs text-fuchsia-400 font-semibold uppercase tracking-wider">
+            <span className="text-xs text-fuchsia-600 font-semibold uppercase tracking-wider">
                 {post.categoryTitle}
             </span>
-            <h3 className="font-bold text-xl text-white leading-snug group-hover:text-fuchsia-400 transition-colors line-clamp-2">
+            <h3 className="font-bold text-xl text-gray-900 leading-snug group-hover:text-fuchsia-600 transition-colors line-clamp-2">
                 {post.title}
             </h3>
-            <p className="text-gray-400 text-sm flex-grow line-clamp-3">{post.description}</p>
+            <p className="text-gray-600 text-sm flex-grow line-clamp-3">{post.description}</p>
             <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 mt-auto">
-                <span className="text-white">{post.authorName}</span>
+                <span className="text-gray-900">{post.authorName}</span>
                 <span>·</span>
                 <span>{new Date(post.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</span>
             </div>
@@ -109,11 +109,11 @@ export default async function InsightsSection() {
     const rest = posts.slice(1);
 
     return (
-        <section className="py-20 md:py-28 bg-black">
+        <section className="py-20 md:py-28">
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="section-title text-4xl md:text-5xl mb-4 font-bold">Dialogus Insights</h2>
-                    <p className="text-gray-400">Explore our latest analysis on politics, business, and culture.</p>
+                    <p className="text-gray-600">Explore our latest analysis on politics, business, and culture.</p>
                 </div>
                 {featured && (
                     <div className="mb-16">

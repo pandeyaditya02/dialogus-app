@@ -38,11 +38,10 @@ const InsightsPaginationControls = ({ totalPages }: Props) => {
         {/* Left Arrow */}
         <Link
           href={`/insights?page=${currentPage - 1}`}
-          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 ${
-            currentPage === 1
-              ? 'bg-gray-700 text-gray-500 pointer-events-none'
-              : 'bg-gray-800 hover:bg-fuchsia-500 text-white'
-          }`}
+          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 border ${currentPage === 1
+              ? 'bg-gray-100 text-gray-300 border-gray-200 pointer-events-none'
+              : 'bg-white hover:bg-fuchsia-600 hover:text-white hover:border-fuchsia-600 text-gray-600 border-gray-200'
+            }`}
           aria-disabled={currentPage === 1}
         >
           <span className="sr-only">Previous Page</span>
@@ -57,11 +56,10 @@ const InsightsPaginationControls = ({ totalPages }: Props) => {
             <Link
               key={p}
               href={`/insights?page=${p}`}
-              className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-all duration-300 ${
-                currentPage === p
-                  ? 'bg-fuchsia-500 text-white scale-110 shadow-lg'
-                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-              }`}
+              className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-all duration-300 ${currentPage === p
+                  ? 'bg-fuchsia-600 text-white scale-110 shadow-md'
+                  : 'bg-white hover:bg-gray-100 text-gray-600 border border-gray-200'
+                }`}
               aria-current={currentPage === p ? 'page' : undefined}
             >
               {p}
@@ -72,11 +70,10 @@ const InsightsPaginationControls = ({ totalPages }: Props) => {
         {/* Right Arrow */}
         <Link
           href={`/insights?page=${currentPage + 1}`}
-          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 ${
-            currentPage === totalPages
-              ? 'bg-gray-700 text-gray-500 pointer-events-none'
-              : 'bg-gray-800 hover:bg-fuchsia-500 text-white'
-          }`}
+          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 border ${currentPage === totalPages
+              ? 'bg-gray-100 text-gray-300 border-gray-200 pointer-events-none'
+              : 'bg-white hover:bg-fuchsia-600 hover:text-white hover:border-fuchsia-600 text-gray-600 border-gray-200'
+            }`}
           aria-disabled={currentPage === totalPages}
         >
           <span className="sr-only">Next Page</span>

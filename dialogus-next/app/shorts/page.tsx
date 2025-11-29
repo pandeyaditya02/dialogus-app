@@ -37,13 +37,13 @@ export default async function ShortsPage({
 
   return (
     <main className="pt-24">
-      <section id="shorts" className="py-20 md:py-28 bg-black">
+      <section id="shorts" className="py-20 md:py-28">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="section-title text-3xl md:text-5xl mb-4 font-bold">
               Watch Our Shorts
             </h2>
-            <p className="text-gray-400 text-lg md:text-xl">
+            <p className="text-gray-600 text-lg md:text-xl">
               Quick insights and highlights from our shows.
             </p>
           </div>

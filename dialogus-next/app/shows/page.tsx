@@ -71,7 +71,7 @@ const ShowCard = ({
     style={{ transitionDelay: delay }}
     onClick={() => window.open(playlistUrl, "_blank", "noopener,noreferrer")}
   >
-    <div className="relative overflow-hidden rounded-2xl bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-fuchsia-500 hover:shadow-2xl hover:shadow-fuchsia-500/20 hover:-translate-y-2">
+    <div className="relative overflow-hidden rounded-2xl bg-white border border-gray-200 transition-all duration-300 hover:border-fuchsia-500 hover:shadow-2xl hover:shadow-fuchsia-500/20 hover:-translate-y-2">
       {/* Thumbnail Image */}
       <div className="relative aspect-video overflow-hidden">
         <Image
@@ -84,7 +84,7 @@ const ShowCard = ({
         />
 
         {/* Overlay with play icon */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-fuchsia-600 flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -104,10 +104,10 @@ const ShowCard = ({
 
       {/* Title Section */}
       <div className="p-8">
-        <h3 className="font-bold text-2xl md:text-3xl text-white mb-3 group-hover:text-fuchsia-400 transition-colors">
+        <h3 className="font-bold text-2xl md:text-3xl text-gray-900 mb-3 group-hover:text-fuchsia-600 transition-colors">
           {title}
         </h3>
-        <p className="text-gray-400 text-base group-hover:text-gray-300 transition-colors">
+        <p className="text-gray-600 text-base group-hover:text-gray-800 transition-colors">
           Watch on YouTube
         </p>
       </div>
@@ -137,13 +137,13 @@ export default function ShowsPage() {
 
   return (
     <main className="pt-24">
-      <section id="shows" className="py-20 md:py-28 bg-black">
+      <section id="shows" className="py-20 md:py-28">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="section-title text-3xl md:text-5xl mb-6 font-bold fade-in">
               Our Shows
             </h2>
-            <p className="text-gray-400 text-lg md:text-xl fade-in" style={{ transitionDelay: "100ms" }}>
+            <p className="text-gray-600 text-lg md:text-xl fade-in" style={{ transitionDelay: "100ms" }}>
               Explore our diverse collection of shows. Click on any show to watch the complete playlist on YouTube.
             </p>
           </div>
