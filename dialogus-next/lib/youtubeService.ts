@@ -69,7 +69,7 @@ interface YouTubePlaylistDetails {
 // === SHARED UTILITIES ===
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 const DEFAULT_PLAYLIST_ID = 'PLiWELLjBSGHJegQWqDl9EImihEW0Rakzc';
-const DEFAULT_CACHE_DURATION = 3600; // 1 hour in seconds
+const DEFAULT_CACHE_DURATION = 43200; // 12 hour in seconds
 const VIDEOS_PER_PAGE = 12;
 
 /**
