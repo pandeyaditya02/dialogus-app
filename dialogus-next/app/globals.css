@@ -127,9 +127,6 @@ body {
 }
 
 /* Productions Page Grid and Card Styles */
-.video-card-container {
-  /* aspect-ratio removed to allow content to flow naturally */
-}
 
 .video-title-truncate {
   display: -webkit-box;

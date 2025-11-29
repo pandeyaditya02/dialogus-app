@@ -33,7 +33,7 @@ export default function VideosGrid({
 }: VideosGridProps) {
   const [localLoading, setLocalLoading] = useState(true);
   const [playing, setPlaying] = useState<string | null>(null);
-  
+
   // Handle the initial loading state for better UX
   useEffect(() => {
     if (isLoading !== undefined) {
@@ -42,20 +42,20 @@ export default function VideosGrid({
       const timer = setTimeout(() => {
         setLocalLoading(false);
       }, 300); // Minimum 300ms loading time
-      
+
       return () => clearTimeout(timer);
     }
   }, [isLoading]);
-  
+
   // Close video player when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.video-card-container') && playing) {
+      if (!target.closest('.group') && playing) {
         setPlaying(null);
       }
     };
-    
+
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [playing]);

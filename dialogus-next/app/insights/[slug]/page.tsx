@@ -262,14 +262,14 @@ export default async function BlogPost({ params }: Props) {
         </div>
       </article>
 
-      {/* Related Articles */}
+      {/* More on DIALOGUS */}
       {
         relatedPosts.length > 0 && (
           <section className="py-16 bg-gray-900/50">
             <div className="container mx-auto px-6">
               <div className="max-w-6xl mx-auto">
                 <h2 className="text-3xl font-bold text-white mb-12 text-center">
-                  Related Articles
+                  More on DIALOGUS
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {relatedPosts.map((relatedPost: any) => (

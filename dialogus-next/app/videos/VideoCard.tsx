@@ -17,7 +17,7 @@ interface VideoCardProps {
 
 export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) {
   return (
-    <div className="video-card-container group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
+    <div className="group relative rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 transition-all duration-300 hover:border-gray-700">
       <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden bg-black">
         <div
           className="w-full h-full flex items-center justify-center bg-gray-900 cursor-pointer"
