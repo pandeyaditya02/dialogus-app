@@ -32,7 +32,7 @@ export default function VideoCard({ video, isPlaying, onPlay }: VideoCardProps) 
             loading="lazy"
             unoptimized // YouTube images are already optimized
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center transform hover:scale-110 transition-transform">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

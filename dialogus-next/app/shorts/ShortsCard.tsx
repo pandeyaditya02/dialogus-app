@@ -27,7 +27,7 @@ export default function ShortsCard({ short, isPlaying, onPlay }: ShortsCardProps
             loading="lazy"
             unoptimized // YouTube images are already optimized
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center transform hover:scale-110 transition-transform">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -43,9 +43,9 @@ export default function ShortsCard({ short, isPlaying, onPlay }: ShortsCardProps
               </svg>
             </div>
           </div>
-          
+
           {/* Shorts indicator badge */}
-          <div className="absolute top-2 left-2 bg-black bg-opacity-80 px-2 py-1 rounded-md">
+          <div className="absolute top-2 left-2 bg-black/80 px-2 py-1 rounded-md">
             <span className="text-white text-xs font-semibold">SHORTS</span>
           </div>
         </div>
@@ -62,7 +62,7 @@ export default function ShortsCard({ short, isPlaying, onPlay }: ShortsCardProps
           />
         )}
       </div>
-      
+
       <div className="px-4 pb-4">
         <h3 className="text-white font-semibold text-sm mb-2 line-clamp-2 hover:underline cursor-pointer transition-colors">
           <Link

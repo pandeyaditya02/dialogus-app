@@ -82,9 +82,9 @@ const ShowCard = ({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           priority={title === "WORLD VIEW" || title === "TALK IT OUT"}
         />
-        
+
         {/* Overlay with play icon */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-fuchsia-600 flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ const ShowCard = ({
           </div>
         </div>
       </div>
-      
+
       {/* Title Section */}
       <div className="p-8">
         <h3 className="font-bold text-2xl md:text-3xl text-white mb-3 group-hover:text-fuchsia-400 transition-colors">
@@ -147,7 +147,7 @@ export default function ShowsPage() {
               Explore our diverse collection of shows. Click on any show to watch the complete playlist on YouTube.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10 md:gap-12">
             {showsData.map((show) => (
               <ShowCard key={show.title} {...show} />
