@@ -5,8 +5,8 @@ import { fetchPlaylistVideos } from '@/lib/youtubeService';
 // Playlist configurations
 const PLAYLISTS = {
   exclusiveInterviews: {
-    id: "PLiWELLjBSGHIlwS-6Btqaze1rQko3otMP",
-    title: "EXCLUSIVE INTERVIEWS"
+    id: "PLiWELLjBSGHJxybM8osxFEmm-_Z24c374",
+    title: "EDITOR'S PICK"
   }
 };
 
