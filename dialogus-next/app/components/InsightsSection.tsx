@@ -111,9 +111,29 @@ export default async function InsightsSection() {
     return (
         <section className="py-20 md:py-28">
             <div className="container mx-auto px-6">
-                <div className="text-center max-w-2xl mx-auto mb-16">
-                    <h2 className="text-4xl md:text-5xl mb-4 font-bold">Dialogus Insights</h2>
-                    <p className="text-gray-600">Explore our latest analysis on politics, business, and culture.</p>
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    {/* <div className="inline-block mb-6">
+                        <span className="text-sm md:text-base font-semibold text-fuchsia-600 uppercase tracking-[0.2em] letter-spacing-wider">
+                            Insights & Analysis
+                        </span>
+                    </div> */}
+                    <div className="relative inline-block mb-6">
+                        <div className="absolute -inset-3 md:-inset-4 bg-[#c026d3] rounded-xl opacity-15 blur-md"></div>
+                        <div className="absolute -inset-1 md:-inset-2 bg-[#c026d3] rounded-lg"></div>
+                        <h2 className="relative text-5xl md:text-6xl lg:text-7xl font-bold leading-tight px-6 md:px-8 py-3 md:py-4">
+                            <span className="text-white drop-shadow-lg">
+                                Dialogus Insights
+                            </span>
+                        </h2>
+                    </div>
+                    <div className="flex items-center justify-center gap-3 mb-6">
+                        <div className="h-px w-12 bg-gradient-to-r from-transparent to-fuchsia-500"></div>
+                        <div className="w-2 h-2 rounded-full bg-fuchsia-500"></div>
+                        <div className="h-px w-12 bg-gradient-to-l from-transparent to-fuchsia-500"></div>
+                    </div>
+                    <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                        Explore our latest analysis on <span className="font-semibold text-gray-800">politics</span>, <span className="font-semibold text-gray-800">business</span>, and <span className="font-semibold text-gray-800">culture</span>.
+                    </p>
                 </div>
                 {featured && (
                     <div className="mb-16">
