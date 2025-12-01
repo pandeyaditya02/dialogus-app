@@ -112,7 +112,7 @@ export default async function InsightsSection() {
         <section className="py-20 md:py-28">
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <h2 className="section-title text-4xl md:text-5xl mb-4 font-bold">Dialogus Insights</h2>
+                    <h2 className="text-4xl md:text-5xl mb-4 font-bold">Dialogus Insights</h2>
                     <p className="text-gray-600">Explore our latest analysis on politics, business, and culture.</p>
                 </div>
                 {featured && (

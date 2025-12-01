@@ -156,7 +156,7 @@ const Speakers = () => {
     <section id="speakers" className="py-20 md:py-28">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="section-title text-3xl md:text-4xl mb-4 fade-in font-bold text-gray-900">
+          <h2 className="text-3xl md:text-4xl mb-4 fade-in font-bold text-gray-900">
             Voices Behind Dialogus
           </h2>
           <p
