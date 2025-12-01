@@ -70,11 +70,17 @@ body {
   color: #52525b;
   /* Zinc 600 */
   text-decoration: none;
-  transition: color 0.3s ease;
-  font-size: 0.95rem;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  /* Dark gray/black */
+  font-weight: 700;
+}
+
 .nav-link.active {
   color: #18181b;
   /* Zinc 900 */
@@ -84,12 +90,13 @@ body {
   content: "";
   position: absolute;
   width: 0;
-  height: 2px;
+  height: 3px;
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #c026d3;
   transition: width 0.3s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nav-link:hover::after,

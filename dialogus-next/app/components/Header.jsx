@@ -72,14 +72,14 @@ const Header = () => {
               height={67}
               className="h-8 md:h-10 w-auto"
             />
-            <span className="hidden lg:block font-semibold tracking-wider text-sm text-gray-500 border-l border-gray-300 pl-4">
+            <span className="hidden lg:block font-semibold tracking-wider text-sm text-black border-l border-black/30 pl-4">
               DEBATE DISCUSS DECIDE
             </span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8 text-sm font-medium">
+        <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -113,7 +113,7 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button onClick={toggleMenu} className="md:hidden text-gray-900 z-10">
+        <button onClick={toggleMenu} className="md:hidden text-black z-10">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
