@@ -97,7 +97,7 @@ const PrivacyPolicyPage = () => {
                         <div className="relative hidden lg:flex justify-center items-start h-full pt-16">
                             <div className="sticky top-32">
                                 <div className="absolute w-80 h-80 bg-fuchsia-500 rounded-full opacity-10 blur-3xl"></div>
-                                <div className="absolute w-64 h-64 bg-cyan-500 rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
+                                <div className="absolute w-64 h-64 bg-[#3eb2e3] rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
                                 <div className="relative w-full max-w-sm">
                                     <Image
                                         src="/NEW LOGO.png"

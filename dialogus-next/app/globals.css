@@ -52,7 +52,7 @@ body {
 
 /* Light Navigation Bar Styles with Scroll Effect */
 .dark-glass-nav {
-  background: rgba(6, 182, 212, 0.8);
+  background: rgba(62, 178, 227, 1.0);
   /* Cyan Glass */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -61,7 +61,7 @@ body {
 }
 
 .dark-glass-nav.scrolled {
-  background: rgba(6, 182, 212, 0.95);
+  /* background: rgba(62, 178, 227, 1.0); */
   border-bottom-color: rgba(0, 0, 0, 0.05);
 }
 
