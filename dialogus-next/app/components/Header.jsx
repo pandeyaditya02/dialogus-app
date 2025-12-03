@@ -94,21 +94,21 @@ const Header = () => {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center flex-shrink-0 gap-2 lg:gap-4">
-          <a
+          {/* <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-cta font-medium py-2 px-4 rounded-full text-sm whitespace-nowrap"
           >
             Subscribe
-          </a>
+          </a> */}
           <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
             className="primary-cta font-medium py-2 px-5 rounded-full text-sm whitespace-nowrap"
           >
-            Connect With Us
+            Subscribe
           </a>
         </div>
 
@@ -137,7 +137,7 @@ const Header = () => {
           </Link>
         ))}
         <div className="p-6 flex flex-col gap-4 border-t border-gray-200 mt-4">
-          <a
+          {/* <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
@@ -145,13 +145,13 @@ const Header = () => {
             className="block text-center py-3 px-4 bg-gray-100 text-gray-900 rounded-full hover:bg-gray-200 transition-colors duration-300"
           >
             Subscribe
-          </a>
+          </a> */}
           <a
             href="#contact"
             onClick={closeMenu}
             className="block text-center py-3 px-4 bg-fuchsia-600 text-white rounded-full hover:bg-fuchsia-500 transition-colors duration-300"
           >
-            Connect With Us
+            Subscribe
           </a>
         </div>
       </div>
