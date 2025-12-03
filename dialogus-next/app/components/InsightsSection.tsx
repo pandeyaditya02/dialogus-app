@@ -70,7 +70,7 @@ const FeaturedArticle = ({ post }: { post: InsightPost }) => (
 const GridArticle = ({ post }: { post: InsightPost }) => (
     <Link
         href={`/insights/${post.slug}`}
-        className="rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all flex flex-col group h-full border border-gray-200"
+        className="rounded-2xl overflow-hidden bg-white shadow-xl hover:shadow-2xl transition-all flex flex-col group h-full border border-gray-200"
     >
         <div className="relative h-48 w-full overflow-hidden">
             {post.coverImage ? (
