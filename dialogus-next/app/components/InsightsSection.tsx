@@ -118,8 +118,8 @@ export default async function InsightsSection() {
                         </span>
                     </div> */}
                     <div className="relative inline-block mb-6">
-                        <div className="absolute -inset-3 md:-inset-4 bg-[#c026d3] rounded-xl opacity-15 blur-md"></div>
-                        <div className="absolute -inset-1 md:-inset-2 bg-[#c026d3] rounded-lg"></div>
+                        <div className="absolute -inset-3 md:-inset-4 bg-[#c026d3] rounded-full opacity-15 blur-md"></div>
+                        <div className="absolute -inset-1 md:-inset-2 bg-[#c026d3] rounded-full"></div>
                         <h2 className="relative text-3xl md:text-4xl lg:text-5xl font-bold leading-tight px-6 md:px-8 py-3 md:py-4">
                             <span className="text-white drop-shadow-lg">
                                 Dialogus Insights
