@@ -98,7 +98,7 @@ const HeroContent = ({ videoData }: HeroContentProps) => {
                         href="https://www.youtube.com/@Dialogusdigital"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="subscribe-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full"
+                        className="primary-cta w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-semibold py-3 px-6 rounded-full"
                     >
                         <Star size={20} className="text-yellow-400" fill="currentColor" />
                         Subscribe to Dialogus
