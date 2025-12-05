@@ -18,8 +18,10 @@
 
 body {
   font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #050505;
-  color: #e4e4e7;
+  background-color: #FDFBF7;
+  /* Cream White */
+  color: #18181b;
+  /* Zinc 900 */
   font-weight: 400;
   line-height: 1.6;
 }
@@ -48,9 +50,10 @@ body {
   }
 }
 
-/* Dark Navigation Bar Styles with Scroll Effect */
+/* Light Navigation Bar Styles with Scroll Effect */
 .dark-glass-nav {
-  background: #050505;
+  background: rgba(62, 178, 227, 1.0);
+  /* Cyan Glass */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
@@ -58,33 +61,42 @@ body {
 }
 
 .dark-glass-nav.scrolled {
-  background: #050505;
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  /* background: rgba(62, 178, 227, 1.0); */
+  border-bottom-color: rgba(0, 0, 0, 0.05);
 }
 
 .nav-link {
   position: relative;
-  color: #a1a1aa;
+  color: #52525b;
+  /* Zinc 600 */
   text-decoration: none;
-  transition: color 0.3s ease;
-  font-size: 0.95rem;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  /* Dark gray/black */
+  font-weight: 700;
+}
+
 .nav-link.active {
-  color: #ffffff;
+  color: #18181b;
+  /* Zinc 900 */
 }
 
 .nav-link::after {
   content: "";
   position: absolute;
   width: 0;
-  height: 2px;
+  height: 3px;
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #c026d3;
   transition: width 0.3s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nav-link:hover::after,
@@ -106,24 +118,22 @@ body {
   pointer-events: none;
 }
 
-/* Card Styles */
+/* Card Styles - Light Theme */
 .card-base {
-  background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.05),
-      rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .card-base:hover {
   transform: translateY(-8px);
-  background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.03));
-  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: rgba(192, 38, 211, 0.2);
+  /* Fuchsia hint on hover */
 }
 
 /* Productions Page Grid and Card Styles */
@@ -140,7 +150,8 @@ body {
 
 /* General Styles */
 .section-title {
-  color: #f4f4f5;
+  color: #18181b;
+  /* Zinc 900 */
   font-weight: 800;
 }
 
@@ -148,26 +159,26 @@ body {
   background-color: #c026d3;
   color: #fff;
   transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(192, 38, 211, 0.4);
+  box-shadow: 0 4px 14px 0 rgba(192, 38, 211, 0.39);
 }
 
 .primary-cta:hover {
   background-color: #d946ef;
   transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(217, 70, 239, 0.6);
+  box-shadow: 0 6px 20px rgba(192, 38, 211, 0.23);
 }
 
 .subscribe-cta {
   background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #d4d4d8;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: #18181b;
   transition: all 0.3s ease;
 }
 
 .subscribe-cta:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff;
-  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: #18181b;
+  color: #000000;
 }
 
 .speaker-card {
@@ -176,7 +187,8 @@ body {
   overflow: hidden;
   aspect-ratio: 4 / 5;
   transition: transform 0.3s ease;
-  background-color: #18181b;
+  background-color: #f4f4f5;
+  /* Zinc 100 */
 }
 
 .speaker-card:hover {
@@ -196,25 +208,32 @@ body {
 
 .featured-logo {
   transition: opacity 0.3s ease, transform 0.3s ease;
+  filter: invert(1) brightness(0.2);
+  /* Make white logos dark */
 }
 
 .featured-logo:hover {
   opacity: 1;
   transform: scale(1.1);
+  filter: invert(0) brightness(0) sepia(1) hue-rotate(280deg) saturate(5);
+  /* Fuchsia on hover */
 }
 
 .footer-link {
-  color: #ccc;
+  color: #52525b;
+  /* Zinc 600 */
   transition: color 0.2s ease-in-out;
 }
 
 .footer-link:hover {
-  color: #fff;
+  color: #18181b;
+  /* Zinc 900 */
   text-decoration: underline;
 }
 
 .social-icon {
-  color: #ccc;
+  color: #52525b;
+  /* Zinc 600 */
   transition: all 0.2s ease-in-out;
 }
 
@@ -225,24 +244,28 @@ body {
 
 /* Blog Post Styles */
 .prose {
-  color: #d1d5db;
+  color: #3f3f46;
+  /* Zinc 700 */
 }
 
 .prose h2 {
-  color: #ffffff;
+  color: #18181b;
+  /* Zinc 900 */
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
 
 .prose p {
-  color: #d1d5db;
+  color: #3f3f46;
+  /* Zinc 700 */
   line-height: 1.75;
   margin-bottom: 1.5rem;
 }
 
 .prose strong {
-  color: #ffffff;
+  color: #18181b;
+  /* Zinc 900 */
   font-weight: 600;
 }
 
@@ -277,9 +300,11 @@ body {
 }
 
 .slider-arrow {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   transition: all 0.2s ease-in-out;
   opacity: 0;
+  color: #18181b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .slider-wrapper:hover .slider-arrow {
@@ -287,7 +312,8 @@ body {
 }
 
 .slider-arrow:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: #ffffff;
+  transform: scale(1.1);
 }
 
 .video-card-thumbnail {
@@ -304,7 +330,8 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  /* Keep dark for text readability on image */
   padding: 1.5rem 1rem 1rem;
   opacity: 0;
   transform: translateY(10px);

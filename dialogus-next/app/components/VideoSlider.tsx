@@ -46,8 +46,8 @@ const VideoCard = ({ video }: { video: Video }) => (
 
 // Loading Skeleton Component
 const VideoCardSkeleton = () => (
-    <div className="flex-shrink-0 w-64 md:w-80 lg:w-96 aspect-video rounded-lg overflow-hidden bg-gray-800 animate-pulse">
-        <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-700"></div>
+    <div className="flex-shrink-0 w-64 md:w-80 lg:w-96 aspect-video rounded-lg overflow-hidden bg-gray-200 animate-pulse">
+        <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
     </div>
 );
 
@@ -92,10 +92,10 @@ export default function VideoSlider({ title, videos, error }: VideoSliderProps) 
     };
 
     return (
-        <section className="py-8 md:py-12 bg-black/50">
+        <section className="py-8 md:py-12 bg-gray-50">
             <div className="container mx-auto px-6">
                 <div className="fade-in slider-wrapper relative">
-                    <h3 className="text-2xl md:text-4xl font-bold text-white mb-6">{title}</h3>
+                    <h3 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6">{title}</h3>
 
                     {error ? (
                         <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
@@ -129,14 +129,14 @@ export default function VideoSlider({ title, videos, error }: VideoSliderProps) 
                         <>
                             <button
                                 onClick={() => scroll("left")}
-                                className="slider-arrow prev-btn absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 rounded-full p-2 z-10 hidden md:block bg-black/50 hover:bg-black/80 text-white transition-all hover:scale-110"
+                                className="slider-arrow prev-btn absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 rounded-full p-2 z-10 hidden md:block bg-white/80 hover:bg-white text-gray-900 shadow-lg transition-all hover:scale-110 border border-gray-200"
                                 aria-label="Previous videos"
                             >
                                 <ChevronLeft size={32} />
                             </button>
                             <button
                                 onClick={() => scroll("right")}
-                                className="slider-arrow next-btn absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 rounded-full p-2 z-10 hidden md:block bg-black/50 hover:bg-black/80 text-white transition-all hover:scale-110"
+                                className="slider-arrow next-btn absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 rounded-full p-2 z-10 hidden md:block bg-white/80 hover:bg-white text-gray-900 shadow-lg transition-all hover:scale-110 border border-gray-200"
                                 aria-label="Next videos"
                             >
                                 <ChevronRight size={32} />

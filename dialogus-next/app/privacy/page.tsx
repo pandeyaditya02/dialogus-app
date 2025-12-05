@@ -81,7 +81,7 @@ const policySections = [
         title: "9. Contact Us",
         content: [
             "If you have any questions or concerns about this Privacy Policy or our practices, please contact us at:",
-            "<a href='mailto:info@dialogus.co.in' class='mt-4 block text-gray-200 hover:underline'>info@dialogus.co.in</a>",
+            "<a href='mailto:info@dialogus.co.in' class='mt-4 block text-gray-800 hover:underline'>info@dialogus.co.in</a>",
             // "<span class='text-gray-400 text-sm'>[Registered address]</span>"
         ]
     }
@@ -97,7 +97,7 @@ const PrivacyPolicyPage = () => {
                         <div className="relative hidden lg:flex justify-center items-start h-full pt-16">
                             <div className="sticky top-32">
                                 <div className="absolute w-80 h-80 bg-fuchsia-500 rounded-full opacity-10 blur-3xl"></div>
-                                <div className="absolute w-64 h-64 bg-cyan-500 rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
+                                <div className="absolute w-64 h-64 bg-[#3eb2e3] rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
                                 <div className="relative w-full max-w-sm">
                                     <Image
                                         src="/NEW LOGO.png"
@@ -115,33 +115,33 @@ const PrivacyPolicyPage = () => {
                             <div className="max-w-4xl">
                                 <div className="mb-12">
                                     <h1 className="section-title text-3xl md:text-4xl mb-4">Privacy Policy</h1>
-                                    <p className="text-gray-400">Effective Date: September 8, 2025</p>
+                                    <p className="text-gray-600">Effective Date: September 8, 2025</p>
                                 </div>
 
-                                <div className="text-gray-300 space-y-12 text-base leading-relaxed">
+                                <div className="text-gray-700 space-y-12 text-base leading-relaxed">
                                     <p>
                                         Dialogus (“we,” “our,” “us”) is committed to protecting the privacy of our viewers, subscribers, and users (“you,” “your”). This Privacy Policy explains how we collect, use, disclose and safeguard your information when you access our website, YouTube channel, or other digital platforms linked to Dialogus. By engaging with our content, you agree to the practices described here:
                                     </p>
 
                                     {policySections.map((section, index) => (
                                         <div key={index} className="flex items-start gap-6">
-                                            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-fuchsia-500/10 text-fuchsia-400 mt-1">
+                                            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-fuchsia-500/10 text-fuchsia-600 mt-1">
                                                 {section.icon}
                                             </div>
                                             <div>
-                                                <h2 className="text-xl font-bold text-white mb-3">{section.title}</h2>
+                                                <h2 className="text-xl font-bold text-gray-900 mb-3">{section.title}</h2>
                                                 {Array.isArray(section.content) ? (
                                                     section.content.length > 1 ? (
                                                         <>
                                                             <p className="mb-3" dangerouslySetInnerHTML={{ __html: section.content[0] }}></p>
-                                                            <ul className="space-y-2 text-gray-400">
+                                                            <ul className="space-y-2 text-gray-600">
                                                                 {section.content.slice(1).map((item, i) => (
                                                                     <li key={i} dangerouslySetInnerHTML={{ __html: item }}></li>
                                                                 ))}
                                                             </ul>
                                                         </>
                                                     ) : (
-                                                        <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: section.content[0] }}></p>
+                                                        <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: section.content[0] }}></p>
                                                     )
                                                 ) : null}
                                             </div>

@@ -11,14 +11,14 @@ const Footer = () => {
   return (
     <footer
       id="contact"
-      className="bg-gradient-to-t from-black to-gray-900/50 border-t border-gray-800"
+      className="bg-gradient-to-t from-gray-100 to-white border-t border-gray-200"
     >
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
           {/* Column 1: About Us */}
           <div className="md:col-span-2 lg:col-span-1">
-            <h3 className="text-lg font-bold text-white mb-4">Dialogus</h3>
-            <p className="text-gray-400 max-w-xs leading-relaxed">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Dialogus</h3>
+            <p className="text-gray-600 max-w-xs leading-relaxed">
               In a world full of noise, Dialogus decodes it with sharp
               data-backed analyses and powerful storytelling across politics,
               business, law and culture.
@@ -27,7 +27,7 @@ const Footer = () => {
 
           {/* Column 2: Quick Links */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/about" className="footer-link">
@@ -54,7 +54,7 @@ const Footer = () => {
 
           {/* Column 3: Social Media */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-4">Follow Us</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
             <div className="flex space-x-4">
               <a
                 href="https://www.youtube.com/@Dialogusdigital"
@@ -99,8 +99,8 @@ const Footer = () => {
 
           {/* Column 4: CTA */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-4">Stay Updated</h3>
-            <p className="text-gray-400 mb-4">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Stay Updated</h3>
+            <p className="text-gray-600 mb-4">
               Subscribe to our Youtube channel for the latest insights.
             </p>
             <a
@@ -114,7 +114,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center text-xs">
+        <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center text-xs">
           <p className="text-gray-500">
             Copyright © 2025 Dialogus. All rights reserved.
           </p>

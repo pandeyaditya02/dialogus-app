@@ -53,9 +53,8 @@ const Header = () => {
   return (
     <header
       id="header"
-      className={`dark-glass-nav fixed top-0 left-0 right-0 z-50 ${
-        isScrolled ? "scrolled" : ""
-      }`}
+      className={`dark-glass-nav fixed top-0 left-0 right-0 z-50 ${isScrolled ? "scrolled" : ""
+        }`}
     >
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo and Tagline */}
@@ -73,21 +72,20 @@ const Header = () => {
               height={67}
               className="h-8 md:h-10 w-auto"
             />
-            <span className="hidden lg:block font-semibold tracking-wider text-sm text-gray-400 border-l border-gray-600 pl-4">
+            <span className="hidden lg:block font-semibold tracking-wider text-sm text-black border-l border-black/30 pl-4">
               DEBATE DISCUSS DECIDE
             </span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8 text-sm font-medium">
+        <nav className="hidden md:flex flex-grow justify-center items-center space-x-4 lg:space-x-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`nav-link whitespace-nowrap ${
-                isActive(link.href) ? "active" : ""
-              }`}
+              className={`nav-link whitespace-nowrap ${isActive(link.href) ? "active" : ""
+                }`}
             >
               {link.label}
             </Link>
@@ -96,26 +94,26 @@ const Header = () => {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center flex-shrink-0 gap-2 lg:gap-4">
-          <a
+          {/* <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-cta font-medium py-2 px-4 rounded-full text-sm whitespace-nowrap"
           >
             Subscribe
-          </a>
+          </a> */}
           <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
             className="primary-cta font-medium py-2 px-5 rounded-full text-sm whitespace-nowrap"
           >
-            Connect With Us
+            Subscribe
           </a>
         </div>
 
         {/* Mobile Menu Button */}
-        <button onClick={toggleMenu} className="md:hidden text-white z-10">
+        <button onClick={toggleMenu} className="md:hidden text-black z-10">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -123,9 +121,8 @@ const Header = () => {
       {/* Mobile Menu */}
       <div
         id="mobile-menu"
-        className={`absolute top-0 left-0 right-0 pt-20 bg-black/90 backdrop-blur-md md:hidden transform transition-transform duration-300 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`absolute top-0 left-0 right-0 pt-20 bg-[#FDFBF7]/95 backdrop-blur-md md:hidden transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         style={{ minHeight: "100vh" }}
       >
         {navLinks.map((link) => (
@@ -133,29 +130,28 @@ const Header = () => {
             key={link.href}
             href={link.href}
             onClick={closeMenu}
-            className={`block text-gray-300 text-center text-lg py-4 px-4 hover:bg-gray-900 transition-colors duration-300 nav-link ${
-              isActive(link.href) ? "active" : ""
-            }`}
+            className={`block text-gray-700 text-center text-lg py-4 px-4 hover:bg-gray-100 transition-colors duration-300 nav-link ${isActive(link.href) ? "active" : ""
+              }`}
           >
             {link.label}
           </Link>
         ))}
-        <div className="p-6 flex flex-col gap-4 border-t border-gray-800 mt-4">
-          <a
+        <div className="p-6 flex flex-col gap-4 border-t border-gray-200 mt-4">
+          {/* <a
             href="https://www.youtube.com/@Dialogusdigital"
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMenu}
-            className="block text-center py-3 px-4 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors duration-300"
+            className="block text-center py-3 px-4 bg-gray-100 text-gray-900 rounded-full hover:bg-gray-200 transition-colors duration-300"
           >
             Subscribe
-          </a>
+          </a> */}
           <a
             href="#contact"
             onClick={closeMenu}
             className="block text-center py-3 px-4 bg-fuchsia-600 text-white rounded-full hover:bg-fuchsia-500 transition-colors duration-300"
           >
-            Connect With Us
+            Subscribe
           </a>
         </div>
       </div>

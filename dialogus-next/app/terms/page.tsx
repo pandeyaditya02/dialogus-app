@@ -84,7 +84,7 @@ const termsSections = [
         icon: <Mail size={24} />,
         title: "10. Contact Us",
         content: [
-            "For questions or concerns about these Terms, please contact us at:<br/><a href='mailto:info@dialogus.co.in' class='mt-2 text-gray-200 hover:underline'>info@dialogus.co.in</a>"
+            "For questions or concerns about these Terms, please contact us at:<br/><a href='mailto:info@dialogus.co.in' class='mt-2 text-gray-800 hover:underline'>info@dialogus.co.in</a>"
         ]
     }
 ];
@@ -99,7 +99,7 @@ const TermsOfServicePage = () => {
                         <div className="relative hidden lg:flex justify-center items-start h-full pt-16">
                             <div className="sticky top-32">
                                 <div className="absolute w-80 h-80 bg-fuchsia-500 rounded-full opacity-10 blur-3xl"></div>
-                                <div className="absolute w-64 h-64 bg-cyan-500 rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
+                                <div className="absolute w-64 h-64 bg-[#3eb2e3] rounded-full opacity-10 blur-3xl bottom-0 right-0"></div>
                                 <div className="relative w-full max-w-sm">
                                     <Image
                                         src="/NEW LOGO.png"
@@ -117,30 +117,30 @@ const TermsOfServicePage = () => {
                             <div className="max-w-4xl">
                                 <div className="mb-12">
                                     <h1 className="section-title text-3xl md:text-4xl mb-4">Terms of Service</h1>
-                                    <p className="text-gray-400">Effective Date: September 8, 2025</p>
+                                    <p className="text-gray-600">Effective Date: September 8, 2025</p>
                                 </div>
 
-                                <div className="text-gray-300 space-y-12 text-base leading-relaxed">
+                                <div className="text-gray-700 space-y-12 text-base leading-relaxed">
                                     <p>
                                         Welcome to Dialogus (“we,” “our,” “us”). By accessing or using our website, YouTube channel, or any related digital services (“Platform”), you agree to comply with and be bound by these Terms of Service (“Terms”). Please read them carefully before using our Platform.
                                     </p>
 
                                     {termsSections.map((section, index) => (
                                         <div key={index} className="flex items-start gap-6">
-                                            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-fuchsia-500/10 text-fuchsia-400 mt-1">
+                                            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-fuchsia-500/10 text-fuchsia-600 mt-1">
                                                 {section.icon}
                                             </div>
                                             <div>
-                                                <h2 className="text-xl font-bold text-white mb-3">{section.title}</h2>
+                                                <h2 className="text-xl font-bold text-gray-900 mb-3">{section.title}</h2>
                                                 {Array.isArray(section.content) ? (
                                                     section.content.length > 1 ? (
-                                                        <ul className="space-y-2 text-gray-400">
+                                                        <ul className="space-y-2 text-gray-600">
                                                             {section.content.map((item, i) => (
                                                                 <li key={i} dangerouslySetInnerHTML={{ __html: `●&nbsp;&nbsp;${item}` }}></li>
                                                             ))}
                                                         </ul>
                                                     ) : (
-                                                        <p className="text-gray-400" dangerouslySetInnerHTML={{ __html: section.content[0] }}></p>
+                                                        <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: section.content[0] }}></p>
                                                     )
                                                 ) : null}
                                             </div>

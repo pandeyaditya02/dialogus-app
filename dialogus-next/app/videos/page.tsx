@@ -22,13 +22,13 @@ export default async function VideosPage({
   if (error) {
     return (
       <main className="pt-24">
-        <section className="py-20 md:py-28 bg-black">
+        <section className="py-20 md:py-28">
           <div className="container mx-auto px-6 max-w-7xl">
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-4xl text-white mb-4">
+              <h2 className="text-3xl md:text-4xl text-gray-900 mb-4">
                 Error Loading Videos
               </h2>
-              <p className="text-gray-400">{error}</p>
+              <p className="text-gray-600">{error}</p>
             </div>
           </div>
         </section>
@@ -38,13 +38,13 @@ export default async function VideosPage({
 
   return (
     <main className="pt-24">
-      <section id="videos" className="py-20 md:py-28 bg-black">
+      <section id="videos" className="py-20 md:py-28">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="section-title text-3xl md:text-5xl mb-4 font-bold">
               Watch It All
             </h2>
-            <p className="text-gray-400 text-lg md:text-xl">
+            <p className="text-gray-600 text-lg md:text-xl">
               Binge the complete collection of Dialogus shows here
             </p>
           </div>
