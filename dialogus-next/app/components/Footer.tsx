@@ -118,7 +118,7 @@ const Footer = () => {
           <p className="text-gray-500">
             Copyright © 2025 Dialogus. All rights reserved.
           </p>
-          <p className="text-gray-500 mt-2 sm:mt-0">
+          <p className="text-gray-500 mt-2 sm:mt-0 ">
             Made with ❤️ by the Dialogus Team
           </p>
         </div>
