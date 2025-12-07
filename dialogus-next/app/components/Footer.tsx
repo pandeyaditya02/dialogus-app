@@ -60,7 +60,7 @@ const Footer = () => {
                 href="https://www.youtube.com/@Dialogusdigital"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-icon"
+                className="transition-transform duration-200 hover:scale-125 text-[#FF0000]"
               >
                 <FaYoutube size={24} />
               </a>
@@ -68,7 +68,7 @@ const Footer = () => {
                 href="https://x.com/DialogusThreads"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-icon"
+                className="transition-transform duration-200 hover:scale-125 text-black"
               >
                 <FaXTwitter size={24} />
               </a>
@@ -76,7 +76,7 @@ const Footer = () => {
                 href="https://www.linkedin.com/in/dialogus-digital-8b481b35b/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-icon"
+                className="transition-transform duration-200 hover:scale-125 text-[#0077B5]"
               >
                 <FaLinkedin size={24} />
               </a>
@@ -84,13 +84,13 @@ const Footer = () => {
                 href="https://www.instagram.com/dialogue_with_dialogus/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-icon"
+                className="transition-transform duration-200 hover:scale-125 text-[#E1306C]"
               >
                 <FaInstagram size={24} />
               </a>
               <a
                 href="https://www.facebook.com/people/Dialogus/61577374885734/"
-                className="social-icon"
+                className="transition-transform duration-200 hover:scale-125 text-[#1877F2]"
               >
                 <FaFacebook size={24} />
               </a>
