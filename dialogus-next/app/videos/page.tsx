@@ -3,8 +3,23 @@ import { Suspense } from "react";
 import VideosGrid from "./VideosGrid";
 import VideoSkeleton from "./VideoSkeleton";
 import { fetchYouTubeVideos } from '@/lib/youtubeService';
+import type { Metadata } from "next";
 
-// --- REACT SERVER COMPONENT (OPTIMIZED) ---
+export const metadata: Metadata = {
+  title: "Videos - Watch Dialogus Shows",
+  description:
+    "Watch the complete collection of Dialogus shows covering politics, business, law, and culture with data-driven analysis.",
+  alternates: {
+    canonical: "/videos",
+  },
+  openGraph: {
+    title: "Videos - Watch Dialogus Shows",
+    description:
+      "Watch the complete collection of Dialogus shows covering politics, business, law, and culture.",
+    type: "website",
+  },
+};
+
 export default async function VideosPage({
   searchParams,
 }: {

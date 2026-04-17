@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: Props) {
     title,
     description,
     date,
+    coverImage,
     "authorName": author->name
   }`;
   const post = await client.fetch(query, { slug });
@@ -56,20 +57,29 @@ export async function generateMetadata({ params }: Props) {
     return { title: "Post Not Found" };
   }
 
+  const ogImage = post.coverImage
+    ? urlFor(post.coverImage).width(1200).height(630).url()
+    : undefined;
+
   return {
-    title: `${post.title} | Dialogus Insights`,
+    title: post.title,
     description: post.description,
+    alternates: {
+      canonical: `/insights/${slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       publishedTime: post.date,
       authors: [post.authorName],
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: post.title }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      images: ogImage ? [ogImage] : [],
     },
   };
 }
@@ -154,8 +164,70 @@ export default async function BlogPost({ params }: Props) {
     readTime: calculateReadTime(p.body),
   }));
 
+  const ogImage = post.coverImage
+    ? urlFor(post.coverImage).width(1200).height(630).url()
+    : undefined;
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    image: ogImage,
+    datePublished: post.date,
+    author: {
+      "@type": "Person",
+      name: post.authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Dialogus",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.dialogus.co.in/logo3.jpg",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.dialogus.co.in/insights/${slug}`,
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.dialogus.co.in",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Insights",
+        item: "https://www.dialogus.co.in/insights",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://www.dialogus.co.in/insights/${slug}`,
+      },
+    ],
+  };
+
   return (
     <main className="pt-24 bg-white text-gray-900 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Hero Section with Cover Image and Overlapping Text */}
       {/* Hero Section with Cover Image and Overlapping Text */}
       <section className="relative w-full min-h-[70vh] md:min-h-[85vh] flex items-end">
@@ -220,13 +292,13 @@ export default async function BlogPost({ params }: Props) {
               <div className="hidden sm:block h-8 w-px bg-gray-300" />
 
               <div className="text-xs sm:text-sm text-center sm:text-left">
-                <p className="text-gray-900 font-medium">
+                <time dateTime={post.date} className="text-gray-900 font-medium block">
                   {new Date(post.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}
-                </p>
+                </time>
                 <p className="text-gray-600">Published</p>
               </div>
 

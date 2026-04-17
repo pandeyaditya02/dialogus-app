@@ -4,6 +4,22 @@ import Image from "next/image";
 import { groq } from "next-sanity";
 import { client, urlFor } from "@/lib/sanity.client";
 import InsightsPaginationControls from "./InsightsPaginationControls";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Insights - Current Affairs Analysis & Opinion",
+  description:
+    "Read data-driven insights and analysis on politics, business, law, and culture. Stay informed with Dialogus editorial coverage of current affairs.",
+  alternates: {
+    canonical: "/insights",
+  },
+  openGraph: {
+    title: "Insights - Current Affairs Analysis & Opinion",
+    description:
+      "Read data-driven insights and analysis on politics, business, law, and culture.",
+    type: "website",
+  },
+};
 
 const POSTS_PER_PAGE = 12;
 
