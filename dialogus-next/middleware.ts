@@ -10,15 +10,26 @@ const PROTECTED_API_PATHS = [
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
+  // --- 1. Handle Login Page Redirection ---
+  if (pathname === "/admin/login") {
+    if (sessionCookie) {
+      const session = await verifySession(sessionCookie);
+      if (session) {
+        return NextResponse.redirect(new URL("/admin/generate", request.url));
+      }
+    }
+    return NextResponse.next();
+  }
+
+  // --- 2. Handle Protected Paths Protection ---
   const isProtectedPage = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   const isProtectedApi = PROTECTED_API_PATHS.some((p) => pathname.startsWith(p));
 
   if (!isProtectedPage && !isProtectedApi) {
     return NextResponse.next();
   }
-
-  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
   if (!sessionCookie) {
     if (isProtectedApi) {
@@ -36,6 +47,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
+  // Add user info to headers for API routes/Server Components
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-user-id", session.userId);
   requestHeaders.set("x-user-name", session.userName);
@@ -44,5 +56,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/generate/:path*", "/api/generate-blog", "/api/generate-image", "/api/publish-blog"],
+  matcher: [
+    "/admin/login",
+    "/admin/generate/:path*",
+    "/api/generate-blog",
+    "/api/generate-image",
+    "/api/publish-blog",
+  ],
 };

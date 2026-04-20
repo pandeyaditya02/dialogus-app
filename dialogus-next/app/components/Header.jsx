@@ -11,6 +11,9 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
+  // Hide the public header on admin pages to avoid overlapping with the AdminHeader
+  if (pathname.startsWith("/admin")) return null;
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {

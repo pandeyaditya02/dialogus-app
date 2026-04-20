@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   FaXTwitter,
   FaYoutube,
@@ -8,6 +11,11 @@ import {
 } from "react-icons/fa6";
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  // Hide the public footer on admin pages
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer
       id="contact"
