@@ -1,5 +1,6 @@
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!;
-const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
+const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY!;
+const MODEL_NAME = "gemini-3-flash-preview";
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GOOGLE_AI_API_KEY}`;
 
 interface GeneratedBlog {
   title: string;
@@ -94,34 +95,43 @@ Please revise the article based on the editor's feedback.`;
     }
   }
 
-  const res = await fetch(ANTHROPIC_API_URL, {
+  const res = await fetch(GEMINI_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userMessage }],
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: userMessage }],
+        },
+      ],
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.7,
+        responseMimeType: "application/json",
+      },
     }),
   });
 
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(`Anthropic API error (${res.status}): ${error}`);
+    throw new Error(`Gemini API error (${res.status}): ${error}`);
   }
 
   const data = await res.json();
-  const content = data.content?.[0]?.text;
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
   if (!content) {
-    throw new Error("No content in Anthropic response");
+    throw new Error("No content in Gemini response");
   }
 
   let jsonStr = content.trim();
+  // Handle potential markdown code blocks in response
   const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (jsonMatch) {
     jsonStr = jsonMatch[1].trim();

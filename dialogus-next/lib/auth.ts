@@ -62,7 +62,7 @@ export async function verifySession(cookie: string): Promise<SessionPayload | nu
     const valid = await crypto.subtle.verify(
       "HMAC",
       key,
-      signature,
+      signature as any,
       encoder.encode(payloadB64)
     );
 

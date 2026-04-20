@@ -30,7 +30,7 @@ function renderMarkdownToHtml(md: string): string {
     .replace(/\n/g, "<br/>");
 
   // Wrap consecutive <li> in <ul>
-  html = html.replace(/(<li>.*?<\/li>(\s*<br\/>)?)+/gs, (match) => {
+  html = html.replace(/(<li>[\s\S]*?<\/li>(\s*<br\/>)?)+/g, (match) => {
     const items = match.replace(/<br\/>/g, "");
     return `<ul>${items}</ul>`;
   });

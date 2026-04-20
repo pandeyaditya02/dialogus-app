@@ -70,7 +70,7 @@ export async function uploadImage(
         "Content-Type": contentType,
         Authorization: `Bearer ${writeToken}`,
       },
-      body: imageBuffer,
+      body: imageBuffer as any,
     }
   );
 

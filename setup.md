@@ -5,19 +5,12 @@
 - Node.js 18.18.0 or higher
 - Your existing Dialogus Next.js app running
 - A Sanity project with members already added
-- API keys for Anthropic (Claude) and Google AI (Imagen 3)
+- API keys for Google AI (Gemini 3 Flash and Imagen 3)
 
 ---
 
 ## Step 1: Get Your API Keys
 
-### Anthropic (Claude) API Key
-
-1. Go to [console.anthropic.com](https://console.anthropic.com/)
-2. Sign up or log in
-3. Navigate to **API Keys**
-4. Click **Create Key**
-5. Copy the key (starts with `sk-ant-...`)
 
 ### Google AI (Imagen 3) API Key
 
@@ -59,12 +52,7 @@ NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 
-# --- New variables for the Blog Generator ---
-
-# Anthropic Claude API key for content generation
-ANTHROPIC_API_KEY=sk-ant-your-key-here
-
-# Google AI API key for Imagen 3 image generation
+# Google AI API key for content generation (Gemini 3 Flash) and image generation (Imagen 3)
 GOOGLE_AI_API_KEY=your-google-ai-key-here
 
 # Sanity write token (Editor role) for publishing articles
@@ -161,7 +149,6 @@ When deploying to Netlify, add the same environment variables from Step 2 to you
 
 1. Go to your Netlify dashboard → Site settings → Environment variables
 2. Add each variable:
-   - `ANTHROPIC_API_KEY`
    - `GOOGLE_AI_API_KEY`
    - `SANITY_WRITE_TOKEN`
    - `SESSION_SECRET`
@@ -186,9 +173,9 @@ When deploying to Netlify, add the same environment variables from Step 2 to you
 
 | Service | Cost per article |
 |---|---|
-| Claude Sonnet (content generation) | ~$0.03-0.06 |
+| Gemini 3 Flash (content generation) | <$0.01 |
 | Imagen 3 (cover image) | ~$0.02-0.04 |
-| **Total** | **~$0.05-0.10** |
+| **Total** | **~$0.03-0.05** |
 
 Regeneration doubles the Claude cost. Image regeneration adds another Imagen charge.
 
@@ -209,7 +196,7 @@ Regeneration doubles the Claude cost. Image regeneration adds another Imagen cha
 - Make sure your `GOOGLE_AI_API_KEY` has the Generative Language API enabled
 
 ### Content generation fails
-- Check that `ANTHROPIC_API_KEY` is valid and has credits
+- Check that `GOOGLE_AI_API_KEY` is valid and has credits/quota
 - The API returns a 429 error if you've hit rate limits
 
 ### Session expired
