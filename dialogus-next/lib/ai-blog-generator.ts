@@ -111,7 +111,7 @@ Please revise the article based on the editor's feedback.`;
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: userMessage }] }],
     generationConfig: {
-      maxOutputTokens: 8192,
+      maxOutputTokens: 16384,
       temperature: 0.7,
       responseMimeType: "application/json",
     },
@@ -121,9 +121,11 @@ Please revise the article based on the editor's feedback.`;
   const content = response.text();
   const candidate = result.response.candidates?.[0];
 
-  if (candidate?.finishReason === "MAX_TOKENS") {
-    throw new Error(
-      "AI response was truncated due to length limits. Please try a more specific topic."
+  // Only throw on MAX_TOKENS if the content is actually empty.
+  // If the JSON was fully formed before the token cap, fall through and parse it normally.
+  if (candidate?.finishReason === "MAX_TOKENS" && !content?.trim()) {
+    throw new Error( 
+      "The AI response was cut off before completing. Try a shorter or more specific topic."
     );
   }
 
