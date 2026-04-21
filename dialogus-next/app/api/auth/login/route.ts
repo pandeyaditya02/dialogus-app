@@ -4,6 +4,7 @@ import {
   createSessionPayload,
   signSession,
   SESSION_COOKIE_NAME,
+  SESSION_DURATION_S,
 } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: SESSION_DURATION_S,
     });
 
     return response;

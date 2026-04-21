@@ -5,7 +5,8 @@ if (!SESSION_SECRET && process.env.NODE_ENV === "production") {
 }
 
 const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
-const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+export const SESSION_DURATION_S = 24 * 60 * 60; // 24 hours
+export const SESSION_DURATION_MS = SESSION_DURATION_S * 1000;
 
 interface SessionPayload {
   userId: string;

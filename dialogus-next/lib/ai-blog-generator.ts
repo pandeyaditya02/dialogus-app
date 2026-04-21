@@ -1,6 +1,9 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY!;
 const MODEL_NAME = "gemini-3-flash-preview";
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GOOGLE_AI_API_KEY}`;
+
+const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
 
 interface GeneratedBlog {
   title: string;
@@ -100,57 +103,61 @@ Please revise the article based on the editor's feedback.`;
     }
   }
 
-  const res = await fetch(GEMINI_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      systemInstruction: {
-        parts: [{ text: systemPrompt }],
-      },
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: userMessage }],
-        },
-      ],
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.7,
-        responseMimeType: "application/json",
-      },
-    }),
+  const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+    systemInstruction: systemPrompt,
   });
 
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(`Gemini API error (${res.status}): ${error}`);
-  }
+  const result = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: userMessage }] }],
+    generationConfig: {
+      maxOutputTokens: 8192,
+      temperature: 0.7,
+      responseMimeType: "application/json",
+    },
+  });
 
-  const data = await res.json();
-  const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const response = await result.response;
+  const content = response.text();
+  const candidate = result.response.candidates?.[0];
+
+  if (candidate?.finishReason === "MAX_TOKENS") {
+    throw new Error(
+      "AI response was truncated due to length limits. Please try a more specific topic."
+    );
+  }
 
   if (!content) {
     throw new Error("No content in Gemini response");
   }
 
+
   let jsonStr = content.trim();
-  // Handle potential markdown code blocks in response
-  const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (jsonMatch) {
-    jsonStr = jsonMatch[1].trim();
+  
+  // Find the first '{' and last '}' to extract the JSON object
+  // This is more robust than regex when the content contains markdown code blocks
+  const start = jsonStr.indexOf("{");
+  const end = jsonStr.lastIndexOf("}");
+  
+  if (start !== -1 && end !== -1) {
+    jsonStr = jsonStr.substring(start, end + 1);
   }
 
-  const blog: GeneratedBlog = JSON.parse(jsonStr);
-
-  if (!blog.title || !blog.slug || !blog.description || !blog.body) {
-    throw new Error("Incomplete blog generated — missing required fields");
+  try {
+    const blog: GeneratedBlog = JSON.parse(jsonStr);
+    
+    if (!blog.title || !blog.slug || !blog.description || !blog.body) {
+      throw new Error("Incomplete blog generated — missing required fields");
+    }
+    
+    if (blog.description.length > 200) {
+      blog.description = blog.description.slice(0, 197) + "...";
+    }
+    
+    return blog;
+  } catch (e) {
+    console.error("Failed to parse AI response:", jsonStr);
+    const errorMsg = e instanceof Error ? e.message : "Invalid JSON";
+    throw new Error(`AI generated invalid JSON: ${errorMsg}. Please try again.`);
   }
-
-  if (blog.description.length > 200) {
-    blog.description = blog.description.slice(0, 197) + "...";
-  }
-
-  return blog;
 }

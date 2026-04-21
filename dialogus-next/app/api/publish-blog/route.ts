@@ -26,17 +26,18 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      title,
-      slug,
-      description,
-      bodyMarkdown,
-      authorId,
-      categoryId,
-      coverImageBase64,
-      coverImageMimeType,
-      publishMode,
-    } = body;
+    const clean = (val: any) => 
+      typeof val === "string" ? (val.trim() || "") : val;
+
+    const title = clean(body.title);
+    const slug = clean(body.slug);
+    const description = clean(body.description);
+    const bodyMarkdown = clean(body.bodyMarkdown);
+    const authorId = clean(body.authorId);
+    const categoryId = clean(body.categoryId);
+    const coverImageBase64 = body.coverImageBase64;
+    const coverImageMimeType = body.coverImageMimeType;
+    const publishMode = body.publishMode;
 
     if (!title || !slug || !description || !bodyMarkdown || !authorId || !categoryId) {
       return NextResponse.json(

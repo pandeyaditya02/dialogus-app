@@ -6,7 +6,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { topic, instructions, previousContent, regenerateInstructions } = body;
 
-    if (!topic || typeof topic !== "string") {
+    const clean = (val: any) => 
+      typeof val === "string" ? (val.trim() || null) : val;
+
+    const cleanedTopic = clean(topic);
+    if (!cleanedTopic) {
       return NextResponse.json(
         { error: "Topic is required" },
         { status: 400 }
@@ -14,10 +18,10 @@ export async function POST(request: NextRequest) {
     }
 
     const blog = await generateBlog({
-      topic,
-      instructions: instructions || undefined,
+      topic: cleanedTopic,
+      instructions: clean(instructions) || undefined,
       previousContent: previousContent || null,
-      regenerateInstructions: regenerateInstructions || null,
+      regenerateInstructions: clean(regenerateInstructions) || null,
     });
 
     return NextResponse.json({ success: true, blog });

@@ -4,15 +4,16 @@ import { generateImage } from "@/lib/imagen";
 export async function POST(request: NextRequest) {
   try {
     const { prompt } = await request.json();
+    const cleanedPrompt = typeof prompt === "string" ? prompt.trim() : null;
 
-    if (!prompt || typeof prompt !== "string") {
+    if (!cleanedPrompt) {
       return NextResponse.json(
         { error: "Image prompt is required" },
         { status: 400 }
       );
     }
 
-    const result = await generateImage(prompt);
+    const result = await generateImage(cleanedPrompt);
 
     return NextResponse.json({
       success: true,

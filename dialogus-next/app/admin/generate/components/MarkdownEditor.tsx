@@ -1,11 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import DOMPurify from "dompurify";
 
 interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
 }
+
+/** Tags produced by the markdown-ish pipeline below — anything else is stripped. */
+const PREVIEW_SANITIZE = {
+  ALLOWED_TAGS: [
+    "p",
+    "h2",
+    "h3",
+    "h4",
+    "blockquote",
+    "strong",
+    "em",
+    "a",
+    "ul",
+    "li",
+    "br",
+  ],
+  ALLOWED_ATTR: ["href", "target", "rel"],
+};
 
 function renderMarkdownToHtml(md: string): string {
   let html = md
@@ -35,7 +54,8 @@ function renderMarkdownToHtml(md: string): string {
     return `<ul>${items}</ul>`;
   });
 
-  return `<p>${html}</p>`;
+  const raw = `<p>${html}</p>`;
+  return DOMPurify.sanitize(raw, PREVIEW_SANITIZE);
 }
 
 export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
