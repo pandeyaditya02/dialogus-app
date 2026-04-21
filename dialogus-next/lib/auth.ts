@@ -1,4 +1,9 @@
-const SESSION_SECRET = process.env.SESSION_SECRET!;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET && process.env.NODE_ENV === "production") {
+  console.warn("WARNING: SESSION_SECRET is not set in production!");
+}
+
 const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
@@ -10,7 +15,7 @@ interface SessionPayload {
 
 async function getSigningKey(): Promise<CryptoKey> {
   const encoder = new TextEncoder();
-  const keyData = encoder.encode(SESSION_SECRET);
+  const keyData = encoder.encode(SESSION_SECRET || "fallback-secret-change-me");
   return crypto.subtle.importKey(
     "raw",
     keyData,
@@ -52,6 +57,7 @@ export async function signSession(payload: SessionPayload): Promise<string> {
 
 export async function verifySession(cookie: string): Promise<SessionPayload | null> {
   try {
+    if (!SESSION_SECRET) return null;
     const [payloadB64, signatureB64] = cookie.split(".");
     if (!payloadB64 || !signatureB64) return null;
 

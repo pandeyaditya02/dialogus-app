@@ -34,8 +34,8 @@ Your task is to write a complete blog article. Return your response as a JSON ob
 }
 
 Article requirements:
-- Length: 800-1500 words
-- Structure: Introduction paragraph, 3-5 sections with H2 headings (##), optional H3 subheadings (###), conclusion
+- Length: Exactly 500 words
+- Structure: Introduction paragraph, 3 sections with H2 headings (##), conclusion
 - Tone: Analytical, data-driven, journalistic. Not sensational, not academic.
 - Use markdown formatting: ## for H2, ### for H3, **bold** for emphasis, *italic* for terms, > for notable quotes, - for bullet lists, [text](url) for links
 - Never use H1 (#) — the title is rendered separately
@@ -57,6 +57,11 @@ Return your response as a JSON object with exactly these fields:
   "body": "Full revised article in markdown format",
   "imagePrompt": "A descriptive prompt for generating a cover image"
 }
+
+Regeneration requirements:
+- Length: Exactly 500 words (maintain this limit during revisions)
+- Structure: Introduction paragraph, 3 sections with H2 headings (##), conclusion
+- Use markdown formatting as specified in the original article instructions.
 
 IMPORTANT: Return ONLY the JSON object, no other text before or after it.`;
 

@@ -12,8 +12,17 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  // --- 1. Handle Login Page Redirection ---
-  if (pathname === "/admin/login") {
+  // Normalize pathname (remove trailing slash)
+  const normalizedPath = pathname.endsWith("/") && pathname !== "/"
+    ? pathname.slice(0, -1)
+    : pathname;
+
+  const isLoginPage = normalizedPath === "/admin/login";
+  const isAdminPath = normalizedPath.startsWith("/admin");
+  const isProtectedApi = PROTECTED_API_PATHS.some((p) => normalizedPath.startsWith(p));
+
+  // --- 1. Handle Login Page Redirection (already logged in) ---
+  if (isLoginPage) {
     if (sessionCookie) {
       const session = await verifySession(sessionCookie);
       if (session) {
@@ -24,13 +33,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // --- 2. Handle Protected Paths Protection ---
-  const isProtectedPage = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-  const isProtectedApi = PROTECTED_API_PATHS.some((p) => pathname.startsWith(p));
-
-  if (!isProtectedPage && !isProtectedApi) {
+  if (!isAdminPath && !isProtectedApi) {
     return NextResponse.next();
   }
 
+  // Redirect unauthenticated users to login
   if (!sessionCookie) {
     if (isProtectedApi) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -57,8 +64,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/admin/login",
-    "/admin/generate/:path*",
+    "/admin/:path*",
     "/api/generate-blog",
     "/api/generate-image",
     "/api/publish-blog",
