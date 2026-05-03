@@ -5,6 +5,7 @@ import GenerateForm from "./components/GenerateForm";
 import ContentEditor from "./components/ContentEditor";
 import ImagePreview from "./components/ImagePreview";
 import PublishBar from "./components/PublishBar";
+import SourcesPanel from "./components/SourcesPanel";
 
 type ViewState = "input" | "edit" | "success";
 
@@ -21,6 +22,13 @@ interface PublishResult {
   slug: string;
   studioUrl: string;
   isDraft: boolean;
+}
+
+interface NewsSource {
+  title: string;
+  link: string;
+  source: string;
+  pubDate: string;
 }
 
 export default function GeneratePage() {
@@ -43,6 +51,12 @@ export default function GeneratePage() {
   const [coverImageBase64, setCoverImageBase64] = useState<string>("");
   const [coverImageMimeType, setCoverImageMimeType] = useState<string>("image/png");
   const [imagePrompt, setImagePrompt] = useState("");
+
+  // RAG sources state
+  const [sources, setSources] = useState<NewsSource[]>([]);
+  const [contextStatus, setContextStatus] = useState<"grounded" | "no_sources">("no_sources");
+  const [totalFetched, setTotalFetched] = useState(0);
+  const [afterDedup, setAfterDedup] = useState(0);
 
   // Regenerate state
   const [regenerateInstructions, setRegenerateInstructions] = useState("");
@@ -72,6 +86,13 @@ export default function GeneratePage() {
     fetchMeta();
   }, []);
 
+  function applyGenerateResponse(data: any) {
+    setSources(data.sources || []);
+    setContextStatus(data.contextStatus || "no_sources");
+    setTotalFetched(data.totalFetched || 0);
+    setAfterDedup(data.afterDedup || 0);
+  }
+
   async function handleGenerate() {
     if (!topic.trim()) return;
     setIsGenerating(true);
@@ -89,9 +110,9 @@ export default function GeneratePage() {
 
       setBlog(data.blog);
       setImagePrompt(data.blog.imagePrompt);
+      applyGenerateResponse(data);
       setView("edit");
 
-      // Auto-generate image
       handleGenerateImage(data.blog.imagePrompt);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");
@@ -126,9 +147,9 @@ export default function GeneratePage() {
 
       setBlog(data.blog);
       setImagePrompt(data.blog.imagePrompt);
+      applyGenerateResponse(data);
       setRegenerateInstructions("");
 
-      // Auto-generate new image
       handleGenerateImage(data.blog.imagePrompt);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Regeneration failed");
@@ -210,6 +231,10 @@ export default function GeneratePage() {
     setError("");
     setTopic("");
     setInstructions("");
+    setSources([]);
+    setContextStatus("no_sources");
+    setTotalFetched(0);
+    setAfterDedup(0);
   }
 
   return (
@@ -264,7 +289,7 @@ export default function GeneratePage() {
                   categories={categories}
                 />
               </div>
-              <div>
+              <div className="space-y-6">
                 <ImagePreview
                   imageBase64={coverImageBase64}
                   mimeType={coverImageMimeType}
@@ -276,6 +301,12 @@ export default function GeneratePage() {
                     setCoverImageBase64(base64);
                     setCoverImageMimeType(mime);
                   }}
+                />
+                <SourcesPanel
+                  sources={sources}
+                  contextStatus={contextStatus}
+                  totalFetched={totalFetched}
+                  afterDedup={afterDedup}
                 />
               </div>
             </div>
