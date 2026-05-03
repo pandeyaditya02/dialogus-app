@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDocument, uploadImage, fetchCategories, fetchAuthors } from "@/lib/sanity.write";
-import { markdownToPortableText } from "@/lib/markdown-to-portable-text";
+import { markdownToPortableText, type PortableTextImagePlaceholder } from "@/lib/markdown-to-portable-text";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,6 +23,13 @@ export async function GET(request: NextRequest) {
   }
 }
 
+interface BodyImagePayload {
+  id: string;
+  base64: string;
+  mimeType: string;
+  alt: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -37,6 +44,7 @@ export async function POST(request: NextRequest) {
     const categoryId = clean(body.categoryId);
     const coverImageBase64 = body.coverImageBase64;
     const coverImageMimeType = body.coverImageMimeType;
+    const bodyImagesPayload: BodyImagePayload[] = body.bodyImages || [];
     const publishMode = body.publishMode;
 
     if (!title || !slug || !description || !bodyMarkdown || !authorId || !categoryId) {
@@ -64,7 +72,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const uploadedBodyImages = new Map<string, { _ref: string }>();
+    for (const img of bodyImagesPayload) {
+      const buffer = Buffer.from(img.base64, "base64");
+      const ext = img.mimeType === "image/jpeg" ? "jpg" : "png";
+      const result = await uploadImage(
+        buffer,
+        `${slug}-body-${img.id}.${ext}`,
+        img.mimeType || "image/png"
+      );
+      uploadedBodyImages.set(img.id, { _ref: result.asset._ref });
+    }
+
     const portableTextBody = markdownToPortableText(bodyMarkdown);
+
+    const resolvedBody = portableTextBody.map((node) => {
+      if (node._type === "image") {
+        const placeholder = node as PortableTextImagePlaceholder;
+        const uploaded = uploadedBodyImages.get(placeholder._imageId);
+        if (uploaded) {
+          return {
+            _type: "image" as const,
+            _key: placeholder._key,
+            asset: { _type: "reference" as const, _ref: uploaded._ref },
+          };
+        }
+        return null;
+      }
+      return node;
+    }).filter(Boolean);
 
     const doc: Record<string, unknown> = {
       _type: "insightPost",
@@ -74,7 +110,7 @@ export async function POST(request: NextRequest) {
       date: new Date().toISOString().split("T")[0],
       author: { _type: "reference", _ref: authorId },
       category: { _type: "reference", _ref: categoryId },
-      body: portableTextBody,
+      body: resolvedBody,
     };
 
     if (coverImage) {

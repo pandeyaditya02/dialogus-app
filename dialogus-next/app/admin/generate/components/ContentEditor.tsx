@@ -1,6 +1,6 @@
 "use client";
 
-import MarkdownEditor from "./MarkdownEditor";
+import MarkdownEditor, { type BodyImage } from "./MarkdownEditor";
 
 interface BlogContent {
   title: string;
@@ -19,6 +19,11 @@ interface ContentEditorProps {
   setCategoryId: (v: string) => void;
   authors: Array<{ _id: string; name: string }>;
   categories: Array<{ _id: string; title: string }>;
+  bodyImages: Map<string, BodyImage>;
+  onInsertImage: (image: BodyImage, placeholder: string) => void;
+  onRemoveImage: (id: string) => void;
+  isGeneratingBodyImage: boolean;
+  onGenerateBodyImage: (prompt: string, alt: string) => void;
 }
 
 function slugify(text: string): string {
@@ -30,6 +35,10 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter((w) => w.length > 0).length;
+}
+
 export default function ContentEditor({
   blog,
   setBlog,
@@ -39,6 +48,11 @@ export default function ContentEditor({
   setCategoryId,
   authors,
   categories,
+  bodyImages,
+  onInsertImage,
+  onRemoveImage,
+  isGeneratingBodyImage,
+  onGenerateBodyImage,
 }: ContentEditorProps) {
   function update(field: keyof BlogContent, value: string) {
     setBlog({ ...blog, [field]: value });
@@ -47,6 +61,8 @@ export default function ContentEditor({
   function handleTitleChange(value: string) {
     setBlog({ ...blog, title: value, slug: slugify(value) });
   }
+
+  const wordCount = countWords(blog.body);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
@@ -144,12 +160,22 @@ export default function ContentEditor({
 
       {/* Body */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Body
-        </label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Body
+          </label>
+          <span className={`text-xs ${wordCount > 550 ? "text-amber-600" : "text-gray-400"}`}>
+            {wordCount} words
+          </span>
+        </div>
         <MarkdownEditor
           value={blog.body}
           onChange={(v) => update("body", v)}
+          bodyImages={bodyImages}
+          onInsertImage={onInsertImage}
+          onRemoveImage={onRemoveImage}
+          isGeneratingBodyImage={isGeneratingBodyImage}
+          onGenerateBodyImage={onGenerateBodyImage}
         />
       </div>
     </div>

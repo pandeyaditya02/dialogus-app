@@ -47,8 +47,11 @@ export default function GenerateForm({
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6"
+        className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-6 relative overflow-hidden"
       >
+        {/* Subtle top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-fuchsia-500" />
+
         {/* Topic */}
         <div>
           <label
@@ -66,6 +69,9 @@ export default function GenerateForm({
             required
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent transition-shadow text-sm"
           />
+          <p className="mt-1.5 text-xs text-gray-400">
+            AI will fetch real-time news for this topic to ground the article in facts.
+          </p>
         </div>
 
         {/* Instructions */}
@@ -143,7 +149,7 @@ export default function GenerateForm({
           {isGenerating ? (
             <>
               <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Generating article…
+              Generating article...
             </>
           ) : (
             "Generate Article"

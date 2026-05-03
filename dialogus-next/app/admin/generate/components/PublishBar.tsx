@@ -28,7 +28,7 @@ export default function PublishBar({
   const busy = isPublishing || isGenerating;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 sticky bottom-4 z-10">
       {/* Regenerate section */}
       {showRegenerate && (
         <div className="mb-4 space-y-3">
@@ -55,7 +55,7 @@ export default function PublishBar({
               {isGenerating ? (
                 <>
                   <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Regenerating…
+                  Regenerating...
                 </>
               ) : (
                 "Apply & Regenerate"
@@ -84,7 +84,7 @@ export default function PublishBar({
           {isPublishing ? (
             <>
               <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Publishing…
+              Publishing...
             </>
           ) : (
             "Publish"

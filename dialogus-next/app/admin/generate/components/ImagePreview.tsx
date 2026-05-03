@@ -38,7 +38,7 @@ export default function ImagePreview({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 space-y-4 sticky top-24">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 space-y-4">
       <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
         Cover Image
       </h2>

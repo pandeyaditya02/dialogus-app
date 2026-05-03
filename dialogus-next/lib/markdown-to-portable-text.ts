@@ -1,7 +1,7 @@
 /**
  * Custom markdown-to-Portable-Text converter.
  * Supports: h2, h3, h4, normal, blockquote, bullet lists,
- * strong, em, and link annotations — matching the blockContent schema.
+ * strong, em, link annotations, and image placeholders — matching the blockContent schema.
  */
 
 interface PortableTextSpan {
@@ -27,7 +27,14 @@ interface PortableTextBlock {
   level?: number;
 }
 
-type PortableTextNode = PortableTextBlock;
+export interface PortableTextImagePlaceholder {
+  _type: "image";
+  _key: string;
+  _imageId: string;
+  alt: string;
+}
+
+export type PortableTextNode = PortableTextBlock | PortableTextImagePlaceholder;
 
 let keyCounter = 0;
 function genKey(): string {
@@ -145,6 +152,8 @@ function createBlock(
   return block;
 }
 
+const IMAGE_PLACEHOLDER_RE = /^!\[([^\]]*)\]\(body:(img-[a-zA-Z0-9_-]+)\)\s*$/;
+
 export function markdownToPortableText(markdown: string): PortableTextNode[] {
   keyCounter = 0;
   const blocks: PortableTextNode[] = [];
@@ -155,6 +164,18 @@ export function markdownToPortableText(markdown: string): PortableTextNode[] {
     const line = lines[i];
 
     if (line.trim() === "") {
+      i++;
+      continue;
+    }
+
+    const imgMatch = line.trim().match(IMAGE_PLACEHOLDER_RE);
+    if (imgMatch) {
+      blocks.push({
+        _type: "image",
+        _key: genKey(),
+        _imageId: imgMatch[2],
+        alt: imgMatch[1],
+      });
       i++;
       continue;
     }
@@ -194,7 +215,8 @@ export function markdownToPortableText(markdown: string): PortableTextNode[] {
       lines[i].trim() !== "" &&
       !lines[i].startsWith("#") &&
       !lines[i].startsWith("> ") &&
-      !/^[-*+]\s/.test(lines[i])
+      !/^[-*+]\s/.test(lines[i]) &&
+      !IMAGE_PLACEHOLDER_RE.test(lines[i].trim())
     ) {
       paragraph += " " + lines[i];
       i++;
