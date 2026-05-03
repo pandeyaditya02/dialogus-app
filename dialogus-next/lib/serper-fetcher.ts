@@ -28,16 +28,27 @@ export async function fetchSerperNews(topic: string): Promise<NewsItem[]> {
       link?: string;
       source?: string;
       date?: string;
+      snippet?: string;
     }> = data.news || [];
 
     return articles
       .filter((a) => a.title && a.link)
-      .map((a) => ({
-        title: a.title!,
-        link: a.link!,
-        source: a.source || "",
-        pubDate: a.date || "",
-      }));
+      .map((a) => {
+        const rawSnippet = (a.snippet || "").trim();
+        const snippet =
+          rawSnippet && rawSnippet.toLowerCase() !== a.title!.toLowerCase()
+            ? rawSnippet.length > 300
+              ? rawSnippet.slice(0, 300).replace(/\s+\S*$/, "") + "..."
+              : rawSnippet
+            : undefined;
+        return {
+          title: a.title!,
+          link: a.link!,
+          source: a.source || "",
+          pubDate: a.date || "",
+          snippet,
+        };
+      });
   } catch {
     return [];
   }

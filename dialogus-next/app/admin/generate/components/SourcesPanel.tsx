@@ -7,6 +7,7 @@ interface NewsSource {
   link: string;
   source: string;
   pubDate: string;
+  snippet?: string;
 }
 
 interface SourcesPanelProps {
@@ -14,6 +15,7 @@ interface SourcesPanelProps {
   contextStatus: "grounded" | "no_sources";
   totalFetched: number;
   afterDedup: number;
+  withSnippets: number;
 }
 
 export default function SourcesPanel({
@@ -21,6 +23,7 @@ export default function SourcesPanel({
   contextStatus,
   totalFetched,
   afterDedup,
+  withSnippets,
 }: SourcesPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -61,9 +64,24 @@ export default function SourcesPanel({
       {isExpanded && (
         <div className="space-y-3">
           {sources.length > 0 && (
-            <p className="text-[11px] text-gray-400">
-              {sources.length} sources used from {totalFetched} fetched ({afterDedup} after dedup)
-            </p>
+            <div className="space-y-1">
+              <p className="text-[11px] text-gray-400">
+                {sources.length} sources used from {totalFetched} fetched ({afterDedup} after dedup)
+              </p>
+              <p className="text-[11px] text-gray-400">
+                <span
+                  className={
+                    withSnippets >= 3
+                      ? "text-green-600 font-medium"
+                      : "text-amber-600 font-medium"
+                  }
+                >
+                  {withSnippets}/{sources.length}
+                </span>{" "}
+                with snippets ·{" "}
+                {withSnippets >= 3 ? "strict grounding" : "lenient grounding"}
+              </p>
+            </div>
           )}
 
           {sources.length === 0 ? (
@@ -71,7 +89,7 @@ export default function SourcesPanel({
               No real-time news sources were found for this topic. The article was generated using the AI model&apos;s general knowledge.
             </p>
           ) : (
-            <ul className="space-y-2 max-h-72 overflow-y-auto">
+            <ul className="space-y-2">
               {sources.map((s, i) => (
                 <li
                   key={i}
@@ -101,6 +119,14 @@ export default function SourcesPanel({
                         </span>
                       )}
                     </div>
+                    {s.snippet && (
+                      <p
+                        className="mt-1.5 text-[11px] text-gray-500 leading-relaxed line-clamp-3"
+                        title={s.snippet}
+                      >
+                        {s.snippet}
+                      </p>
+                    )}
                   </a>
                 </li>
               ))}

@@ -5,7 +5,19 @@ export interface ContextResult {
   sources: NewsItem[];
   totalFetched: number;
   afterDedup: number;
+  withSnippets: number;
 }
+
+const STOP_WORDS = new Set([
+  "the", "and", "for", "with", "from", "this", "that", "into", "over",
+  "are", "was", "were", "has", "have", "had", "new", "old", "not", "but",
+  "all", "any", "you", "your", "our", "its", "their", "what", "when",
+  "where", "why", "how", "who", "whom", "which", "than", "then", "also",
+  "about", "after", "before", "between", "during", "under", "above",
+  "more", "most", "some", "such", "only", "very", "just", "they", "them",
+  "these", "those", "would", "could", "should", "will", "shall", "may",
+  "might", "must", "can", "did", "does", "done", "been", "being",
+]);
 
 function normalizeTitle(title: string): Set<string> {
   return new Set(
@@ -13,7 +25,7 @@ function normalizeTitle(title: string): Set<string> {
       .toLowerCase()
       .replace(/[^\w\s]/g, "")
       .split(/\s+/)
-      .filter((w) => w.length > 2)
+      .filter((w) => w.length > 0 && !STOP_WORDS.has(w))
   );
 }
 
@@ -58,6 +70,14 @@ function scoreItem(item: NewsItem, topicWords: Set<string>): number {
     if (titleWords.has(word)) score += 15;
   }
 
+  if (item.snippet) {
+    score += 10;
+    const snippetWords = normalizeTitle(item.snippet);
+    for (const word of topicWords) {
+      if (snippetWords.has(word)) score += 5;
+    }
+  }
+
   return score;
 }
 
@@ -69,7 +89,13 @@ export function buildContext(
   const totalFetched = merged.length;
 
   if (totalFetched === 0) {
-    return { contextString: "", sources: [], totalFetched: 0, afterDedup: 0 };
+    return {
+      contextString: "",
+      sources: [],
+      totalFetched: 0,
+      afterDedup: 0,
+      withSnippets: 0,
+    };
   }
 
   const deduped = deduplicate(merged);
@@ -82,15 +108,33 @@ export function buildContext(
     .slice(0, 8)
     .map((r) => r.item);
 
-  const lines = ranked.map((item, i) => {
-    const parts = [`${i + 1}. "${item.title}"`];
-    if (item.source) parts[0] += ` — ${item.source}`;
-    if (item.pubDate) parts[0] += `, ${item.pubDate}`;
-    parts.push(`   URL: ${item.link}`);
-    return parts.join("\n");
+  const withSnippets = ranked.filter((item) => !!item.snippet).length;
+
+  const blocks = ranked.map((item, i) => {
+    const headerParts = [`${i + 1}. "${item.title}"`];
+    if (item.source) headerParts[0] += ` — ${item.source}`;
+    if (item.pubDate) headerParts[0] += `, ${item.pubDate}`;
+
+    const lines = [headerParts[0]];
+    if (item.snippet) {
+      lines.push(`   Snippet: ${item.snippet}`);
+    }
+    lines.push(`   URL: ${item.link}`);
+    return lines.join("\n");
   });
 
-  const contextString = `[CONTEXT — Real-time news sources for: "${topic}"]\n\n${lines.join("\n\n")}`;
+  const header =
+    `[CONTEXT — Real-time news sources for: "${topic}"]\n` +
+    `Sources with snippets: ${withSnippets}/${ranked.length}. ` +
+    `Use the snippet text as the primary factual basis. Where only a headline is provided, treat it as a topical signal, not a factual claim.\n`;
 
-  return { contextString, sources: ranked, totalFetched, afterDedup };
+  const contextString = `${header}\n${blocks.join("\n\n")}`;
+
+  return {
+    contextString,
+    sources: ranked,
+    totalFetched,
+    afterDedup,
+    withSnippets,
+  };
 }

@@ -14,10 +14,7 @@ export async function POST(request: NextRequest) {
 
     const cleanedTopic = clean(topic);
     if (!cleanedTopic) {
-      return NextResponse.json(
-        { error: "Topic is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
     const [rssResult, serperResult] = await Promise.allSettled([
@@ -33,10 +30,18 @@ export async function POST(request: NextRequest) {
     const contextStatus: "grounded" | "no_sources" =
       contextResult.sources.length > 0 ? "grounded" : "no_sources";
 
+    const todayDate = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
     const blog = await generateBlog({
       topic: cleanedTopic,
       instructions: clean(instructions) || undefined,
       context: contextResult.contextString || null,
+      todayDate,
+      withSnippets: contextResult.withSnippets,
       previousContent: previousContent || null,
       regenerateInstructions: clean(regenerateInstructions) || null,
     });
@@ -48,6 +53,7 @@ export async function POST(request: NextRequest) {
       contextStatus,
       totalFetched: contextResult.totalFetched,
       afterDedup: contextResult.afterDedup,
+      withSnippets: contextResult.withSnippets,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Generation failed";

@@ -3,6 +3,7 @@ export interface NewsItem {
   link: string;
   source: string;
   pubDate: string;
+  snippet?: string;
 }
 
 function decodeHtmlEntities(text: string): string {
@@ -12,7 +13,30 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'");
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
+}
+
+function cleanDescription(raw: string, title: string): string | undefined {
+  if (!raw) return undefined;
+
+  const stripped = raw
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const decoded = decodeHtmlEntities(stripped).trim();
+
+  if (!decoded) return undefined;
+
+  if (decoded.toLowerCase() === title.toLowerCase()) return undefined;
+
+  if (decoded.length <= 300) return decoded;
+
+  const truncated = decoded.slice(0, 300);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > 200 ? truncated.slice(0, lastSpace) : truncated) + "...";
 }
 
 function extractTag(xml: string, tag: string): string {
@@ -51,9 +75,11 @@ export async function fetchGoogleNews(topic: string): Promise<NewsItem[]> {
       const link = extractTag(block, "link") || extractTagAttribute(block, "link", "href");
       const source = extractTag(block, "source") || extractTagAttribute(block, "source", "url");
       const pubDate = extractTag(block, "pubDate");
+      const description = extractTag(block, "description");
+      const snippet = cleanDescription(description, title);
 
       if (title && link) {
-        items.push({ title, link, source, pubDate });
+        items.push({ title, link, source, pubDate, snippet });
       }
     }
 

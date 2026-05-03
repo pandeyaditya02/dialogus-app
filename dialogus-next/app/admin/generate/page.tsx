@@ -30,6 +30,7 @@ interface NewsSource {
   link: string;
   source: string;
   pubDate: string;
+  snippet?: string;
 }
 
 export default function GeneratePage() {
@@ -62,6 +63,7 @@ export default function GeneratePage() {
   const [contextStatus, setContextStatus] = useState<"grounded" | "no_sources">("no_sources");
   const [totalFetched, setTotalFetched] = useState(0);
   const [afterDedup, setAfterDedup] = useState(0);
+  const [withSnippets, setWithSnippets] = useState(0);
 
   // Regenerate state
   const [regenerateInstructions, setRegenerateInstructions] = useState("");
@@ -96,6 +98,7 @@ export default function GeneratePage() {
     setContextStatus(data.contextStatus || "no_sources");
     setTotalFetched(data.totalFetched || 0);
     setAfterDedup(data.afterDedup || 0);
+    setWithSnippets(data.withSnippets || 0);
   }
 
   async function handleGenerate() {
@@ -286,6 +289,7 @@ export default function GeneratePage() {
     setContextStatus("no_sources");
     setTotalFetched(0);
     setAfterDedup(0);
+    setWithSnippets(0);
     setBodyImages(new Map());
   }
 
@@ -353,6 +357,7 @@ export default function GeneratePage() {
                 contextStatus={contextStatus}
                 totalFetched={totalFetched}
                 afterDedup={afterDedup}
+                withSnippets={withSnippets}
               />
             </div>
 
