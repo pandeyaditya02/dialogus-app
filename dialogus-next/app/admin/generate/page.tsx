@@ -483,16 +483,6 @@ export default function GeneratePage() {
           </span>
           <div className="flex-1 text-sm font-medium">
             <div>{toast.message}</div>
-            {toast.studioUrl && (
-              <a
-                href={toast.studioUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-fuchsia-400 hover:text-fuchsia-300 underline font-normal mt-0.5 inline-block"
-              >
-                Open draft in Sanity Studio ↗
-              </a>
-            )}
           </div>
           <button
             onClick={() => setToast(null)}

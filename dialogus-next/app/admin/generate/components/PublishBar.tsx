@@ -140,21 +140,9 @@ export default function PublishBar({
           )}
 
           {draftStatus === "saved" && (
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                <span className="font-bold">✓</span> Draft saved {lastSavedTime && `at ${lastSavedTime}`}
-              </span>
-              {studioUrl && (
-                <a
-                  href={studioUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-fuchsia-600 hover:underline font-medium flex items-center gap-0.5"
-                >
-                  Sanity Studio ↗
-                </a>
-              )}
-            </div>
+            <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+              <span className="font-bold">✓</span> Draft saved {lastSavedTime && `at ${lastSavedTime}`}
+            </span>
           )}
 
           {draftStatus === "error" && (
