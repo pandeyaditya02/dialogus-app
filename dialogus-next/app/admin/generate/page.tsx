@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import GenerateForm from "./components/GenerateForm";
 import ContentEditor from "./components/ContentEditor";
 import ImagePreview from "./components/ImagePreview";
-import PublishBar from "./components/PublishBar";
+import PublishBar, { DraftStatus } from "./components/PublishBar";
 import SourcesPanel from "./components/SourcesPanel";
 import ProgressIndicator, { StageStatus } from "./components/ProgressIndicator";
 import UnifiedPipelineHeader from "./components/UnifiedPipelineHeader";
@@ -78,11 +78,24 @@ export default function GeneratePage() {
   // Regenerate state
   const [regenerateInstructions, setRegenerateInstructions] = useState("");
 
+  // In-place draft tracking state
+  const [savedDraftId, setSavedDraftId] = useState<string | null>(null);
+  const [draftStatus, setDraftStatus] = useState<DraftStatus>("idle");
+  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
+  const [studioUrl, setStudioUrl] = useState<string | null>(null);
+
+  // Toast notification state
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+    studioUrl?: string;
+  } | null>(null);
+
   // Publish result
   const [publishResult, setPublishResult] = useState<PublishResult | null>(null);
 
   useEffect(() => {
-    async function fetchMeta() {
+    async function initPage() {
       try {
         const [catRes, authRes] = await Promise.all([
           fetch("/api/publish-blog?action=categories"),
@@ -99,8 +112,48 @@ export default function GeneratePage() {
       } catch {
         // non-blocking
       }
+
+      // Restore draft from URL ?draft= parameter if present
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const draftParam = params.get("draft");
+        if (draftParam) {
+          try {
+            const res = await fetch(
+              `/api/publish-blog?action=get-draft&draftId=${encodeURIComponent(draftParam)}`
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.success && data.draft) {
+                const d = data.draft;
+                setBlog({
+                  title: d.title,
+                  slug: d.slug,
+                  description: d.description,
+                  body: d.bodyMarkdown,
+                  imagePrompt: "",
+                });
+                setTopic(d.title);
+                if (d.authorId) setAuthorId(d.authorId);
+                if (d.categoryId) setCategoryId(d.categoryId);
+                setSavedDraftId(draftParam);
+                const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+                if (projectId) {
+                  const studioBase = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || `https://${projectId}.sanity.studio`;
+                  setStudioUrl(`${studioBase}/structure/insightPost;${draftParam}`);
+                }
+                setDraftStatus("saved");
+                setLastSavedTime("loaded from Sanity");
+                setView("edit");
+              }
+            }
+          } catch (err) {
+            console.error("Failed to restore draft from URL:", err);
+          }
+        }
+      }
     }
-    fetchMeta();
+    initPage();
   }, []);
 
   function applyGenerateResponse(data: any) {
@@ -307,10 +360,15 @@ export default function GeneratePage() {
   async function handlePublish(publishMode: "publish" | "draft") {
     if (!blog) return;
     if (!authorId || !categoryId) {
-      setError("Please select an author and category before publishing.");
+      setError("Please select an author and category before saving or publishing.");
       return;
     }
-    setIsPublishing(true);
+
+    if (publishMode === "draft") {
+      setDraftStatus("saving");
+    } else {
+      setIsPublishing(true);
+    }
     setError("");
 
     try {
@@ -328,18 +386,53 @@ export default function GeneratePage() {
           coverImageMimeType: coverImageMimeType || "image/png",
           bodyImages: Array.from(bodyImages.values()),
           publishMode,
+          documentId: savedDraftId || undefined,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Publishing failed");
+      if (!res.ok) throw new Error(data.error || "Saving failed");
 
-      setPublishResult(data);
-      setView("success");
+      if (publishMode === "draft") {
+        setSavedDraftId(data.documentId);
+        setStudioUrl(data.studioUrl);
+        setDraftStatus("saved");
+        const formattedTime = new Date().toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        setLastSavedTime(formattedTime);
+
+        // Show success notification toast
+        setToast({
+          message: `Article saved as draft in Sanity (${formattedTime})`,
+          type: "success",
+          studioUrl: data.studioUrl,
+        });
+
+        // Update URL query parameter without page reload
+        if (typeof window !== "undefined") {
+          const newUrl = `${window.location.pathname}?draft=${encodeURIComponent(data.documentId)}`;
+          window.history.replaceState(null, "", newUrl);
+        }
+      } else {
+        setPublishResult(data);
+        setView("success");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Publishing failed");
+      const errMsg = err instanceof Error ? err.message : "Saving failed";
+      if (publishMode === "draft") {
+        setDraftStatus("error");
+        setToast({
+          message: `Failed to save draft: ${errMsg}`,
+          type: "error",
+        });
+      }
+      setError(errMsg);
     } finally {
-      setIsPublishing(false);
+      if (publishMode === "publish") {
+        setIsPublishing(false);
+      }
     }
   }
 
@@ -364,10 +457,52 @@ export default function GeneratePage() {
     setSerperItems([]);
     setScholarItems([]);
     setStreamedText("");
+    setSavedDraftId(null);
+    setDraftStatus("idle");
+    setLastSavedTime(null);
+    setStudioUrl(null);
+
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="min-h-screen bg-slate-50/50 relative">
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 z-50 max-w-md px-4 py-3 rounded-2xl shadow-2xl border flex items-center gap-3 transition-all ${
+            toast.type === "success"
+              ? "bg-slate-900 text-white border-slate-700"
+              : "bg-red-950 text-white border-red-800"
+          }`}
+        >
+          <span className={`text-base font-bold ${toast.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
+            {toast.type === "success" ? "✓" : "✕"}
+          </span>
+          <div className="flex-1 text-sm font-medium">
+            <div>{toast.message}</div>
+            {toast.studioUrl && (
+              <a
+                href={toast.studioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-fuchsia-400 hover:text-fuchsia-300 underline font-normal mt-0.5 inline-block"
+              >
+                Open draft in Sanity Studio ↗
+              </a>
+            )}
+          </div>
+          <button
+            onClick={() => setToast(null)}
+            className="text-gray-400 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded-lg hover:bg-slate-800"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Error banner */}
         {error && (
@@ -497,6 +632,9 @@ export default function GeneratePage() {
                   <PublishBar
                     isPublishing={isPublishing}
                     isGenerating={isGenerating}
+                    draftStatus={draftStatus}
+                    lastSavedTime={lastSavedTime}
+                    studioUrl={studioUrl}
                     regenerateInstructions={regenerateInstructions}
                     setRegenerateInstructions={setRegenerateInstructions}
                     onPublish={() => handlePublish("publish")}

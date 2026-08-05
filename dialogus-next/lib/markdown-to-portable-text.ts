@@ -227,3 +227,54 @@ export function markdownToPortableText(markdown: string): PortableTextNode[] {
 
   return blocks;
 }
+
+export function portableTextToMarkdown(blocks: any[]): string {
+  if (!Array.isArray(blocks) || blocks.length === 0) return "";
+
+  const lines: string[] = [];
+
+  for (const block of blocks) {
+    if (!block) continue;
+
+    if (block._type === "block") {
+      const markDefsMap = new Map<string, string>();
+      if (Array.isArray(block.markDefs)) {
+        for (const def of block.markDefs) {
+          if (def._type === "link" && def.href) {
+            markDefsMap.set(def._key, def.href);
+          }
+        }
+      }
+
+      let text = "";
+      if (Array.isArray(block.children)) {
+        for (const child of block.children) {
+          let childText = child.text || "";
+          if (Array.isArray(child.marks)) {
+            for (const mark of child.marks) {
+              if (mark === "strong") childText = `**${childText}**`;
+              else if (mark === "em") childText = `*${childText}*`;
+              else if (markDefsMap.has(mark)) {
+                childText = `[${childText}](${markDefsMap.get(mark)})`;
+              }
+            }
+          }
+          text += childText;
+        }
+      }
+
+      if (block.style === "h2") lines.push(`## ${text}`);
+      else if (block.style === "h3") lines.push(`### ${text}`);
+      else if (block.style === "h4") lines.push(`#### ${text}`);
+      else if (block.style === "blockquote") lines.push(`> ${text}`);
+      else if (block.listItem === "bullet") lines.push(`- ${text}`);
+      else lines.push(text);
+    } else if (block._type === "image") {
+      const alt = block.alt || "";
+      const ref = block.asset?._ref || "";
+      lines.push(`![${alt}](${ref})`);
+    }
+  }
+
+  return lines.join("\n\n");
+}
