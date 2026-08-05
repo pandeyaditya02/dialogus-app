@@ -9,6 +9,7 @@ import SourcesPanel from "./components/SourcesPanel";
 import ProgressIndicator, { StageStatus } from "./components/ProgressIndicator";
 import UnifiedPipelineHeader from "./components/UnifiedPipelineHeader";
 import type { BodyImage } from "./components/MarkdownEditor";
+import { parseCompletedMarkdown } from "@/lib/ai-blog-generator";
 
 type ViewState = "input" | "edit" | "success";
 
@@ -192,7 +193,19 @@ export default function GeneratePage() {
       }
 
       if (!completedBlog) {
-        throw new Error("Pipeline terminated before blog completion");
+        if (buffer.trim()) {
+          // Attempt parsing any residual content left in buffer
+          try {
+            const parsed = parseCompletedMarkdown(buffer);
+            setBlog(parsed);
+            setImagePrompt(parsed.imagePrompt);
+            setView("edit");
+          } catch {
+            // non-fatal fallback
+          }
+        } else {
+          throw new Error("Pipeline terminated before blog completion");
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");

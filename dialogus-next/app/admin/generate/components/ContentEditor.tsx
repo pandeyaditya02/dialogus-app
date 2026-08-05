@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import MarkdownEditor, { type BodyImage } from "./MarkdownEditor";
 
 export interface BlogContent {
@@ -42,53 +41,6 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter((w) => w.length > 0).length;
 }
 
-function extractPartialJSON(jsonStr: string): Partial<BlogContent> {
-  const result: Partial<BlogContent> = {};
-  if (!jsonStr) return result;
-
-  // Extract title
-  const titleMatch = jsonStr.match(/"title"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
-  if (titleMatch) {
-    try {
-      result.title = JSON.parse(`"${titleMatch[1]}"`);
-    } catch {
-      result.title = titleMatch[1];
-    }
-  }
-
-  // Extract description
-  const descMatch = jsonStr.match(/"description"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
-  if (descMatch) {
-    try {
-      result.description = JSON.parse(`"${descMatch[1]}"`);
-    } catch {
-      result.description = descMatch[1];
-    }
-  }
-
-  // Extract body
-  const bodyMatch = jsonStr.match(/"body"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
-  if (bodyMatch) {
-    try {
-      result.body = JSON.parse(`"${bodyMatch[1]}"`);
-    } catch {
-      result.body = bodyMatch[1].replace(/\\n/g, "\n").replace(/\\"/g, '"');
-    }
-  } else {
-    // If body string quote isn't closed yet in streaming JSON
-    const openBodyIdx = jsonStr.indexOf('"body":');
-    if (openBodyIdx !== -1) {
-      const startQuoteIdx = jsonStr.indexOf('"', openBodyIdx + 7);
-      if (startQuoteIdx !== -1) {
-        const rawPartial = jsonStr.slice(startQuoteIdx + 1);
-        result.body = rawPartial.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\t/g, "\t");
-      }
-    }
-  }
-
-  return result;
-}
-
 export default function ContentEditor({
   blog,
   setBlog,
@@ -106,28 +58,11 @@ export default function ContentEditor({
   isGenerating = false,
   streamedText = "",
 }: ContentEditorProps) {
-  // Extract real-time streaming values if generation is active
-  const partial = useMemo(() => {
-    if (isGenerating && streamedText) {
-      return extractPartialJSON(streamedText);
-    }
-    return null;
-  }, [isGenerating, streamedText]);
-
-  const currentTitle = isGenerating
-    ? partial?.title || blog?.title || ""
-    : blog?.title || "";
-
-  const currentSlug = isGenerating
-    ? currentTitle ? slugify(currentTitle) : blog?.slug || ""
-    : blog?.slug || "";
-
-  const currentDescription = isGenerating
-    ? partial?.description || blog?.description || ""
-    : blog?.description || "";
-
+  const currentTitle = blog?.title || "";
+  const currentSlug = blog?.slug || "";
+  const currentDescription = blog?.description || "";
   const currentBody = isGenerating
-    ? partial?.body || (streamedText ? "Receiving article tokens from AI..." : "")
+    ? streamedText || "Waiting for model Markdown stream..."
     : blog?.body || "";
 
   function update(field: keyof BlogContent, value: string) {
@@ -161,7 +96,7 @@ export default function ContentEditor({
           {isGenerating && (
             <span className="inline-flex items-center gap-1 text-xs font-normal text-fuchsia-600 animate-pulse">
               <span className="w-2 h-2 rounded-full bg-fuchsia-500 animate-ping" />
-              Streaming content live...
+              Streaming Markdown live...
             </span>
           )}
         </h2>
@@ -177,10 +112,10 @@ export default function ContentEditor({
           value={currentTitle}
           readOnly={isGenerating}
           onChange={(e) => handleTitleChange(e.target.value)}
-          placeholder="Headline will stream here live..."
+          placeholder={isGenerating ? "Headline will be parsed upon completion..." : "Enter headline..."}
           className={`w-full px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all ${
             isGenerating
-              ? "bg-slate-50 border-fuchsia-300 font-medium text-fuchsia-950"
+              ? "bg-slate-50 border-gray-200 text-gray-400"
               : "bg-white border-gray-300"
           }`}
         />
@@ -201,7 +136,7 @@ export default function ContentEditor({
             placeholder="url-friendly-slug"
             className={`flex-1 px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 font-mono transition-all ${
               isGenerating
-                ? "bg-slate-50 border-gray-200 text-gray-500"
+                ? "bg-slate-50 border-gray-200 text-gray-400"
                 : "bg-white border-gray-300"
             }`}
           />
@@ -226,10 +161,10 @@ export default function ContentEditor({
           onChange={(e) => update("description", e.target.value)}
           rows={2}
           maxLength={210}
-          placeholder="SEO summary preview..."
+          placeholder={isGenerating ? "SEO summary will be parsed upon completion..." : "SEO summary preview..."}
           className={`w-full px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none transition-all ${
             isGenerating
-              ? "bg-slate-50 border-fuchsia-200 text-gray-800"
+              ? "bg-slate-50 border-gray-200 text-gray-400"
               : "bg-white border-gray-300"
           }`}
         />
@@ -279,14 +214,14 @@ export default function ContentEditor({
       <div>
         <div className="flex items-center justify-between mb-1">
           <label className="block text-sm font-medium text-gray-700">
-            Article Body (Markdown)
+            Article Body (Markdown Stream)
           </label>
           <span className={`text-xs ${wordCount > 550 ? "text-amber-600" : "text-gray-400"}`}>
             {wordCount} words
           </span>
         </div>
 
-        {/* Live streaming preview or Interactive Markdown Editor */}
+        {/* Pure Markdown Stream Editor */}
         <MarkdownEditor
           value={currentBody}
           onChange={(v) => update("body", v)}
