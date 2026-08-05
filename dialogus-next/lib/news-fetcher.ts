@@ -4,6 +4,7 @@ export interface NewsItem {
   source: string;
   pubDate: string;
   snippet?: string;
+  isAcademic?: boolean;
 }
 
 function decodeHtmlEntities(text: string): string {

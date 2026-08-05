@@ -135,7 +135,7 @@ export const revalidate = 60;
 export default async function InsightsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const rawPosts: Omit<InsightPost, 'readTime'>[] = await client.fetch(query);
 

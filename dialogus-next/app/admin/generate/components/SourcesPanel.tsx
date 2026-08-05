@@ -8,6 +8,7 @@ interface NewsSource {
   source: string;
   pubDate: string;
   snippet?: string;
+  isAcademic?: boolean;
 }
 
 interface SourcesPanelProps {
@@ -93,7 +94,11 @@ export default function SourcesPanel({
               {sources.map((s, i) => (
                 <li
                   key={i}
-                  className="p-2.5 bg-gray-50 rounded-lg border border-gray-100"
+                  className={`p-2.5 rounded-lg border transition-colors ${
+                    s.isAcademic
+                      ? "bg-indigo-50/60 border-indigo-100 hover:bg-indigo-50"
+                      : "bg-gray-50 border-gray-100 hover:bg-gray-100/80"
+                  }`}
                 >
                   <a
                     href={s.link}
@@ -101,12 +106,23 @@ export default function SourcesPanel({
                     rel="noopener noreferrer"
                     className="block group"
                   >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      {s.isAcademic ? (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-600 text-white uppercase tracking-wider">
+                          Scholar Paper
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-slate-200 text-slate-700 uppercase tracking-wider">
+                          Web News
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs font-medium text-gray-800 group-hover:text-fuchsia-600 transition-colors leading-snug">
                       {s.title}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       {s.source && (
-                        <span className="text-[10px] text-gray-500">
+                        <span className="text-[10px] text-gray-500 font-medium">
                           {s.source}
                         </span>
                       )}

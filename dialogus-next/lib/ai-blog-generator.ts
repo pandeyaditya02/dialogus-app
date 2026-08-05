@@ -146,8 +146,9 @@ Regeneration requirements:
 IMPORTANT: Return ONLY the JSON object, no other text before or after it.`;
 }
 
-export async function generateBlog(
-  options: GenerateOptions
+export async function generateBlogStream(
+  options: GenerateOptions,
+  onChunk?: (chunkText: string) => void
 ): Promise<GeneratedBlog> {
   const isRegeneration =
     options.previousContent && options.regenerateInstructions;
@@ -214,7 +215,7 @@ Today's date: ${todayDate}`;
     systemInstruction: systemPrompt,
   });
 
-  const result = await model.generateContent({
+  const resultStream = await model.generateContentStream({
     contents: [{ role: "user", parts: [{ text: userMessage }] }],
     generationConfig: {
       maxOutputTokens: 16384,
@@ -223,22 +224,19 @@ Today's date: ${todayDate}`;
     },
   });
 
-  const response = await result.response;
-  const content = response.text();
-  const candidate = result.response.candidates?.[0];
+  let fullContent = "";
 
-  if (candidate?.finishReason === "MAX_TOKENS" && !content?.trim()) {
-    throw new Error(
-      "The AI response was cut off before completing. Try a shorter or more specific topic."
-    );
+  for await (const chunk of resultStream.stream) {
+    const chunkText = chunk.text();
+    if (chunkText) {
+      fullContent += chunkText;
+      if (onChunk) {
+        onChunk(chunkText);
+      }
+    }
   }
 
-  if (!content) {
-    throw new Error("No content in Gemini response");
-  }
-
-  let jsonStr = content.trim();
-
+  let jsonStr = fullContent.trim();
   const start = jsonStr.indexOf("{");
   const end = jsonStr.lastIndexOf("}");
 
@@ -263,4 +261,10 @@ Today's date: ${todayDate}`;
     const errorMsg = e instanceof Error ? e.message : "Invalid JSON";
     throw new Error(`AI generated invalid JSON: ${errorMsg}. Please try again.`);
   }
+}
+
+export async function generateBlog(
+  options: GenerateOptions
+): Promise<GeneratedBlog> {
+  return generateBlogStream(options);
 }

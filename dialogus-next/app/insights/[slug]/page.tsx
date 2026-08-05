@@ -25,7 +25,7 @@ interface InsightPostDetail {
 }
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 // --- Helper function to calculate reading time ---

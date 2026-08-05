@@ -6,6 +6,7 @@ import ContentEditor from "./components/ContentEditor";
 import ImagePreview from "./components/ImagePreview";
 import PublishBar from "./components/PublishBar";
 import SourcesPanel from "./components/SourcesPanel";
+import ProgressIndicator, { StageStatus } from "./components/ProgressIndicator";
 import type { BodyImage } from "./components/MarkdownEditor";
 
 type ViewState = "input" | "edit" | "success";
@@ -31,6 +32,7 @@ interface NewsSource {
   source: string;
   pubDate: string;
   snippet?: string;
+  isAcademic?: boolean;
 }
 
 export default function GeneratePage() {
@@ -48,6 +50,12 @@ export default function GeneratePage() {
   const [categoryId, setCategoryId] = useState("");
   const [authors, setAuthors] = useState<Array<{ _id: string; name: string }>>([]);
   const [categories, setCategories] = useState<Array<{ _id: string; title: string }>>([]);
+
+  // Real-time streaming pipeline state
+  const [stages, setStages] = useState<Record<string, StageStatus>>({});
+  const [serperItems, setSerperItems] = useState<NewsSource[]>([]);
+  const [scholarItems, setScholarItems] = useState<NewsSource[]>([]);
+  const [streamedText, setStreamedText] = useState("");
 
   // Content state
   const [blog, setBlog] = useState<BlogContent | null>(null);
@@ -101,8 +109,11 @@ export default function GeneratePage() {
     setWithSnippets(data.withSnippets || 0);
   }
 
-  async function handleGenerate() {
-    if (!topic.trim()) return;
+  async function processStream(requestBody: any) {
+    setStages({});
+    setSerperItems([]);
+    setScholarItems([]);
+    setStreamedText("");
     setIsGenerating(true);
     setError("");
 
@@ -110,18 +121,78 @@ export default function GeneratePage() {
       const res = await fetch("/api/generate-blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, instructions }),
+        body: JSON.stringify(requestBody),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Generation failed");
+      if (!res.ok && res.headers.get("content-type")?.includes("application/json")) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Generation failed");
+      }
 
-      setBlog(data.blog);
-      setImagePrompt(data.blog.imagePrompt);
-      applyGenerateResponse(data);
-      setView("edit");
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("Response stream is unreadable");
 
-      handleGenerateImage(data.blog.imagePrompt);
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let completedBlog: BlogContent | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const blocks = buffer.split("\n\n");
+        buffer = blocks.pop() || "";
+
+        for (const block of blocks) {
+          if (!block.trim()) continue;
+          let eventType = "message";
+          let dataStr = "";
+
+          for (const line of block.split("\n")) {
+            if (line.startsWith("event: ")) {
+              eventType = line.slice(7).trim();
+            } else if (line.startsWith("data: ")) {
+              dataStr = line.slice(6).trim();
+            }
+          }
+
+          if (!dataStr) continue;
+
+          try {
+            const data = JSON.parse(dataStr);
+            if (eventType === "stage") {
+              setStages((prev) => ({
+                ...prev,
+                [data.id]: data,
+              }));
+            } else if (eventType === "serper_results") {
+              setSerperItems(data.items || []);
+            } else if (eventType === "scholar_results") {
+              setScholarItems(data.items || []);
+            } else if (eventType === "context_ready") {
+              applyGenerateResponse(data);
+            } else if (eventType === "generation_chunk") {
+              setStreamedText((prev) => prev + (data.text || ""));
+            } else if (eventType === "complete") {
+              completedBlog = data.blog;
+              setBlog(data.blog);
+              setImagePrompt(data.blog.imagePrompt);
+              applyGenerateResponse(data);
+              setView("edit");
+              handleGenerateImage(data.blog.imagePrompt);
+            } else if (eventType === "error") {
+              throw new Error(data.error || "Generation failed");
+            }
+          } catch (e) {
+            if (e instanceof Error && eventType === "error") throw e;
+          }
+        }
+      }
+
+      if (!completedBlog) {
+        throw new Error("Pipeline terminated before blog completion");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");
     } finally {
@@ -129,41 +200,25 @@ export default function GeneratePage() {
     }
   }
 
+  async function handleGenerate() {
+    if (!topic.trim()) return;
+    await processStream({ topic, instructions });
+  }
+
   async function handleRegenerate() {
     if (!blog) return;
-    setIsGenerating(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/generate-blog", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          topic,
-          instructions,
-          previousContent: {
-            title: blog.title,
-            description: blog.description,
-            body: blog.body,
-          },
-          regenerateInstructions,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Regeneration failed");
-
-      setBlog(data.blog);
-      setImagePrompt(data.blog.imagePrompt);
-      applyGenerateResponse(data);
-      setRegenerateInstructions("");
-
-      handleGenerateImage(data.blog.imagePrompt);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Regeneration failed");
-    } finally {
-      setIsGenerating(false);
-    }
+    const prevBody = blog.body;
+    setRegenerateInstructions("");
+    await processStream({
+      topic,
+      instructions,
+      previousContent: {
+        title: blog.title,
+        description: blog.description,
+        body: prevBody,
+      },
+      regenerateInstructions,
+    });
   }
 
   async function handleGenerateImage(prompt?: string) {
@@ -291,13 +346,17 @@ export default function GeneratePage() {
     setAfterDedup(0);
     setWithSnippets(0);
     setBodyImages(new Map());
+    setStages({});
+    setSerperItems([]);
+    setScholarItems([]);
+    setStreamedText("");
   }
 
   return (
     <div className="min-h-screen">
       <main className="max-w-6xl mx-auto px-6 py-10">
         {/* Error banner */}
-        {error && (
+        {error && !isGenerating && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
             <span className="mt-0.5">⚠</span>
             <span>{error}</span>
@@ -310,8 +369,20 @@ export default function GeneratePage() {
           </div>
         )}
 
+        {/* Progress Indicator View during live generation */}
+        {isGenerating && (
+          <ProgressIndicator
+            topic={topic}
+            stages={stages}
+            serperItems={serperItems}
+            scholarItems={scholarItems}
+            streamedText={streamedText}
+            error={error}
+          />
+        )}
+
         {/* Input view */}
-        {view === "input" && (
+        {!isGenerating && view === "input" && (
           <GenerateForm
             topic={topic}
             setTopic={setTopic}
@@ -329,7 +400,7 @@ export default function GeneratePage() {
         )}
 
         {/* Edit view */}
-        {view === "edit" && blog && (
+        {!isGenerating && view === "edit" && blog && (
           <div className="space-y-8">
             {/* Topic banner */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
