@@ -19,6 +19,7 @@ interface MarkdownEditorProps {
   onRemoveImage: (id: string) => void;
   isGeneratingBodyImage: boolean;
   onGenerateBodyImage: (prompt: string, alt: string) => void;
+  readOnly?: boolean;
 }
 
 const PREVIEW_SANITIZE = {
@@ -70,6 +71,7 @@ export default function MarkdownEditor({
   onRemoveImage,
   isGeneratingBodyImage,
   onGenerateBodyImage,
+  readOnly = false,
 }: MarkdownEditorProps) {
   const [tab, setTab] = useState<"write" | "preview">("write");
   const [showImageModal, setShowImageModal] = useState(false);
@@ -223,9 +225,14 @@ export default function MarkdownEditor({
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          readOnly={readOnly}
           rows={24}
           spellCheck
-          className="w-full px-4 py-3 text-sm text-gray-900 font-mono resize-y focus:outline-none min-h-[400px]"
+          className={`w-full px-4 py-3 text-sm font-mono resize-y focus:outline-none min-h-[400px] transition-colors ${
+            readOnly
+              ? "bg-slate-50 text-fuchsia-950 border-fuchsia-200"
+              : "text-gray-900 bg-white"
+          }`}
           placeholder="Write your article in Markdown..."
         />
       )}

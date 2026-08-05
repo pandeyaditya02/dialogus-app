@@ -1,8 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import MarkdownEditor, { type BodyImage } from "./MarkdownEditor";
 
-interface BlogContent {
+export interface BlogContent {
   title: string;
   slug: string;
   description: string;
@@ -11,7 +12,7 @@ interface BlogContent {
 }
 
 interface ContentEditorProps {
-  blog: BlogContent;
+  blog: BlogContent | null;
   setBlog: (b: BlogContent) => void;
   authorId: string;
   setAuthorId: (v: string) => void;
@@ -24,6 +25,8 @@ interface ContentEditorProps {
   onRemoveImage: (id: string) => void;
   isGeneratingBodyImage: boolean;
   onGenerateBodyImage: (prompt: string, alt: string) => void;
+  isGenerating?: boolean;
+  streamedText?: string;
 }
 
 function slugify(text: string): string {
@@ -37,6 +40,53 @@ function slugify(text: string): string {
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter((w) => w.length > 0).length;
+}
+
+function extractPartialJSON(jsonStr: string): Partial<BlogContent> {
+  const result: Partial<BlogContent> = {};
+  if (!jsonStr) return result;
+
+  // Extract title
+  const titleMatch = jsonStr.match(/"title"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+  if (titleMatch) {
+    try {
+      result.title = JSON.parse(`"${titleMatch[1]}"`);
+    } catch {
+      result.title = titleMatch[1];
+    }
+  }
+
+  // Extract description
+  const descMatch = jsonStr.match(/"description"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+  if (descMatch) {
+    try {
+      result.description = JSON.parse(`"${descMatch[1]}"`);
+    } catch {
+      result.description = descMatch[1];
+    }
+  }
+
+  // Extract body
+  const bodyMatch = jsonStr.match(/"body"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"/);
+  if (bodyMatch) {
+    try {
+      result.body = JSON.parse(`"${bodyMatch[1]}"`);
+    } catch {
+      result.body = bodyMatch[1].replace(/\\n/g, "\n").replace(/\\"/g, '"');
+    }
+  } else {
+    // If body string quote isn't closed yet in streaming JSON
+    const openBodyIdx = jsonStr.indexOf('"body":');
+    if (openBodyIdx !== -1) {
+      const startQuoteIdx = jsonStr.indexOf('"', openBodyIdx + 7);
+      if (startQuoteIdx !== -1) {
+        const rawPartial = jsonStr.slice(startQuoteIdx + 1);
+        result.body = rawPartial.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\t/g, "\t");
+      }
+    }
+  }
+
+  return result;
 }
 
 export default function ContentEditor({
@@ -53,22 +103,69 @@ export default function ContentEditor({
   onRemoveImage,
   isGeneratingBodyImage,
   onGenerateBodyImage,
+  isGenerating = false,
+  streamedText = "",
 }: ContentEditorProps) {
+  // Extract real-time streaming values if generation is active
+  const partial = useMemo(() => {
+    if (isGenerating && streamedText) {
+      return extractPartialJSON(streamedText);
+    }
+    return null;
+  }, [isGenerating, streamedText]);
+
+  const currentTitle = isGenerating
+    ? partial?.title || blog?.title || ""
+    : blog?.title || "";
+
+  const currentSlug = isGenerating
+    ? currentTitle ? slugify(currentTitle) : blog?.slug || ""
+    : blog?.slug || "";
+
+  const currentDescription = isGenerating
+    ? partial?.description || blog?.description || ""
+    : blog?.description || "";
+
+  const currentBody = isGenerating
+    ? partial?.body || (streamedText ? "Receiving article tokens from AI..." : "")
+    : blog?.body || "";
+
   function update(field: keyof BlogContent, value: string) {
-    setBlog({ ...blog, [field]: value });
+    if (!blog) {
+      setBlog({
+        title: "",
+        slug: "",
+        description: "",
+        body: "",
+        imagePrompt: "",
+        [field]: value,
+      });
+    } else {
+      setBlog({ ...blog, [field]: value });
+    }
   }
 
   function handleTitleChange(value: string) {
-    setBlog({ ...blog, title: value, slug: slugify(value) });
+    update("title", value);
+    update("slug", slugify(value));
   }
 
-  const wordCount = countWords(blog.body);
+  const wordCount = countWords(currentBody);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
-      <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-        Edit Content
-      </h2>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5 relative">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+          Article Editor
+          {isGenerating && (
+            <span className="inline-flex items-center gap-1 text-xs font-normal text-fuchsia-600 animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-fuchsia-500 animate-ping" />
+              Streaming content live...
+            </span>
+          )}
+        </h2>
+      </div>
 
       {/* Title */}
       <div>
@@ -77,9 +174,15 @@ export default function ContentEditor({
         </label>
         <input
           type="text"
-          value={blog.title}
+          value={currentTitle}
+          readOnly={isGenerating}
           onChange={(e) => handleTitleChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent"
+          placeholder="Headline will stream here live..."
+          className={`w-full px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all ${
+            isGenerating
+              ? "bg-slate-50 border-fuchsia-300 font-medium text-fuchsia-950"
+              : "bg-white border-gray-300"
+          }`}
         />
       </div>
 
@@ -92,9 +195,15 @@ export default function ContentEditor({
           <span className="text-sm text-gray-400">/insights/</span>
           <input
             type="text"
-            value={blog.slug}
+            value={currentSlug}
+            readOnly={isGenerating}
             onChange={(e) => update("slug", e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent font-mono"
+            placeholder="url-friendly-slug"
+            className={`flex-1 px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 font-mono transition-all ${
+              isGenerating
+                ? "bg-slate-50 border-gray-200 text-gray-500"
+                : "bg-white border-gray-300"
+            }`}
           />
         </div>
       </div>
@@ -105,18 +214,24 @@ export default function ContentEditor({
           Description
           <span
             className={`ml-2 text-xs font-normal ${
-              blog.description.length > 200 ? "text-red-500" : "text-gray-400"
+              currentDescription.length > 200 ? "text-red-500" : "text-gray-400"
             }`}
           >
-            {blog.description.length}/200
+            {currentDescription.length}/200
           </span>
         </label>
         <textarea
-          value={blog.description}
+          value={currentDescription}
+          readOnly={isGenerating}
           onChange={(e) => update("description", e.target.value)}
-          rows={3}
+          rows={2}
           maxLength={210}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent resize-none"
+          placeholder="SEO summary preview..."
+          className={`w-full px-3 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none transition-all ${
+            isGenerating
+              ? "bg-slate-50 border-fuchsia-200 text-gray-800"
+              : "bg-white border-gray-300"
+          }`}
         />
       </div>
 
@@ -129,7 +244,8 @@ export default function ContentEditor({
           <select
             value={authorId}
             onChange={(e) => setAuthorId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent bg-white"
+            disabled={isGenerating}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 bg-white disabled:bg-slate-50"
           >
             <option value="">Select author</option>
             {authors.map((a) => (
@@ -146,7 +262,8 @@ export default function ContentEditor({
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent bg-white"
+            disabled={isGenerating}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 bg-white disabled:bg-slate-50"
           >
             <option value="">Select category</option>
             {categories.map((c) => (
@@ -158,24 +275,27 @@ export default function ContentEditor({
         </div>
       </div>
 
-      {/* Body */}
+      {/* Body Editor */}
       <div>
         <div className="flex items-center justify-between mb-1">
           <label className="block text-sm font-medium text-gray-700">
-            Body
+            Article Body (Markdown)
           </label>
           <span className={`text-xs ${wordCount > 550 ? "text-amber-600" : "text-gray-400"}`}>
             {wordCount} words
           </span>
         </div>
+
+        {/* Live streaming preview or Interactive Markdown Editor */}
         <MarkdownEditor
-          value={blog.body}
+          value={currentBody}
           onChange={(v) => update("body", v)}
           bodyImages={bodyImages}
           onInsertImage={onInsertImage}
           onRemoveImage={onRemoveImage}
           isGeneratingBodyImage={isGeneratingBodyImage}
           onGenerateBodyImage={onGenerateBodyImage}
+          readOnly={isGenerating}
         />
       </div>
     </div>

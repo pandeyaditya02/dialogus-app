@@ -7,6 +7,7 @@ import ImagePreview from "./components/ImagePreview";
 import PublishBar from "./components/PublishBar";
 import SourcesPanel from "./components/SourcesPanel";
 import ProgressIndicator, { StageStatus } from "./components/ProgressIndicator";
+import UnifiedPipelineHeader from "./components/UnifiedPipelineHeader";
 import type { BodyImage } from "./components/MarkdownEditor";
 
 type ViewState = "input" | "edit" | "success";
@@ -353,11 +354,11 @@ export default function GeneratePage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-6xl mx-auto px-6 py-10">
+    <div className="min-h-screen bg-slate-50/50">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Error banner */}
-        {error && !isGenerating && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm flex items-start gap-2 shadow-sm">
             <span className="mt-0.5">⚠</span>
             <span>{error}</span>
             <button
@@ -369,105 +370,9 @@ export default function GeneratePage() {
           </div>
         )}
 
-        {/* Progress Indicator View during live generation */}
-        {isGenerating && (
-          <ProgressIndicator
-            topic={topic}
-            stages={stages}
-            serperItems={serperItems}
-            scholarItems={scholarItems}
-            streamedText={streamedText}
-            error={error}
-          />
-        )}
-
-        {/* Input view */}
-        {!isGenerating && view === "input" && (
-          <GenerateForm
-            topic={topic}
-            setTopic={setTopic}
-            instructions={instructions}
-            setInstructions={setInstructions}
-            authorId={authorId}
-            setAuthorId={setAuthorId}
-            categoryId={categoryId}
-            setCategoryId={setCategoryId}
-            authors={authors}
-            categories={categories}
-            onGenerate={handleGenerate}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        {/* Edit view */}
-        {!isGenerating && view === "edit" && blog && (
-          <div className="space-y-8">
-            {/* Topic banner */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-fuchsia-500" />
-              <p className="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest mb-1">Generating article for:</p>
-              <h1 className="text-xl font-bold text-gray-900">{topic}</h1>
-            </div>
-
-            {/* Horizontal row for Cover and Sources */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ImagePreview
-                imageBase64={coverImageBase64}
-                mimeType={coverImageMimeType}
-                imagePrompt={imagePrompt}
-                setImagePrompt={setImagePrompt}
-                isGenerating={isGeneratingImage}
-                onGenerateImage={() => handleGenerateImage()}
-                onImageUpload={(base64, mime) => {
-                  setCoverImageBase64(base64);
-                  setCoverImageMimeType(mime);
-                }}
-              />
-              <SourcesPanel
-                sources={sources}
-                contextStatus={contextStatus}
-                totalFetched={totalFetched}
-                afterDedup={afterDedup}
-                withSnippets={withSnippets}
-              />
-            </div>
-
-            {/* Full-width Content Editor */}
-            <div className="w-full">
-              <ContentEditor
-                blog={blog}
-                setBlog={setBlog}
-                authorId={authorId}
-                setAuthorId={setAuthorId}
-                categoryId={categoryId}
-                setCategoryId={setCategoryId}
-                authors={authors}
-                categories={categories}
-                bodyImages={bodyImages}
-                onInsertImage={handleInsertBodyImage}
-                onRemoveImage={handleRemoveBodyImage}
-                isGeneratingBodyImage={isGeneratingBodyImage}
-                onGenerateBodyImage={handleGenerateBodyImage}
-              />
-            </div>
-
-            {/* Sticky Publish Bar */}
-            <PublishBar
-              isPublishing={isPublishing}
-              isGenerating={isGenerating}
-              regenerateInstructions={regenerateInstructions}
-              setRegenerateInstructions={setRegenerateInstructions}
-              onPublish={() => handlePublish("publish")}
-              onDraft={() => handlePublish("draft")}
-              onRegenerate={handleRegenerate}
-              onStartOver={handleStartOver}
-            />
-          </div>
-        )}
-
-        {/* Success view */}
-        {view === "success" && publishResult && (
-          <div className="max-w-lg mx-auto text-center py-16">
+        {/* Success View */}
+        {view === "success" && publishResult ? (
+          <div className="max-w-lg mx-auto text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
             <div className="text-5xl mb-6">🎉</div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {publishResult.isDraft ? "Saved as Draft!" : "Published!"}
@@ -482,7 +387,7 @@ export default function GeneratePage() {
                 href={publishResult.studioUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-fuchsia-600 text-white rounded-lg text-sm font-medium hover:bg-fuchsia-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-fuchsia-600 text-white rounded-xl text-sm font-medium hover:bg-fuchsia-700 transition-colors shadow-sm"
               >
                 Open in Sanity Studio ↗
               </a>
@@ -491,17 +396,103 @@ export default function GeneratePage() {
                   href={`/insights/${publishResult.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
                 >
                   View Post ↗
                 </a>
               )}
               <button
                 onClick={handleStartOver}
-                className="text-sm text-gray-500 hover:text-gray-700 transition-colors py-2"
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors py-2 font-medium"
               >
                 Generate another post
               </button>
+            </div>
+          </div>
+        ) : (
+          /* 1 UNIFIED WORKSPACE LAYOUT */
+          <div className="space-y-6">
+            {/* Unified Pipeline Header */}
+            <UnifiedPipelineHeader
+              topic={topic}
+              setTopic={setTopic}
+              instructions={instructions}
+              setInstructions={setInstructions}
+              authorId={authorId}
+              setAuthorId={setAuthorId}
+              categoryId={categoryId}
+              setCategoryId={setCategoryId}
+              authors={authors}
+              categories={categories}
+              onGenerate={handleGenerate}
+              isGenerating={isGenerating}
+              stages={stages}
+              hasGenerated={!!blog}
+            />
+
+            {/* Continuous Workspace Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Cover Image & Sources Panel (5 cols) */}
+              <div className="lg:col-span-5 space-y-6">
+                <ImagePreview
+                  imageBase64={coverImageBase64}
+                  mimeType={coverImageMimeType}
+                  imagePrompt={imagePrompt}
+                  setImagePrompt={setImagePrompt}
+                  isGenerating={isGeneratingImage}
+                  onGenerateImage={() => handleGenerateImage()}
+                  onImageUpload={(base64, mime) => {
+                    setCoverImageBase64(base64);
+                    setCoverImageMimeType(mime);
+                  }}
+                />
+                <SourcesPanel
+                  sources={
+                    sources.length > 0
+                      ? sources
+                      : [...scholarItems, ...serperItems]
+                  }
+                  contextStatus={contextStatus}
+                  totalFetched={totalFetched || serperItems.length + scholarItems.length}
+                  afterDedup={afterDedup || serperItems.length + scholarItems.length}
+                  withSnippets={withSnippets}
+                  isGenerating={isGenerating}
+                />
+              </div>
+
+              {/* Right Column: Article Content Editor & Sticky Publish Bar (7 cols) */}
+              <div className="lg:col-span-7 space-y-6">
+                <ContentEditor
+                  blog={blog}
+                  setBlog={setBlog}
+                  authorId={authorId}
+                  setAuthorId={setAuthorId}
+                  categoryId={categoryId}
+                  setCategoryId={setCategoryId}
+                  authors={authors}
+                  categories={categories}
+                  bodyImages={bodyImages}
+                  onInsertImage={handleInsertBodyImage}
+                  onRemoveImage={handleRemoveBodyImage}
+                  isGeneratingBodyImage={isGeneratingBodyImage}
+                  onGenerateBodyImage={handleGenerateBodyImage}
+                  isGenerating={isGenerating}
+                  streamedText={streamedText}
+                />
+
+                {(blog || isGenerating) && (
+                  <PublishBar
+                    isPublishing={isPublishing}
+                    isGenerating={isGenerating}
+                    regenerateInstructions={regenerateInstructions}
+                    setRegenerateInstructions={setRegenerateInstructions}
+                    onPublish={() => handlePublish("publish")}
+                    onDraft={() => handlePublish("draft")}
+                    onRegenerate={handleRegenerate}
+                    onStartOver={handleStartOver}
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}

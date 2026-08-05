@@ -17,6 +17,7 @@ interface SourcesPanelProps {
   totalFetched: number;
   afterDedup: number;
   withSnippets: number;
+  isGenerating?: boolean;
 }
 
 export default function SourcesPanel({
@@ -25,6 +26,7 @@ export default function SourcesPanel({
   totalFetched,
   afterDedup,
   withSnippets,
+  isGenerating = false,
 }: SourcesPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -36,10 +38,15 @@ export default function SourcesPanel({
         className="w-full flex items-center justify-between"
       >
         <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-          News Sources
+          News & Academic Sources
         </h2>
         <div className="flex items-center gap-2">
-          {contextStatus === "grounded" ? (
+          {isGenerating && sources.length === 0 ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-fuchsia-50 text-fuchsia-700 text-[10px] font-medium rounded-full border border-fuchsia-200 animate-pulse">
+              <span className="w-1.5 h-1.5 bg-fuchsia-500 rounded-full animate-ping" />
+              Searching real-time web...
+            </span>
+          ) : contextStatus === "grounded" ? (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-medium rounded-full border border-green-200">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
               Grounded
