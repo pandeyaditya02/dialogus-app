@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Adsense from "./components/Adsense";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -82,6 +83,8 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
     return (
         <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
             <head>
@@ -107,6 +110,7 @@ export default function RootLayout({
                 <Header />
                 {children}
                 <Footer />
+                {gaId && <GoogleAnalytics gaId={gaId} />}
             </body>
         </html>
     );
