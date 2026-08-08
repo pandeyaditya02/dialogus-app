@@ -1,9 +1,53 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY!;
-const MODEL_NAME = "gemini-3-flash-preview";
+const MODEL_PRIMARY = "gemini-3.5-flash-lite";
+const MODEL_FALLBACK = "gemini-3.1-flash-lite";
 
 const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
+
+/** Returns true if the error is a transient 503 / overload error from Google AI. */
+function is503Error(err: unknown): boolean {
+  if (err instanceof Error) {
+    return (
+      err.message.includes("503") ||
+      err.message.toLowerCase().includes("service unavailable") ||
+      err.message.toLowerCase().includes("high demand")
+    );
+  }
+  return false;
+}
+
+/**
+ * Calls `fn` up to `maxAttempts` times with exponential backoff.
+ * On a 503, switches to the fallback model for the remaining attempts.
+ */
+async function withRetry<T>(
+  fn: (modelName: string) => Promise<T>,
+  maxAttempts = 3
+): Promise<T> {
+  let modelName = MODEL_PRIMARY;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn(modelName);
+    } catch (err) {
+      const isLast = attempt === maxAttempts;
+      if (is503Error(err) && !isLast) {
+        const delayMs = 1000 * Math.pow(2, attempt - 1); // 1s, 2s, 4s…
+        console.warn(
+          `[AI] 503 on attempt ${attempt} with model "${modelName}". ` +
+          `Switching to fallback "${MODEL_FALLBACK}" and retrying in ${delayMs}ms…`
+        );
+        modelName = MODEL_FALLBACK;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      } else {
+        throw err;
+      }
+    }
+  }
+  // TypeScript: unreachable, but satisfies return type
+  throw new Error("withRetry: exhausted all attempts");
+}
 
 export interface GeneratedBlog {
   title: string;
@@ -250,34 +294,38 @@ Today's date: ${todayDate}`;
     }
   }
 
-  const model = genAI.getGenerativeModel({
-    model: MODEL_NAME,
-    systemInstruction: systemPrompt,
-  });
+  const fullContent = await withRetry(async (modelName) => {
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction: systemPrompt,
+    });
 
-  const resultStream = await model.generateContentStream({
-    contents: [{ role: "user", parts: [{ text: userMessage }] }],
-    generationConfig: {
-      maxOutputTokens: 16384,
-      temperature: 0.7,
-    },
-  });
+    const resultStream = await model.generateContentStream({
+      contents: [{ role: "user", parts: [{ text: userMessage }] }],
+      generationConfig: {
+        maxOutputTokens: 16384,
+        temperature: 0.7,
+      },
+    });
 
-  let fullContent = "";
+    let content = "";
 
-  for await (const chunk of resultStream.stream) {
-    const chunkText = chunk.text();
-    if (chunkText) {
-      fullContent += chunkText;
-      if (onChunk) {
-        onChunk(chunkText);
+    for await (const chunk of resultStream.stream) {
+      const chunkText = chunk.text();
+      if (chunkText) {
+        content += chunkText;
+        if (onChunk) {
+          onChunk(chunkText);
+        }
       }
     }
-  }
 
-  if (!fullContent.trim()) {
-    throw new Error("No content received from Gemini model");
-  }
+    if (!content.trim()) {
+      throw new Error("No content received from Gemini model");
+    }
+
+    return content;
+  });
 
   return parseCompletedMarkdown(fullContent);
 }
