@@ -303,7 +303,7 @@ Today's date: ${todayDate}`;
     const resultStream = await model.generateContentStream({
       contents: [{ role: "user", parts: [{ text: userMessage }] }],
       generationConfig: {
-        maxOutputTokens: 16384,
+        maxOutputTokens: 3500,
         temperature: 0.7,
       },
     });
