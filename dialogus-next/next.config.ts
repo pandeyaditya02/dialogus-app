@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     staleTimes: {
       // Keep stale data for 5 minutes while revalidating
-      dynamic: 300000,
+      dynamic: 300,
     },
   },
   images: {
