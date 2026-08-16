@@ -78,6 +78,9 @@ export default function GeneratePage() {
   // Regenerate state
   const [regenerateInstructions, setRegenerateInstructions] = useState("");
 
+  // Resolved topic (set when a generic topic like "latest news" is auto-expanded)
+  const [resolvedTopic, setResolvedTopic] = useState<string | null>(null);
+
   // In-place draft tracking state
   const [savedDraftId, setSavedDraftId] = useState<string | null>(null);
   const [draftStatus, setDraftStatus] = useState<DraftStatus>("idle");
@@ -169,6 +172,7 @@ export default function GeneratePage() {
     setSerperItems([]);
     setScholarItems([]);
     setStreamedText("");
+    setResolvedTopic(null);
     setIsGenerating(true);
     setError("");
 
@@ -221,6 +225,8 @@ export default function GeneratePage() {
                 ...prev,
                 [data.id]: data,
               }));
+            } else if (eventType === "topic_resolved") {
+              setResolvedTopic(data.resolvedTopic || null);
             } else if (eventType === "serper_results") {
               setSerperItems(data.items || []);
             } else if (eventType === "scholar_results") {
@@ -457,6 +463,7 @@ export default function GeneratePage() {
     setSerperItems([]);
     setScholarItems([]);
     setStreamedText("");
+    setResolvedTopic(null);
     setSavedDraftId(null);
     setDraftStatus("idle");
     setLastSavedTime(null);
@@ -566,6 +573,7 @@ export default function GeneratePage() {
               isGenerating={isGenerating}
               stages={stages}
               hasGenerated={!!blog}
+              resolvedTopic={resolvedTopic}
             />
 
             {/* Continuous Workspace Grid */}

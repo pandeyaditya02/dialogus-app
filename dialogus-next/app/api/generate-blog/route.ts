@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { generateBlogStream } from "@/lib/ai-blog-generator";
 import { fetchGoogleNews } from "@/lib/news-fetcher";
-import { fetchSerperNews } from "@/lib/serper-fetcher";
+import { fetchSerperNews, isGenericNewsTopic, fetchTrendingTopic } from "@/lib/serper-fetcher";
 import { fetchGoogleScholar } from "@/lib/scholar-fetcher";
 import { buildContext } from "@/lib/context-builder";
 
@@ -35,6 +35,40 @@ export async function POST(request: NextRequest) {
       };
 
       try {
+        // ── Stage 0: Topic Resolution (only for generic "latest news" prompts) ──
+        let resolvedTopic = cleanedTopic;
+
+        if (isGenericNewsTopic(cleanedTopic)) {
+          sendEvent("stage", {
+            id: "trend_detect",
+            title: "Detecting top trending story...",
+            status: "in_progress",
+          });
+
+          const trendingTitle = await fetchTrendingTopic();
+
+          if (trendingTitle) {
+            resolvedTopic = trendingTitle;
+            sendEvent("topic_resolved", { resolvedTopic });
+            sendEvent("stage", {
+              id: "trend_detect",
+              title: "Trending topic detected",
+              status: "completed",
+              resolvedTopic,
+            });
+          } else {
+            // Serper unavailable or returned nothing — fall back to "top news today"
+            resolvedTopic = "top news today";
+            sendEvent("topic_resolved", { resolvedTopic });
+            sendEvent("stage", {
+              id: "trend_detect",
+              title: "Trending topic detected (fallback)",
+              status: "completed",
+              resolvedTopic,
+            });
+          }
+        }
+
         // Stage 1: Serper Search
         sendEvent("stage", {
           id: "serper",
@@ -57,7 +91,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Fetch concurrently and stream results as each completes
-        const serperPromise = fetchSerperNews(cleanedTopic).then((items) => {
+        const serperPromise = fetchSerperNews(resolvedTopic).then((items) => {
           sendEvent("serper_results", { items });
           sendEvent("stage", {
             id: "serper",
@@ -76,7 +110,7 @@ export async function POST(request: NextRequest) {
           return [];
         });
 
-        const scholarPromise = fetchGoogleScholar(cleanedTopic).then((items) => {
+        const scholarPromise = fetchGoogleScholar(resolvedTopic).then((items) => {
           sendEvent("scholar_results", { items });
           sendEvent("stage", {
             id: "scholar",
@@ -95,7 +129,7 @@ export async function POST(request: NextRequest) {
           return [];
         });
 
-        const rssPromise = fetchGoogleNews(cleanedTopic).then((items) => {
+        const rssPromise = fetchGoogleNews(resolvedTopic).then((items) => {
           sendEvent("google_news_results", { items });
           sendEvent("stage", {
             id: "news",
@@ -128,7 +162,7 @@ export async function POST(request: NextRequest) {
         });
 
         const contextResult = buildContext(
-          cleanedTopic,
+          resolvedTopic,
           rssItems,
           serperItems,
           scholarItems
@@ -167,7 +201,7 @@ export async function POST(request: NextRequest) {
 
         const blog = await generateBlogStream(
           {
-            topic: cleanedTopic,
+            topic: resolvedTopic,
             instructions: clean(instructions) || undefined,
             context: contextResult.contextString || null,
             todayDate,

@@ -18,6 +18,8 @@ interface UnifiedPipelineHeaderProps {
   isGenerating: boolean;
   stages: Record<string, StageStatus>;
   hasGenerated: boolean;
+  /** Set when a generic topic (e.g. "latest news") was resolved to a specific trending story. */
+  resolvedTopic?: string | null;
 }
 
 export default function UnifiedPipelineHeader({
@@ -35,6 +37,7 @@ export default function UnifiedPipelineHeader({
   isGenerating,
   stages,
   hasGenerated,
+  resolvedTopic,
 }: UnifiedPipelineHeaderProps) {
   const [showInstructions, setShowInstructions] = useState(false);
 
@@ -44,10 +47,13 @@ export default function UnifiedPipelineHeader({
     onGenerate();
   }
 
+  const trendDetectStage = stages["trend_detect"];
   const serperStage = stages["serper"];
   const scholarStage = stages["scholar"];
   const contextStage = stages["context"];
   const genStage = stages["generating"];
+
+  const hasTrendDetect = !!trendDetectStage;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 relative overflow-hidden space-y-5">
@@ -168,10 +174,58 @@ export default function UnifiedPipelineHeader({
         )}
       </form>
 
+      {/* Resolved Topic Banner — shown when a generic topic was auto-resolved to a trending story */}
+      {resolvedTopic && (
+        <div className="flex items-start gap-2.5 px-3.5 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs animate-fadeIn">
+          <span className="text-amber-500 mt-0.5 shrink-0">✦</span>
+          <div className="min-w-0">
+            <span className="font-semibold text-amber-800">Trending topic auto-detected: </span>
+            <span className="text-amber-700 break-words">{resolvedTopic}</span>
+          </div>
+        </div>
+      )}
+
       {/* Inline Stage Stepper Bar (Active during generation or completed) */}
       {(isGenerating || Object.keys(stages).length > 0) && (
-        <div className="pt-3 border-t border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-          {/* Serper Web */}
+        <div className={`pt-3 border-t border-gray-100 grid gap-3 text-xs ${
+          hasTrendDetect
+            ? "grid-cols-2 md:grid-cols-5"
+            : "grid-cols-2 md:grid-cols-4"
+        }`}>
+
+          {/* Trend Detection (conditional) */}
+          {hasTrendDetect && (
+            <div
+              className={`p-2.5 rounded-xl border flex items-center gap-2.5 transition-all ${
+                trendDetectStage?.status === "completed"
+                  ? "bg-amber-50/70 border-amber-200 text-amber-900"
+                  : trendDetectStage?.status === "in_progress"
+                  ? "bg-fuchsia-50 border-fuchsia-200 text-fuchsia-900"
+                  : "bg-gray-50 border-gray-200 text-gray-400"
+              }`}
+            >
+              {trendDetectStage?.status === "completed" ? (
+                <span className="w-4 h-4 rounded-full bg-amber-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0">
+                  ✦
+                </span>
+              ) : trendDetectStage?.status === "in_progress" ? (
+                <span className="w-3.5 h-3.5 border-2 border-fuchsia-600 border-t-transparent rounded-full animate-spin shrink-0" />
+              ) : (
+                <span className="w-3.5 h-3.5 rounded-full border border-gray-300 shrink-0" />
+              )}
+              <div className="min-w-0">
+                <p className="font-semibold truncate">Trend Detect</p>
+                <p className="text-[10px] opacity-75 truncate">
+                  {trendDetectStage?.status === "completed"
+                    ? "Story found"
+                    : trendDetectStage?.status === "in_progress"
+                    ? "Scanning trends..."
+                    : "Pending"}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div
             className={`p-2.5 rounded-xl border flex items-center gap-2.5 transition-all ${
               serperStage?.status === "completed"
